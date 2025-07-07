@@ -130,6 +130,8 @@ class Stock:
 
 class Tableau:
     def __init__(self):
+        self.piles = [[] for _ in range(7)]
+        self.faceup = np.arange(7)
         self.reset()
         
     def reset(self, cards: None | List[Tuple[npt.NDArray, npt.NDArray]] = None):
