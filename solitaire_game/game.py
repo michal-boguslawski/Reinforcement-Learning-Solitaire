@@ -90,7 +90,7 @@ class Game:
             # from Foundation to Tableau
             pass
         
-        if not result:
+        if not result and self.verbose:
             print("!!!!!Unlegal move!!!!!")
         
         return self

@@ -15,10 +15,6 @@ class SolitaireWrapper(Game):
             "Foundation": [[] for _ in range(4)],
             "Tableau": [[] for _ in range(7)]
         }
-        
-    def move(self, pile_from: int, pile_to: int) -> dict:
-        _ = super().move(pile_from=pile_from, pile_to=pile_to)
-        return self.prepare_list_of_cards()
     
     def prepare_list_of_cards(self) -> dict:
         self.__reset_list_of_cards()
@@ -30,7 +26,7 @@ class SolitaireWrapper(Game):
         
     def __prepare_stock(self, stock: Stock) -> None:
         if len(stock.stock) == 0:
-            self.list_of_cards["Stock"].append("*")
+            self.list_of_cards["Stock"].append("-")
         else:
             for _ in range(len(stock.stock)):
                 self.list_of_cards["Stock"].append("*")
@@ -38,7 +34,7 @@ class SolitaireWrapper(Game):
     def __prepare_waste(self, waste: Waste) -> None:
         len_waste = len(waste.waste)
         if len_waste == 0:
-            self.list_of_cards["Waste"].append("*")
+            self.list_of_cards["Waste"].append("-")
         else:
             for i, card in enumerate(waste.waste):
                 if i == len_waste - 1:
@@ -49,7 +45,7 @@ class SolitaireWrapper(Game):
     def __prepare_foundation(self, foundation: Foundation) -> None:
         for color, pile in enumerate(foundation.foundation):
             if len(pile) == 0:
-                self.list_of_cards["Foundation"][color].append("*")
+                self.list_of_cards["Foundation"][color].append("-")
             else:
                 for card in pile:
                     self.list_of_cards["Foundation"][color].append((card.color, card.figure))
@@ -57,7 +53,7 @@ class SolitaireWrapper(Game):
     def __prepare_tableau(self, tableau: Tableau) -> None:
         for pile_id, (pile, faceup) in enumerate(zip(tableau.piles, tableau.faceup)):
             if len(pile) == 0:
-                self.list_of_cards["Tableau"][pile_id].append("*")
+                self.list_of_cards["Tableau"][pile_id].append("-")
             else:
                 for i, card in enumerate(pile):
                     if i < faceup:
