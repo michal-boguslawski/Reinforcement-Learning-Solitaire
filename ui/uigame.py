@@ -27,12 +27,14 @@ class UIGame:
         pygame.init()
         pygame.display.set_caption("Solitaire Game")
         self.window = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
+
         self.clock = pygame.time.Clock()
         
         # additional
         self.move_from = -1
         self.move_to = -1
         self.move = False
+        self.fullscreen = False
         self.dragging = False
         self.collide_card = None
         self.dragged_cards = []
@@ -219,6 +221,13 @@ class UIGame:
                 self._running = False
                 break
             
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
+                self.fullscreen = not self.fullscreen
+                if self.fullscreen:
+                    self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.HWSURFACE | pygame.DOUBLEBUF)
+                else:
+                    self.window = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
+            
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
                 self.game.reset()
                 self.__reset_cards_position()
@@ -285,7 +294,14 @@ class UIGame:
                     self.window.blit(*blit_values)
                 
     def render(self):
-        self.window.blit(self.bg_image, (0, 0))
+        # Get current display size
+        if self.fullscreen:
+            screen_info = pygame.display.Info()
+            screen_width, screen_height = screen_info.current_w, screen_info.current_h
+            bg_image = pygame.transform.scale(self.bg_image, (screen_width, screen_height))
+        else:
+            bg_image = self.bg_image
+        self.window.blit(bg_image, (0, 0))
         for block_list in self.game_blocks.values():
             self.__render_block(**block_list)
         while len(self.render_last) > 0:
