@@ -9,4 +9,4 @@ python main.py
 
 Game example
 
-![Demo](media\ui_example_video.gif)
+![Demo](media/ui_example_video.gif)
