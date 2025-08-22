@@ -12,7 +12,7 @@ class Foundation:
     def reset(self):
         self.foundation = [[] for _ in range(4)]
         
-    def is_end(self) -> False:
+    def is_end(self) -> bool:
         for pile in self.foundation:
             if len(pile) == 0:
                 return False
@@ -184,7 +184,7 @@ class Tableau:
             if len(pile) == 0 and card.figure == 12:
                 result = True
                 break
-            else:
+            elif len(pile) > 0:
                 last_card = pile[-1]
                 if card_relationship(card_from=card, card_to=last_card, type="cn,fb"):
                     result = True

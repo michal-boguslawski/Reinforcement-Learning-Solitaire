@@ -93,4 +93,7 @@ class Game:
         if not result and self.verbose:
             print("!!!!!Unlegal move!!!!!")
         
-        return self
+        return result
+    
+    def is_win(self):
+        return self.foundation.is_end()

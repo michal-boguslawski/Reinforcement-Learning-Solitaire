@@ -260,7 +260,7 @@ class UIGame:
                 
     def update(self):
         if self.move:
-            self.game.move(self.move_from, self.move_to)
+            _ = self.game.move(self.move_from, self.move_to)
             self.move_from, self.move_to, self.move = -1, -1, False
             self.__reset_cards_position()
         for card in self.dragged_cards:
