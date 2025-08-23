@@ -44,9 +44,9 @@ class GymLikeGameWrapper(Game):
         pile_from = move_id // 10
         pile_to = move_id % 10
         result = super().move(pile_from=pile_from, pile_to=pile_to)
-        terminated = self.is_win()
+        terminated = np.array([self.is_win(), ])
         self.curr_iter += 1
-        truncated = ( self.curr_iter >= self.max_iter )
+        truncated = np.array([( self.curr_iter >= self.max_iter )])
         reward = self._reward_function(
             result=result, 
             pile_from=pile_from, 
@@ -81,19 +81,19 @@ class GymLikeGameWrapper(Game):
         if truncated:
             reward -= self.truncation_penalty
         
-        return reward
+        return np.array([reward, ])
     
     @staticmethod
     def __move_reward(pile_from: int, pile_to: int) -> float:
         reward = 0.
         if pile_to == 9:
-            reward += 1
+            reward += 0.2
         elif pile_from == 9:
-            reward -= 0.9
+            reward -= 0.15
         elif pile_from == 7 and pile_to == 8:
-            reward += 0.05
+            reward += 0.01
         else:
-            reward += 0.5
+            reward += 0.15
         return reward
         
     def _convert_to_numpy(self):
