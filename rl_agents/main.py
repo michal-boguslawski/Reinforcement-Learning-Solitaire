@@ -1,25 +1,44 @@
-from models.network import SolitaireNetwork1
-from envs.model_game_wrapper import GymLikeGameWrapper
-from agents.dqn import DQN
-from utils.replay_buffer import ReplayBuffer
-import torch as T
+import gymnasium as gym
+from gymnasium.wrappers import NumpyToTorch
+from torch.optim import Adam
+
+
+from worker.worker import Worker
+from agent.agent import Sarsa
+from network.cart_pole import DQNNetwork
+from memory.replay_buffer import ReplayBuffer
+
 
 if __name__ == "__main__":
-    dtypes_schema = {
-        "state": T.int32,
-        "action": T.int64,
-        "reward": T.float32,
-        "done": T.float32
-    }
-    model = SolitaireNetwork1(104, 100)
-    env = GymLikeGameWrapper(verbose=False, max_iter=1000, move_penalty=0.1, truncation_penalty=0.)
-    replay_buffer = ReplayBuffer(
-        10**5,
-        dtypes_schema=dtypes_schema
+    batch_size = 256
+    minibatch_size = 64
+    
+    env = gym.make("CartPole-v1")
+    env = NumpyToTorch(env)
+    network = DQNNetwork(
+        in_features=4,
+        out_features=2,
+        hidden_dim=32
     )
-    agent = DQN(
-        network=SolitaireNetwork1,
-        in_features=104,
-        n_classes=100
+    optimizer = Adam(network.parameters(), lr=2e-4)
+    buffer = ReplayBuffer(batch_size)
+    agent = Sarsa(
+        network=network,
+        buffer=buffer,
+        num_actions=2,
+        optimizer=optimizer,
+        lambda_=0.95
     )
-    agent.train(env=env, replay_buffer=replay_buffer, episodes=10000, batch_size=64)
+    
+    worker = Worker(
+        env=env,
+        agent=agent,
+        epsilon_start_=0.99
+    )
+    
+    worker.train(
+        episodes=1e5,
+        batch_size=batch_size,
+        minibatch_size=minibatch_size,
+        train_step=batch_size
+    )

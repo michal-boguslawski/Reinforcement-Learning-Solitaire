@@ -32,13 +32,10 @@ class GymLikeGameWrapper(Game):
     def reset(self, seed: int | None = None):
         super().reset(seed=seed)
         self.curr_iter = 0
-        reward = 0
-        terminated = False
-        truncated = False
         info = {}
         state = self._convert_to_numpy()
         
-        return state, reward, terminated, truncated, info
+        return state, info
     
     def step(self, move_id: int):
         pile_from = move_id // 10
