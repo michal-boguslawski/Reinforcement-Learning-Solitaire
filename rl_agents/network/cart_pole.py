@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class DQNNetwork(nn.Module):
+class MLPNetwork(nn.Module):
     def __init__(self, in_features: int = 4, out_features: int = 2, hidden_dim: int = 64):
         super().__init__()
         self.hidden_dim = hidden_dim

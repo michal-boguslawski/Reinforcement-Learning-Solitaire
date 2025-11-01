@@ -104,7 +104,7 @@ class Stock:
             for card in cards:
                 self.stock.append(Card(*card))
                 
-    def __len__(self) -> str:
+    def __len__(self) -> int:
         return len(self.stock)
     
     def extend(self, cards: List[Card]) -> bool:

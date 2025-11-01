@@ -64,10 +64,10 @@ class GymLikeGameWrapper(Game):
         result: bool, 
         pile_from: int, 
         pile_to: int, 
-        terminated: bool, 
-        truncated: bool,
+        terminated: np.ndarray, 
+        truncated: np.ndarray,
         **kwargs
-    ) -> float:
+    ) -> np.ndarray:
         reward = -self.move_penalty
         if result:
             reward += self.__move_reward(pile_from=pile_from, pile_to=pile_to)
@@ -101,7 +101,7 @@ class GymLikeGameWrapper(Game):
         return (tableau_state, foundation_state, waste_state, stock_state)
     
     @staticmethod
-    def __convert_tableau_to_numpy(tableau: Tableau) -> np.array:
+    def __convert_tableau_to_numpy(tableau: Tableau) -> np.ndarray:
         temp_array = np.zeros(shape=(15, 7), dtype=np.int16)
         for col, (faceup, pile) in enumerate(zip(tableau.faceup, tableau.piles)):
             for row, card in enumerate(pile):
@@ -113,7 +113,7 @@ class GymLikeGameWrapper(Game):
         return temp_array
     
     @staticmethod
-    def __convert_foundation_to_numpy(foundation: Foundation) -> np.array:
+    def __convert_foundation_to_numpy(foundation: Foundation) -> np.ndarray:
         temp_array = np.zeros(shape=(4, ), dtype=np.int16)
         for id, pile in enumerate(foundation.foundation):
             if len(pile) > 0:
@@ -135,7 +135,7 @@ class GymLikeGameWrapper(Game):
         return temp_array
     
 if __name__ == "__main__":
-    game = GymLikeGameWrapper(42)
-    output = game.reset()
+    game = GymLikeGameWrapper()
+    output, _ = game.reset()
     print(output[0].shape)
     print(game)

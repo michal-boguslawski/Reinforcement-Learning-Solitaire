@@ -1,38 +1,45 @@
-from collections import deque
+from collections import deque, namedtuple
 import numpy as np
-from random import choices
+import random
+import torch as T
+from typing import NamedTuple
+from models.models import Observation
 
 class ReplayBuffer:
-    def __init__(self, buffer_size: int):
+    def __init__(
+        self,
+        buffer_size: int | None = None,
+    ):
         self.buffer_size = buffer_size
-        self.buffer = deque(maxlen=buffer_size)
+        self.buffer = deque(maxlen=buffer_size) if buffer_size else deque()
         self._sample_method_choice = {
             1: self._sample_one_timestep
         }
+        # self.Observation = namedtuple('Observation', fieldnames)
         
     def __len__(self):
         return len(self.buffer)
         
-    def push(self, item: tuple | list):
-        self.buffer.append(item)
+    def push(self, item: tuple):
+        self.buffer.append(Observation(*item))
         
     def clear(self):
         self.buffer.clear()
 
-    def _sample_one_timestep(self, batch_size: int, **kwargs) -> tuple[np.ndarray, ...]:
-        
-        sample_list = choices(self.buffer, k=min(batch_size, len(self.buffer)))
-        sample = tuple(np.stack(column, axis = 0) for column in zip(*sample_list))
+    def _sample_one_timestep(self, batch_size: int, **kwargs) -> Observation:
+        sample_list = random.sample(self.buffer, k=min(batch_size, len(self.buffer)))
+        sample = tuple(T.stack(column, dim=0) for column in zip(*sample_list) if not any(v is None for v in column))
+        sample = Observation(*sample)
+        return sample
+
+    def sample(self, batch_size: int, timesteps: int = 1, **kwargs) -> Observation | None:
+        if len(self.buffer) < batch_size:
+            return None
+        # sample_method = self._sample_method_choice.get(timesteps, self._sample_multiple_timesteps)
+        sample = self._sample_one_timestep(batch_size=batch_size)
         return sample
     
-    def _sample_multiple_timesteps(self, batch_size: int, timesteps: int, **kwargs) -> tuple[np.ndarray, ...]:
-        pass
-    
-    def sample(self, batch_size: int, timesteps: int = 1, **kwargs) -> tuple[np.ndarray, ...]:
-        sample_method = self._sample_method_choice.get(timesteps, self._sample_multiple_timesteps)
-        sample = sample_method(batch_size=batch_size, timesteps=timesteps)
-        return sample
-    
-    def get_all(self):
-        sample = tuple(np.stack(column, axis=0) for column in zip(*self.buffer))
+    def get_all(self) -> Observation:
+        sample = tuple(T.stack(column, dim=0) for column in zip(*self.buffer) if not any(v is None for v in column))
+        sample = Observation(*sample)
         return sample
