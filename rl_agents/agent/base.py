@@ -9,7 +9,7 @@ from models.models import ActionOutput
 
 class BasePolicy(ABC):
     @abstractmethod
-    def action(self, state: T.Tensor, *args, **kwargs) -> ActionOutput:
+    def action(self, state: T.Tensor, method: str, *args, **kwargs) -> ActionOutput:
         pass
 
     @abstractmethod
@@ -17,9 +17,9 @@ class BasePolicy(ABC):
         pass
 
     @abstractmethod
-    def calculate_loss(self, batch: Tuple[T.Tensor, ...]) -> float:
+    def calculate_loss(self, batch: Tuple[T.Tensor, ...]) -> Tuple[float, ...]:
         pass
 
     @abstractmethod
-    def train(self, minibatch_size: int, *args, **kwargs) -> np.floating | None:
+    def train(self, minibatch_size: int, *args, **kwargs) -> list[float] | None:
         pass

@@ -11,6 +11,8 @@ class Worker:
         self,
         env_name: str,
         agent: BasePolicy,
+        method: str = "egreedy",
+        device: T.device = T.device("cpu"),
         epsilon_start_: float = 0.5,
         epsilon_decay_factor_: float = 0.9999,
         temperature_start_: float = 1,
@@ -19,7 +21,8 @@ class Worker:
     ):
         self.agent = agent
         self.env_name = env_name
-        self.env = make_env(self.env_name)
+        self.device = device
+        self.env = make_env(self.env_name, device=device)
         self.env_box_type = isinstance(self.env.action_space, Box)
 
         self.epsilon_start_ = epsilon_start_
@@ -33,7 +36,7 @@ class Worker:
         self.batch_size: int = 32
         self.minibatch_size: int = 32
         self.epsilon: float = 1.
-        self.method = "egreedy"
+        self.method = method
     
     def _reset_training_vars(
         self,
@@ -62,14 +65,14 @@ class Worker:
         
         while not done:
             try:
-                action_output = self.agent.action(state, epsilon_=self.epsilon, method=self.method)
+                action_output = self.agent.action(method=self.method, state=state, epsilon_=self.epsilon)
                 action = action_output.action
                 next_state, reward, terminated, truncated, _ = self.env.step(
-                    action.numpy() if self.env_box_type else action.item()
+                    action.cpu().numpy() if self.env_box_type else action.item()
                 )
             except Exception as e:
                 print(f"Error during episode step: {e}")
-                break
+                raise e
             
             done = terminated or truncated
             reward = T.as_tensor(reward)
@@ -138,16 +141,19 @@ class Worker:
         try:
             recent_rewards = rewards_list[-100:] if rewards_list else [0]
             recent_losses = self.losses_list[-100:] if self.losses_list else [0]
+            mean_losses = [np.mean(column).round(4).item() for column in zip(*recent_losses)]
             print(f"Episode {episode}, i {self.i}, Avg Reward {np.mean(recent_rewards):.4f},",
-                f"Max Reward {max(recent_rewards):4f}, Loss {np.mean(recent_losses):.6f}, epsilon {self.epsilon:.4f}")
+                f"Max Reward {max(recent_rewards):4f}, Loss {mean_losses}, epsilon {self.epsilon:.4f}")
             if episode % 1000 == 0:
                 self._eval_record_video(episode=episode)
         except Exception as e:
             print(f"Error printing results: {e}")
+            raise e
 
     def _eval_record_video(self, episode: int) -> None:
         env = make_env(
             self.env_name,
+            device=self.device,
             record=True,
             video_folder = f"logs/{self.env_name}/videos/episode_{episode}",
         )
@@ -158,16 +164,15 @@ class Worker:
         truncated = False
         terminated = False
         while not done:
-            state = T.as_tensor(state, dtype=T.float32)
-            action_output = self.agent.action(state, epsilon_=0.0, method=self.method)
+            state = T.as_tensor(state, dtype=T.float32, device=self.device)
+            action_output = self.agent.action(method=self.method, state=state, epsilon_=0.0)
             action = action_output.action
             next_state, reward, terminated, truncated, _ = env.step(
-                    action.numpy() if self.env_box_type else action.item()
+                    action.cpu().numpy() if self.env_box_type else action.item()
                 )
             done = terminated or truncated
             total_reward += float(reward)
             state = next_state
             step_count += 1
-
         print(f"Episode {episode + 1}: {step_count} steps, reward = {total_reward}, truncated = {truncated}, terminated = {terminated}")
         env.close()

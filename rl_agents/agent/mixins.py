@@ -1,8 +1,11 @@
 from abc import ABC, abstractmethod
+from gymnasium.spaces.discrete import Discrete
+from gymnasium.spaces.space import Space
 import numpy as np
 import random
 import torch as T
 from torch import nn
+from torch.distributions import Distribution
 from typing import Tuple, Generator, NamedTuple, Any
 
 from utils.utils import step_return_discounting
@@ -13,7 +16,9 @@ from models.models import Observation, ActionOutput
 class PolicyMixin(ABC):
     def __init__(
         self,
+        action_space: Space,
         num_actions: int,
+        device: T.device = T.device('cpu'),
         gamma_: float = 0.99,
         lambda_: float = 1,
         *args,
@@ -22,6 +27,8 @@ class PolicyMixin(ABC):
         self.gamma_ = gamma_
         self.lambda_ = lambda_
         self.num_actions = num_actions
+        self.device = device
+        self.action_space = action_space
         self.buffer: ReplayBuffer
 
     @property
@@ -30,34 +37,46 @@ class PolicyMixin(ABC):
         """Return the torch.nn.Module used to generate actions."""
         pass
 
+    def _action_sample_from_distribution(self, dist: Distribution) -> T.Tensor:
+        action = dist.sample()
+        return action
+
+    def _action_egreedy(self, epsilon_: float, logits: T.Tensor, dist: Distribution) -> T.Tensor:
+        if random.random() > epsilon_:
+            if isinstance(self.action_space, Discrete):
+                action = logits.argmax(keepdim=True)
+            else:
+                action = self._action_sample_from_distribution(dist)
+        else:
+            action = T.tensor(self.action_space.sample(), device=self.device)
+        
+        return action
+
     def action(
         self,
         state: T.Tensor,
+        method: str,
         epsilon_: float = 0.5,
-        method: str = "egreedy"
     ) -> ActionOutput:
-        net = self.action_network  # use the enforced getter
+        net = self.action_network
         assert isinstance(net, nn.Module), f"Expected nn.Module, got {type(net)}"
+        with T.no_grad():
+            output = net(state)
 
+        logits = output.logits
+        value = getattr(output, "value", None)
         if method == "egreedy":
-            with T.no_grad():
-                output = net(state)
-            logits = output.logits
-            value = getattr(output, "value", None)
-            if random.random() > epsilon_:
-                action = logits.argmax(keepdim=True)
-            else:
-                action = T.randint(0, self.num_actions, size=(1,))
-            logprob = output.dist.log_prob(action)
-            action_output = ActionOutput(
-                action=action,
-                logits=logits,
-                log_probs=logprob,
-                value=value
-            )
-            return action_output
-        
-        raise ValueError("Selected method is not valid")
+            action = self._action_egreedy(epsilon_=epsilon_, logits=logits, dist=output.dist)
+        else:
+            action = self._action_sample_from_distribution(dist=output.dist)
+        logprob = output.dist.log_prob(action)
+        action_output = ActionOutput(
+            action=action,
+            logits=logits,
+            log_probs=logprob,
+            value=value
+        )
+        return action_output
 
     @staticmethod
     def _compute_advantage_and_results(

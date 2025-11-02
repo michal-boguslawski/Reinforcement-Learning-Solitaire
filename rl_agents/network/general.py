@@ -1,8 +1,7 @@
 import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.distributions import Categorical
-from typing import Tuple
+from torch.distributions import Categorical, Normal, Distribution, TransformedDistribution, AffineTransform, TanhTransform
 
 from models.models import QOutput, A2COutput
 
@@ -20,7 +19,8 @@ class MLPNetwork(nn.Module):
         in_features: int = 4,
         out_features: int = 2,
         hidden_dim: int = 64,
-        out_activation: str | None = None,
+        *args,
+        **kwargs
     ):
         super().__init__()
         self.hidden_dim = hidden_dim
@@ -37,71 +37,106 @@ class MLPNetwork(nn.Module):
             nn.GELU(),
             nn.Linear(hidden_dim, out_features),
         )
-        if out_activation is None:
-            out_activation = "identity"
-        out_activation_fn = self.act_fn_dict.get(out_activation, nn.Identity)
-        self.out_activation_fn = out_activation_fn()
+        self.distribution = Categorical # if out_activation == "identity" else Normal
+        self.log_std = nn.Parameter(T.zeros(out_features))
 
     def forward(self, input_tensor: T.Tensor) -> QOutput:
-        x = self.layers(input_tensor)
-        logits = self.out_activation_fn(x)
+        logits = self.layers(input_tensor)
         
-        dist = Categorical(logits=logits)
+        dist = self.distribution(logits=logits)
         return QOutput(logits, dist)
 
 
 class ActorCriticNetwork(nn.Module):
-    act_fn_dict = {
-        "tanh": nn.Tanh,
-        "relu": nn.ReLU,
-        "gelu": nn.GELU,
-        "sigmoid": nn.Sigmoid,
-        "leaky_relu": nn.LeakyReLU,
-    }
     def __init__(
         self,
         in_features: int = 4,
         out_features: int = 2,
         hidden_dim: int = 64,
-        out_activation: str | None = None,
+        distribution: str = "categorical",
+        low: T.Tensor | None = None,
+        high: T.Tensor | None = None,
         *args,
         **kwargs
     ):
         super().__init__()
         self.hidden_dim = hidden_dim
+        self.low = low
+        self.high = high
 
         self.backbone = nn.Sequential(
             nn.Linear(in_features, hidden_dim),
-            nn.LayerNorm(hidden_dim),
+            # nn.LayerNorm(hidden_dim),
             nn.GELU(),
             nn.Linear(hidden_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),
+            # nn.LayerNorm(hidden_dim),
             nn.GELU(),
             nn.Linear(hidden_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),
+            # nn.LayerNorm(hidden_dim),
             nn.GELU(),
         )
         self.actor = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),
+            # nn.LayerNorm(hidden_dim),
             nn.GELU(),
             nn.Linear(hidden_dim, out_features),
         )
         self.critic = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),
+            # nn.LayerNorm(hidden_dim),
             nn.GELU(),
             nn.Linear(hidden_dim, 1),
         )
-        if out_activation is None:
-            out_activation = "identity"
-        actor_activation = self.act_fn_dict.get(out_activation, nn.Identity)
-        self.actor_activation = actor_activation()
+        self.distribution = distribution
+        # self.distribution_fn = self.distribution_dict[distribution]
+        self.log_std = nn.Parameter(T.zeros(out_features,))  # Start with smaller std
+
+    def _set_distribution(self, logits: T.Tensor) -> Distribution:
+        if T.isnan(logits).any():
+            print("NaN detected in logits")
+            print("logits:", logits)
+            raise ValueError("NaN in actor output before creating distribution")
+
+        log_std = T.clamp(self.log_std, min=-5, max=2)
+        if T.isnan(log_std).any() or T.isinf(log_std).any():
+            print("NaN/Inf in log_std!")
+            print("Raw log_std:", self.log_std)
+            print("Clamped log_std:", log_std)
+            raise ValueError("NaN/Inf in log_std")
+        
+        std = T.exp(log_std).expand_as(logits)
+        if T.isnan(std).any() or (std <= 0).any():
+            print("Invalid std values:", std)
+            raise ValueError("Invalid standard deviation")
+        if self.distribution == "normal":
+            # if self.low is not None and self.high is not None:
+            logits = logits.clamp(-3, 3)
+            dist = Normal(loc=logits, scale=std)
+            if self.low is not None and self.high is not None:
+                transforms = [
+                    TanhTransform(),
+                    AffineTransform(
+                        loc = (self.high + self.low) / 2,
+                        scale = (self.high - self.low) / 2
+                    )
+                ]
+                dist = TransformedDistribution(dist, transforms=transforms)
+        else:
+            dist = Categorical(logits=logits)
+        return dist
 
     def forward(self, input_tensor: T.Tensor) -> A2COutput:
         x = self.backbone(input_tensor)
-        actor_out = self.actor_activation(self.actor(x))
+        if T.isnan(x).any() or T.isinf(x).any():
+            print("NaN in backbone output")
+            print(x)
+            raise ValueError("NaN in backbone output")
+        actor_out = self.actor(x)
         critic_out = self.critic(x)
-        
-        dist = Categorical(logits=actor_out)
+
+        if T.isnan(actor_out).any():
+            print("NaN in actor_out")
+            print(actor_out)
+            raise ValueError("NaN in actor_out")
+        dist = self._set_distribution(logits=actor_out)
         return A2COutput(actor_out, critic_out, dist)

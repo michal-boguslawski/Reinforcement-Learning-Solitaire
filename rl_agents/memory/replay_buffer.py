@@ -9,12 +9,14 @@ class ReplayBuffer:
     def __init__(
         self,
         buffer_size: int | None = None,
+        device: T.device = T.device('cpu')
     ):
         self.buffer_size = buffer_size
         self.buffer = deque(maxlen=buffer_size) if buffer_size else deque()
         self._sample_method_choice = {
             1: self._sample_one_timestep
         }
+        self.device = device
         # self.Observation = namedtuple('Observation', fieldnames)
         
     def __len__(self):
@@ -40,6 +42,6 @@ class ReplayBuffer:
         return sample
     
     def get_all(self) -> Observation:
-        sample = tuple(T.stack(column, dim=0) for column in zip(*self.buffer) if not any(v is None for v in column))
+        sample = tuple(T.stack(column, dim=0).to(self.device) for column in zip(*self.buffer) if not any(v is None for v in column))
         sample = Observation(*sample)
         return sample
