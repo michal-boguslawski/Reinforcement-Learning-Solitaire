@@ -64,6 +64,8 @@ class ActorCriticNetwork(nn.Module):
         out_features: int = 2,
         hidden_dim: int = 64,
         out_activation: str | None = None,
+        *args,
+        **kwargs
     ):
         super().__init__()
         self.hidden_dim = hidden_dim

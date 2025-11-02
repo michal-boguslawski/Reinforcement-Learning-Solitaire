@@ -3,11 +3,11 @@ import numpy as np
 import random
 import torch as T
 from torch import nn
-from typing import Tuple, Generator, NamedTuple
+from typing import Tuple, Generator, NamedTuple, Any
 
 from utils.utils import step_return_discounting
 from memory.replay_buffer import ReplayBuffer
-from models.models import Observation
+from models.models import Observation, ActionOutput
 
 
 class PolicyMixin(ABC):
@@ -35,7 +35,7 @@ class PolicyMixin(ABC):
         state: T.Tensor,
         epsilon_: float = 0.5,
         method: str = "egreedy"
-    ) -> Tuple[T.Tensor, T.Tensor | None, T.Tensor]:
+    ) -> ActionOutput:
         net = self.action_network  # use the enforced getter
         assert isinstance(net, nn.Module), f"Expected nn.Module, got {type(net)}"
 
@@ -48,7 +48,14 @@ class PolicyMixin(ABC):
                 action = logits.argmax(keepdim=True)
             else:
                 action = T.randint(0, self.num_actions, size=(1,))
-            return action, value, logits
+            logprob = output.dist.log_prob(action)
+            action_output = ActionOutput(
+                action=action,
+                logits=logits,
+                log_probs=logprob,
+                value=value
+            )
+            return action_output
         
         raise ValueError("Selected method is not valid")
 
@@ -89,5 +96,5 @@ class PolicyMixin(ABC):
         )
         return preprocessed_batch
     
-    def update_buffer(self, item: Tuple[T.Tensor, ...], *args, **kwargs) -> None:
+    def update_buffer(self, item: dict[str, Any], *args, **kwargs) -> None:
         self.buffer.push(item)

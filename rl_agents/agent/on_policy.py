@@ -50,6 +50,8 @@ class OnPolicy(PolicyMixin, BasePolicy):
             gamma_=self.gamma_,
             lambda_=self.lambda_
         )
+
+        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-6)
         
         batch_size = batch.state.shape[0]
         minibatch_ids = np.random.permutation(batch_size // minibatch_size)
@@ -78,7 +80,6 @@ class SarsaPolicy(OnPolicy):
         )
         
         self.network = network
-        self.num_actions = num_actions
         self.optimizer = optimizer
         self.loss_fn = loss_fn
         self.gamma_ = gamma_
@@ -115,6 +116,7 @@ class A2CPolicy(OnPolicy):
         optimizer: Optimizer,
         gamma_: float = 0.99,
         lambda_: float = 1,
+        entropy_beta_: float = 0.001,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         *args,
         **kwargs
@@ -126,11 +128,11 @@ class A2CPolicy(OnPolicy):
         )
         
         self.network = network
-        self.num_actions = num_actions
         self.optimizer = optimizer
         self.loss_fn = loss_fn
         self.gamma_ = gamma_
         self.lambda_ = lambda_
+        self.entropy_beta_ = entropy_beta_
     
     @property
     def action_network(self) -> nn.Module:
@@ -144,9 +146,10 @@ class A2CPolicy(OnPolicy):
         actor_loss = -(log_probs * advantages).mean()
         
         critic_loss = self.loss_fn(output.value.squeeze(-1), results)
-        entropy = 0
+        entropy = output.dist.entropy()
+        entropy = entropy.mean()
         
-        loss = actor_loss + critic_loss + entropy
+        loss = actor_loss + critic_loss - self.entropy_beta_ * entropy
         
         self.optimizer.zero_grad()
         loss.backward()

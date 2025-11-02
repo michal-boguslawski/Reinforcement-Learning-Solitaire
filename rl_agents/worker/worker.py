@@ -1,3 +1,4 @@
+from gymnasium.spaces import Box
 import numpy as np
 import torch as T
 
@@ -19,7 +20,8 @@ class Worker:
         self.agent = agent
         self.env_name = env_name
         self.env = make_env(self.env_name)
-        
+        self.env_box_type = isinstance(self.env.action_space, Box)
+
         self.epsilon_start_ = epsilon_start_
         self.epsilon_decay_factor_ = epsilon_decay_factor_
         self.temperature_start_ = temperature_start_
@@ -60,8 +62,11 @@ class Worker:
         
         while not done:
             try:
-                action, value, logits = self.agent.action(state, epsilon_=self.epsilon, method=self.method)
-                next_state, reward, terminated, truncated, _ = self.env.step(action.item())
+                action_output = self.agent.action(state, epsilon_=self.epsilon, method=self.method)
+                action = action_output.action
+                next_state, reward, terminated, truncated, _ = self.env.step(
+                    action.numpy() if self.env_box_type else action.item()
+                )
             except Exception as e:
                 print(f"Error during episode step: {e}")
                 break
@@ -69,7 +74,18 @@ class Worker:
             done = terminated or truncated
             reward = T.as_tensor(reward)
             done = T.as_tensor(done)
-            self.agent.update_buffer((state, next_state, logits, action, reward, done, value))
+            
+            record = {
+                "state": state,
+                "next_state": next_state,
+                "logits": action_output.logits,
+                "action": action,
+                "reward": reward,
+                "done": done,
+                "value": action_output.value
+            }
+            
+            self.agent.update_buffer(record)
             
             if self.i % self.train_step == 0 and self.i > 0:
                 loss = self.agent.train(
@@ -140,14 +156,18 @@ class Worker:
         state, _ = env.reset()
         done = False
         truncated = False
+        terminated = False
         while not done:
             state = T.as_tensor(state, dtype=T.float32)
-            action, _, _ = self.agent.action(state, epsilon_=0.0, method=self.method)
-            next_state, reward, terminated, truncated, _ = env.step(action.item())
+            action_output = self.agent.action(state, epsilon_=0.0, method=self.method)
+            action = action_output.action
+            next_state, reward, terminated, truncated, _ = env.step(
+                    action.numpy() if self.env_box_type else action.item()
+                )
             done = terminated or truncated
             total_reward += float(reward)
             state = next_state
             step_count += 1
-        result = "Win" if truncated else "Lose"
-        print(f"Episode {episode + 1}: {step_count} steps, reward = {total_reward}, result: {result}")
+
+        print(f"Episode {episode + 1}: {step_count} steps, reward = {total_reward}, truncated = {truncated}, terminated = {terminated}")
         env.close()

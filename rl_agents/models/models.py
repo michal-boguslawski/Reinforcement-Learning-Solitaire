@@ -21,3 +21,9 @@ class A2COutput(NamedTuple):
     logits: T.Tensor
     value: T.Tensor
     dist: Distribution
+    
+class ActionOutput(NamedTuple):
+    action: T.Tensor
+    logits: T.Tensor
+    log_probs: T.Tensor
+    value: T.Tensor | None = None

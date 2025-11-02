@@ -2,7 +2,7 @@ from collections import deque, namedtuple
 import numpy as np
 import random
 import torch as T
-from typing import NamedTuple
+from typing import NamedTuple, Any
 from models.models import Observation
 
 class ReplayBuffer:
@@ -20,8 +20,8 @@ class ReplayBuffer:
     def __len__(self):
         return len(self.buffer)
         
-    def push(self, item: tuple):
-        self.buffer.append(Observation(*item))
+    def push(self, item: dict[str, Any]):
+        self.buffer.append(Observation(**item))
         
     def clear(self):
         self.buffer.clear()
