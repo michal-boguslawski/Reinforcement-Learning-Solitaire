@@ -25,11 +25,12 @@ class OnPolicy(PolicyMixin, BasePolicy):
         batch = self.buffer.get_all()
         if not batch:
             return
-        minibatches = self._generate_minibatches(batch=batch, minibatch_size=minibatch_size)
         losses = []
-        for minibatch in minibatches:
-            loss = self.calculate_loss(minibatch)
-            losses.append(loss)
+        for _ in range(4):
+            minibatches = self._generate_minibatches(batch=batch, minibatch_size=minibatch_size)
+            for minibatch in minibatches:
+                loss = self.calculate_loss(minibatch)
+                losses.append(loss)
         self.buffer.clear()
         return [np.mean(column).item() for column in zip(*losses)]
 
@@ -59,10 +60,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
         # More robust advantage normalization
         # adv_mean = advantages.mean()
         # adv_std = advantages.std()
-        # if adv_std > 1e-6:
-        #     advantages = (advantages - adv_mean) / adv_std
-        # else:
-        #     advantages = advantages - adv_mean
+        # advantages = (advantages - adv_mean) / (adv_std if adv_std > 1e-6 else 1)
         
         batch_size = batch.state.shape[0]
         minibatch_ids = np.random.permutation(batch_size // minibatch_size)
@@ -71,7 +69,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
             end = min((minibatch_id + 1) * minibatch_size, batch_size-1)
             batch_advantages = advantages[start:end]
             batch_advantages = (batch_advantages - batch_advantages.mean()) / (batch_advantages.std() + 1e-6)
-            batch_advantages = T.clamp(batch_advantages, -10.0, 10.0)
+            # batch_advantages = T.clamp(batch_advantages, -10.0, 10.0)
             yield (batch.state[start:end], returns[start:end], batch.action[start:end], batch_advantages)
 
 
@@ -164,9 +162,18 @@ class A2CPolicy(OnPolicy):
         states, results, actions, advantages = batch
         
         output = self.network(states)
-        log_probs = output.dist.log_prob(actions)
-        log_probs = T.nan_to_num(log_probs, nan=-20.0, posinf=5.0, neginf=-20.0)
+        log_probs = output.dist.log_prob(actions.squeeze())
+        # log_probs = log_probs.clamp(-20, 20)
+        # log_probs = T.nan_to_num(log_probs, nan=10.0, posinf=20.0, neginf=-20.0)
         actor_loss = -(log_probs.sum(-1) * advantages).mean()
+        
+        if T.isnan(log_probs.cpu()).any():
+            print("actor_loss:", actor_loss.cpu().item())
+            print("Actions:", actions.cpu().squeeze())
+            print("log_probs:", log_probs.cpu())
+            print("advantages:", advantages.cpu())
+            print("results:", results.cpu())
+            raise ValueError("actions causing problems")
         
         critic_loss = self.loss_fn(output.value.squeeze(-1), results)
         try:
@@ -175,10 +182,7 @@ class A2CPolicy(OnPolicy):
             entropy = output.dist.base_dist.entropy().sum(-1)
         entropy = entropy.mean()
 
-        saturation_penalty = (actions.to(T.float).pow(2).mean())
-
-        loss = actor_loss + critic_loss - self.entropy_beta_ * entropy + 0.001 * saturation_penalty
-        loss = T.nan_to_num(loss, nan=0.0, posinf=1e6, neginf=-1e6)
+        loss = actor_loss + 0.5 * critic_loss - self.entropy_beta_ * entropy
         
         self.optimizer.zero_grad()
         loss.backward()

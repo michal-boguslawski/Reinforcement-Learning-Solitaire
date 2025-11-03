@@ -39,6 +39,16 @@ class PolicyMixin(ABC):
 
     def _action_sample_from_distribution(self, dist: Distribution) -> T.Tensor:
         action = dist.sample()
+        high = getattr(self.action_space, "high")
+        low = getattr(self.action_space, "low")
+        if high is not None and low is not None:
+            high = T.tensor(high, device=self.device)
+            low = T.tensor(low, device=self.device)
+            action = action.clamp(
+                low + 1e-6,
+                high - 1e-6
+            )
+        
         return action
 
     def _action_egreedy(self, epsilon_: float, logits: T.Tensor, dist: Distribution) -> T.Tensor:
@@ -94,13 +104,15 @@ class PolicyMixin(ABC):
         )
         returns = advantages + state_values
         return returns, advantages
-    
-    @staticmethod
-    def _preprocess_batch(batch: Observation) -> Observation:
+
+    def _preprocess_batch(self, batch: Observation) -> Observation:
         state = T.as_tensor(batch.state, dtype=T.float32)
         next_state = T.as_tensor(batch.next_state, dtype=T.float32)
         logits = T.as_tensor(batch.logits, dtype=T.float32)
-        action = T.as_tensor(batch.action, dtype=T.int64)
+        action = T.as_tensor(
+            batch.action,
+            dtype=T.int64 if isinstance(self.action_space, Discrete) else T.float32
+        )
         reward = T.as_tensor(batch.reward, dtype=T.float32)
         done = T.as_tensor(batch.done, dtype=T.float32)
         value = T.as_tensor(batch.value, dtype=T.float32) if batch.value is not None else None

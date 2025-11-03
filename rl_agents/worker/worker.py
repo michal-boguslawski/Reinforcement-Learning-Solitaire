@@ -139,11 +139,15 @@ class Worker:
 
     def _print_results(self, episode: int, rewards_list: list[float]) -> None:
         try:
-            recent_rewards = rewards_list[-100:] if rewards_list else [0]
-            recent_losses = self.losses_list[-100:] if self.losses_list else [0]
-            mean_losses = [np.mean(column).round(4).item() for column in zip(*recent_losses)]
-            print(f"Episode {episode}, i {self.i}, Avg Reward {np.mean(recent_rewards):.4f},",
-                f"Max Reward {max(recent_rewards):4f}, Loss {mean_losses}, epsilon {self.epsilon:.4f}")
+            decay = getattr(self.env, "decay", 1)
+            recent_rewards = rewards_list[-100:] if rewards_list else [0,]
+            recent_losses = self.losses_list[-100:] if self.losses_list else [(0,)]
+            mean_losses = [np.mean(column).round(8).item() for column in zip(*recent_losses)]
+            print(
+                f"Episode {episode}, i {self.i}, Avg Reward {np.mean(recent_rewards):.4f},",
+                f"Max Reward {max(recent_rewards):.4f}, Loss {mean_losses}, epsilon {self.epsilon:.4f}",
+                f"Decay {decay:.6f}"
+                )
             if episode % 1000 == 0:
                 self._eval_record_video(episode=episode)
         except Exception as e:

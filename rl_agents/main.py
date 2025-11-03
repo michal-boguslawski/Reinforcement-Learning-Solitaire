@@ -12,13 +12,13 @@ from worker.worker import Worker
 
 
 if __name__ == "__main__":
-    # T.autograd.set_detect_anomaly(True)
+    T.autograd.set_detect_anomaly(True)
     config = {
         "env_name": "MountainCarContinuous-v0",
         "hidden_dim": 32,
         "buffer_size": 100000,
-        "batch_size": 256,
-        "minibatch_size": 64,
+        "batch_size": 4096,
+        "minibatch_size": 256,
         "gamma_": 0.99,
         "lambda_": 0.95,
         "tau_": 0.005,

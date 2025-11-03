@@ -88,8 +88,8 @@ class ActorCriticNetwork(nn.Module):
             nn.Linear(hidden_dim, 1),
         )
         self.distribution = distribution
-        # self.distribution_fn = self.distribution_dict[distribution]
-        self.log_std = nn.Parameter(T.zeros(out_features,))  # Start with smaller std
+        self.log_std = nn.Parameter(T.zeros(out_features,))
+        # self.log_std = nn.Parameter(T.full((out_features, ), -1.))
 
     def _set_distribution(self, logits: T.Tensor) -> Distribution:
         if T.isnan(logits).any():
@@ -97,7 +97,7 @@ class ActorCriticNetwork(nn.Module):
             print("logits:", logits)
             raise ValueError("NaN in actor output before creating distribution")
 
-        log_std = T.clamp(self.log_std, min=-5, max=2)
+        log_std = T.clamp(self.log_std, min=-20, max=5)
         if T.isnan(log_std).any() or T.isinf(log_std).any():
             print("NaN/Inf in log_std!")
             print("Raw log_std:", self.log_std)
@@ -109,7 +109,6 @@ class ActorCriticNetwork(nn.Module):
             print("Invalid std values:", std)
             raise ValueError("Invalid standard deviation")
         if self.distribution == "normal":
-            # if self.low is not None and self.high is not None:
             logits = logits.clamp(-3, 3)
             dist = Normal(loc=logits, scale=std)
             if self.low is not None and self.high is not None:
