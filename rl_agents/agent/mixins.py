@@ -38,7 +38,7 @@ class PolicyMixin(ABC):
         pass
 
     def _action_sample_from_distribution(self, dist: Distribution) -> T.Tensor:
-        action = dist.sample()
+        action = dist.rsample()
         high = getattr(self.action_space, "high")
         low = getattr(self.action_space, "low")
         if high is not None and low is not None:
@@ -50,6 +50,17 @@ class PolicyMixin(ABC):
             )
         
         return action
+
+    def _action_best_from_distribution(self, dist: Distribution) -> T.Tensor:
+        base_dist = getattr(dist, "base_dist", dist)
+        transforms = getattr(dist, "transforms", None)
+        
+        mean = base_dist.mean
+        if transforms:
+            for transform in transforms:
+                mean = transform(mean)
+
+        return mean
 
     def _action_egreedy(self, epsilon_: float, logits: T.Tensor, dist: Distribution) -> T.Tensor:
         if random.random() > epsilon_:
@@ -77,6 +88,8 @@ class PolicyMixin(ABC):
         value = getattr(output, "value", None)
         if method == "egreedy":
             action = self._action_egreedy(epsilon_=epsilon_, logits=logits, dist=output.dist)
+        elif method == "best":
+            action = self._action_best_from_distribution(dist=output.dist)
         else:
             action = self._action_sample_from_distribution(dist=output.dist)
         logprob = output.dist.log_prob(action)
@@ -104,6 +117,7 @@ class PolicyMixin(ABC):
         )
         returns = advantages + state_values
         return returns, advantages
+        # return q_target, td_errors
 
     def _preprocess_batch(self, batch: Observation) -> Observation:
         state = T.as_tensor(batch.state, dtype=T.float32)

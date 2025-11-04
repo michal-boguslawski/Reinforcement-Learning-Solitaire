@@ -1,5 +1,5 @@
 import gymnasium as gym
-from gymnasium.wrappers import NumpyToTorch, RecordVideo
+from gymnasium.wrappers import NumpyToTorch, RecordVideo, TimeLimit
 import torch as T
 
 from .wrappers import TerminalBonusWrapper, PowerObsRewardWrapper, NoMovementInvPunishmentRewardWrapper
@@ -29,6 +29,8 @@ def make_env(
         return env
 
     env = NumpyToTorch(env, device=device)
+
+    env = TimeLimit(env, max_episode_steps=200)
 
     terminal_bonus = config.get("terminal_bonus")
     truncated_bonus = config.get("truncated_bonus")

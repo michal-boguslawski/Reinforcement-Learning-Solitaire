@@ -68,7 +68,7 @@ class Worker:
                 action_output = self.agent.action(method=self.method, state=state, epsilon_=self.epsilon)
                 action = action_output.action
                 next_state, reward, terminated, truncated, _ = self.env.step(
-                    action.cpu().numpy() if self.env_box_type else action.item()
+                    action.detach().cpu().numpy() if self.env_box_type else action.item()
                 )
             except Exception as e:
                 print(f"Error during episode step: {e}")
@@ -105,7 +105,7 @@ class Worker:
             self.i += 1
 
         self.epsilon *= self.epsilon_decay_factor_
-        
+        print(f"\rAction: {action.cpu().item()}", flush=True, end="")
         return total_reward
 
     def train(
@@ -169,14 +169,17 @@ class Worker:
         terminated = False
         while not done:
             state = T.as_tensor(state, dtype=T.float32, device=self.device)
-            action_output = self.agent.action(method=self.method, state=state, epsilon_=0.0)
+            action_output = self.agent.action(method="best", state=state)
             action = action_output.action
             next_state, reward, terminated, truncated, _ = env.step(
-                    action.cpu().numpy() if self.env_box_type else action.item()
+                    action.detach().cpu().numpy() if self.env_box_type else action.item()
                 )
             done = terminated or truncated
             total_reward += float(reward)
             state = next_state
             step_count += 1
-        print(f"Episode {episode + 1}: {step_count} steps, reward = {total_reward}, truncated = {truncated}, terminated = {terminated}")
+        print(
+            f"Episode {episode + 1}: {step_count} steps, reward = {total_reward}, truncated = {truncated}, terminated = {terminated}",
+            f"Action: {action.detach().cpu().item()}"
+        )
         env.close()
