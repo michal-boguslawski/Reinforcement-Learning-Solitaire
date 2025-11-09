@@ -21,18 +21,31 @@ class TerminalBonusWrapper(gym.RewardWrapper):
 
 
 class PowerObsRewardWrapper(gym.RewardWrapper):
-    def __init__(self, env, pow_factors: T.Tensor, decay_factor: float | None = 1):
+    def __init__(
+        self,
+        env,
+        pow_factors: T.Tensor | None = None,
+        abs_factors: T.Tensor | None = None,
+        decay_factor: float | None = 1
+    ):
         super().__init__(env)
         self.pow_factors = pow_factors
+        self.abs_factors = abs_factors
         self.decay = 1
         self.decay_factor = decay_factor or 1
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
         reward = float(reward)
-        reward += T.sum(obs ** 2 * self.pow_factors).item() * self.decay
+        if self.pow_factors is not None:
+            reward += T.sum(obs ** 2 * self.pow_factors).item() * self.decay
+        if self.abs_factors is not None:
+            reward += T.sum(obs.abs() * self.abs_factors).item() * self.decay
         if terminated:
             self.decay *= self.decay_factor
+        elif truncated:
+            self.decay /= (self.decay_factor ** (1/10))
+            self.decay = min(self.decay, 1)
         
         return obs, reward, terminated, truncated, info
 

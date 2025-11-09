@@ -10,11 +10,10 @@ class EnvConfig:
             },
         "MountainCarContinuous-v0":
             {
-                "truncated_bonus": -1,
-                # "pow_factors": [0, 100],
-                # "decay_factor": 0.99,
-                # "scale_reward": 0.1,
-                # "no_movement_inv_punishment": [0, -0.01]
+                "truncated_bonus": -10,
+                "pow_factors": [0, 100],
+                "decay_factor": 0.999,
+                "abs_factors": [0, 5],
             },
         "Acrobot-v1":
             {

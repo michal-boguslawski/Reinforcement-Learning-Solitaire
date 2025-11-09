@@ -12,20 +12,20 @@ from worker.worker import Worker
 
 
 if __name__ == "__main__":
-    T.autograd.set_detect_anomaly(True)
+    # T.autograd.set_detect_anomaly(True)
     config = {
         "env_name": "MountainCarContinuous-v0",
         "hidden_dim": 32,
         "buffer_size": 100000,
-        "batch_size": 256,
-        "minibatch_size": 64,
+        "batch_size": 2048,
+        "minibatch_size": 256,
         "gamma_": 0.99,
         "lambda_": 0.95,
         "tau_": 0.005,
         "entropy_beta_": 0.01,
         "epsilon_start_": 1,
         "epsilon_decay_factor_": 0.9995,
-        "episodes": 20000,
+        "episodes": 10000,
         "distribution": "normal",
         "method": "entropy",
         "loss_fn": nn.HuberLoss(),
@@ -78,7 +78,7 @@ if __name__ == "__main__":
         network=network,
         num_actions=int(num_actions),
         action_space=env.action_space,
-        optimizer=Adam(network.parameters(), lr=3e-4, weight_decay=0.),
+        optimizer=Adam(network.parameters(), lr=3e-4),
         **config
     )
     

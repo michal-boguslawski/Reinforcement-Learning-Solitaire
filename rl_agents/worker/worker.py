@@ -89,8 +89,12 @@ class Worker:
             }
             
             self.agent.update_buffer(record)
-            
-            if self.i % self.train_step == 0 and self.i > 0:
+            self.i += 1
+
+            if (
+                (self.i % self.train_step == 0 and self.i > 0) or 
+                (isinstance(self.agent, OnPolicy) and (len(self.agent.buffer) == self.batch_size))
+            ):
                 loss = self.agent.train(
                     batch_size=self.batch_size,
                     minibatch_size=self.minibatch_size,
@@ -102,10 +106,9 @@ class Worker:
             state = next_state
             
             total_reward += reward
-            self.i += 1
+            
 
         self.epsilon *= self.epsilon_decay_factor_
-        print(f"\rAction: {action.cpu().item()}", flush=True, end="")
         return total_reward
 
     def train(
@@ -140,14 +143,16 @@ class Worker:
     def _print_results(self, episode: int, rewards_list: list[float]) -> None:
         try:
             decay = getattr(self.env, "decay", 1)
-            recent_rewards = rewards_list[-100:] if rewards_list else [0,]
-            recent_losses = self.losses_list[-100:] if self.losses_list else [(0,)]
+            recent_rewards = rewards_list if rewards_list else [0,]
+            recent_losses = self.losses_list if self.losses_list else [(0,)]
             mean_losses = [np.mean(column).round(8).item() for column in zip(*recent_losses)]
             print(
                 f"Episode {episode}, i {self.i}, Avg Reward {np.mean(recent_rewards):.4f},",
                 f"Max Reward {max(recent_rewards):.4f}, Loss {mean_losses}, epsilon {self.epsilon:.4f}",
                 f"Decay {decay:.6f}"
                 )
+            recent_rewards.clear()
+            recent_losses.clear()
             if episode % 1000 == 0:
                 self._eval_record_video(episode=episode)
         except Exception as e:
@@ -169,7 +174,7 @@ class Worker:
         terminated = False
         while not done:
             state = T.as_tensor(state, dtype=T.float32, device=self.device)
-            action_output = self.agent.action(method="best", state=state)
+            action_output = self.agent.action(method="entropy", state=state)
             action = action_output.action
             next_state, reward, terminated, truncated, _ = env.step(
                     action.detach().cpu().numpy() if self.env_box_type else action.item()
@@ -179,7 +184,6 @@ class Worker:
             state = next_state
             step_count += 1
         print(
-            f"Episode {episode + 1}: {step_count} steps, reward = {total_reward}, truncated = {truncated}, terminated = {terminated}",
-            f"Action: {action.detach().cpu().item()}"
+            f"Episode {episode}: {step_count} steps, reward = {total_reward:.2f}, truncated = {truncated}, terminated = {terminated}"
         )
         env.close()
