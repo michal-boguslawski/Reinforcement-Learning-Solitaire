@@ -1,5 +1,5 @@
 import gymnasium as gym
-from gymnasium.wrappers import NumpyToTorch, RecordVideo
+from gymnasium.wrappers import NumpyToTorch, RecordVideo, TimeLimit
 import torch as T
 
 from .wrappers import TerminalBonusWrapper, PowerObsRewardWrapper, NoMovementInvPunishmentRewardWrapper
@@ -36,9 +36,15 @@ def make_env(
         env = TerminalBonusWrapper(env, terminal_bonus=terminal_bonus, truncated_bonus=truncated_bonus)
     
     pow_factors = config.get("pow_factors")
+    abs_factors = config.get("abs_factors")
     decay_factor = config.get("decay_factor")
-    if pow_factors:
-        env = PowerObsRewardWrapper(env, T.tensor(pow_factors, device=device), decay_factor=decay_factor)
+    if pow_factors or abs_factors:
+        env = PowerObsRewardWrapper(
+            env,
+            pow_factors=T.tensor(pow_factors, device=device) if pow_factors else None,
+            abs_factors=T.tensor(abs_factors, device=device) if abs_factors else None,
+            decay_factor=decay_factor
+        )
     
     no_movement_inv_punishment = config.get("no_movement_inv_punishment")
     if no_movement_inv_punishment:

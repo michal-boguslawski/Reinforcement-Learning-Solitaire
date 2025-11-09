@@ -44,4 +44,5 @@ class ReplayBuffer:
     def get_all(self) -> Observation:
         sample = tuple(T.stack(column, dim=0).to(self.device) for column in zip(*self.buffer) if not any(v is None for v in column))
         sample = Observation(*sample)
+        self.buffer.clear()
         return sample

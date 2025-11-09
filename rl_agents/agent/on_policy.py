@@ -26,12 +26,12 @@ class OnPolicy(PolicyMixin, BasePolicy):
         if not batch:
             return
         losses = []
-        for _ in range(4):
+        for _ in range(1):
             minibatches = self._generate_minibatches(batch=batch, minibatch_size=minibatch_size)
             for minibatch in minibatches:
                 loss = self.calculate_loss(minibatch)
                 losses.append(loss)
-        self.buffer.clear()
+
         return [np.mean(column).item() for column in zip(*losses)]
 
     def _generate_minibatches(
@@ -63,14 +63,15 @@ class OnPolicy(PolicyMixin, BasePolicy):
         # advantages = (advantages - adv_mean) / (adv_std if adv_std > 1e-6 else 1)
         
         batch_size = batch.state.shape[0]
-        minibatch_ids = np.random.permutation(batch_size // minibatch_size)
-        for minibatch_id in minibatch_ids:
-            start = minibatch_id * minibatch_size
-            end = min((minibatch_id + 1) * minibatch_size, batch_size-1)
-            batch_advantages = advantages[start:end]
+        # indices = T.randperm(batch_size-1, device=self.device)
+        indices = T.arange(0, batch_size-1, device=self.device)
+        for start in range(0, batch_size, minibatch_size):
+            end = min(start + minibatch_size, batch_size - 1)
+            mb_idx = indices[start:end]
+            batch_advantages = advantages[mb_idx]
             batch_advantages = (batch_advantages - batch_advantages.mean()) / (batch_advantages.std() + 1e-6)
             # batch_advantages = T.clamp(batch_advantages, -10.0, 10.0)
-            yield (batch.state[start:end], returns[start:end], batch.action[start:end], batch_advantages)
+            yield (batch.state[mb_idx], returns[mb_idx], batch.action[mb_idx], batch_advantages)
 
 
 class SarsaPolicy(OnPolicy):
@@ -160,12 +161,14 @@ class A2CPolicy(OnPolicy):
 
     def calculate_loss(self, batch: Tuple[T.Tensor, ...]) -> Tuple[float, ...]:
         states, results, actions, advantages = batch
-        
+
         output = self.network(states)
-        log_probs = output.dist.log_prob(actions.squeeze())
-        # log_probs = log_probs.clamp(-20, 20)
-        # log_probs = T.nan_to_num(log_probs, nan=10.0, posinf=20.0, neginf=-20.0)
-        actor_loss = -(log_probs.sum(-1) * advantages).mean()
+
+        # calculation policy loss
+        log_probs = output.dist.log_prob(actions)
+        sum_log_probs = log_probs.sum(-1)
+        assert sum_log_probs.shape == results.shape, "Wrong shapes of value"
+        actor_loss = -(sum_log_probs * advantages.detach()).mean()
         
         if T.isnan(log_probs.cpu()).any():
             print("actor_loss:", actor_loss.cpu().item())
@@ -174,8 +177,13 @@ class A2CPolicy(OnPolicy):
             print("advantages:", advantages.cpu())
             print("results:", results.cpu())
             raise ValueError("actions causing problems")
-        
-        critic_loss = self.loss_fn(output.value.squeeze(-1), results)
+
+        # calculating critic loss
+        value = output.value.squeeze(-1)
+        assert value.shape == results.shape, "Wrong shapes of value"
+        critic_loss = self.loss_fn(value, results.detach())
+
+        # calculating entropy
         try:
             entropy = output.dist.entropy()
         except NotImplementedError:
@@ -183,7 +191,8 @@ class A2CPolicy(OnPolicy):
         entropy = entropy.mean()
 
         loss = actor_loss + 0.5 * critic_loss - self.entropy_beta_ * entropy
-        
+
+        # backpropagation of the error
         self.optimizer.zero_grad()
         loss.backward()
         

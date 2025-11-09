@@ -67,24 +67,21 @@ class ActorCriticNetwork(nn.Module):
         self.backbone = nn.Sequential(
             nn.Linear(in_features, hidden_dim),
             # nn.LayerNorm(hidden_dim),
-            nn.GELU(),
+            nn.Tanh(),
             nn.Linear(hidden_dim, hidden_dim),
             # nn.LayerNorm(hidden_dim),
-            nn.GELU(),
-            nn.Linear(hidden_dim, hidden_dim),
-            # nn.LayerNorm(hidden_dim),
-            nn.GELU(),
+            nn.Tanh(),
         )
         self.actor = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim),
             # nn.LayerNorm(hidden_dim),
-            nn.GELU(),
+            nn.Tanh(),
             nn.Linear(hidden_dim, out_features),
         )
         self.critic = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim),
             # nn.LayerNorm(hidden_dim),
-            nn.GELU(),
+            nn.Tanh(),
             nn.Linear(hidden_dim, 1),
         )
         self.distribution = distribution
@@ -109,7 +106,7 @@ class ActorCriticNetwork(nn.Module):
             print("Invalid std values:", std)
             raise ValueError("Invalid standard deviation")
         if self.distribution == "normal":
-            logits = logits.clamp(-3, 3)
+            # logits = logits.clamp(-3, 3)
             dist = Normal(loc=logits, scale=std)
             if self.low is not None and self.high is not None:
                 transforms = [
@@ -126,16 +123,9 @@ class ActorCriticNetwork(nn.Module):
 
     def forward(self, input_tensor: T.Tensor) -> A2COutput:
         x = self.backbone(input_tensor)
-        if T.isnan(x).any() or T.isinf(x).any():
-            print("NaN in backbone output")
-            print(x)
-            raise ValueError("NaN in backbone output")
+
         actor_out = self.actor(x)
         critic_out = self.critic(x)
 
-        if T.isnan(actor_out).any():
-            print("NaN in actor_out")
-            print(actor_out)
-            raise ValueError("NaN in actor_out")
         dist = self._set_distribution(logits=actor_out)
         return A2COutput(actor_out, critic_out, dist)
