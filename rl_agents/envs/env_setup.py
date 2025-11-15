@@ -1,5 +1,6 @@
 import gymnasium as gym
-from gymnasium.wrappers import NumpyToTorch, RecordVideo, TimeLimit
+from gymnasium.wrappers import NumpyToTorch, RecordVideo
+from gymnasium.vector import SyncVectorEnv
 import torch as T
 
 from .wrappers import TerminalBonusWrapper, PowerObsRewardWrapper, NoMovementInvPunishmentRewardWrapper
@@ -13,7 +14,7 @@ def make_env(
     video_folder: str = "logs/videos",
     name_prefix: str = "eval"
 ) -> gym.Env:
-    config = EnvConfig().get_config(env_name)
+    config = EnvConfig(env_name).get_config()
     env = gym.make(
         env_name,
         render_mode="rgb_array" if record else None
@@ -55,3 +56,14 @@ def make_env(
         env = gym.wrappers.TransformReward(env, lambda x: x * scale_reward)
 
     return env
+
+
+def make_vec(
+    env_name: str,
+    num_envs: int,
+    device: T.device = T.device('cpu'),
+):
+    envs = SyncVectorEnv(
+        num_envs * [lambda: make_env(env_name=env_name, device=device), ]
+    )
+    return envs

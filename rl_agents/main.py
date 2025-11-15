@@ -5,7 +5,7 @@ import torch as T
 from torch.optim import Adam
 import torch.nn as nn
 
-from envs.env_setup import make_env
+from envs.env_setup import make_env, make_vec
 from agent.on_policy import A2CPolicy, SarsaPolicy
 from network.general import ActorCriticNetwork, MLPNetwork
 from worker.worker import Worker
@@ -14,7 +14,7 @@ from worker.worker import Worker
 if __name__ == "__main__":
     # T.autograd.set_detect_anomaly(True)
     config = {
-        "env_name": "MountainCarContinuous-v0",
+        "env_name": "CartPole-v1",
         "hidden_dim": 32,
         "buffer_size": 100000,
         "batch_size": 2048,
@@ -22,12 +22,12 @@ if __name__ == "__main__":
         "gamma_": 0.99,
         "lambda_": 0.95,
         "tau_": 0.005,
-        "entropy_beta_": 0.01,
+        "entropy_beta_": 0.001,
         "epsilon_start_": 1,
-        "epsilon_decay_factor_": 0.9995,
+        "epsilon_decay_factor_": 0.9999,
         "episodes": 10000,
-        "distribution": "normal",
-        "method": "entropy",
+        "distribution": "categorical",
+        "action_exploration_method": "distribution",
         "loss_fn": nn.HuberLoss(),
         "device": T.device("cuda" if T.cuda.is_available() else "cpu")
     }
@@ -37,6 +37,7 @@ if __name__ == "__main__":
     
     try:
         env = make_env(config["env_name"], device=config["device"])
+        # env = make_vec(config["env_name"], num_envs=4, device=config["device"])
         action_n = getattr(env.action_space, "n", None)
         action_shape = getattr(env.action_space, "shape", None)
         if action_n is not None:

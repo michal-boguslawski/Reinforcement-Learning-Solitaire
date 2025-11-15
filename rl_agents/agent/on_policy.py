@@ -1,4 +1,5 @@
 from gymnasium.spaces.space import Space
+from gymnasium.spaces.discrete import Discrete
 import numpy as np
 import torch as T
 import torch.nn as nn
@@ -94,11 +95,11 @@ class SarsaPolicy(OnPolicy):
             gamma_=gamma_,
             lambda_=lambda_,
             action_space=action_space,
+            loss_fn=loss_fn
         )
         
         self.network = network
         self.optimizer = optimizer
-        self.loss_fn = loss_fn
         self.gamma_ = gamma_
         self.lambda_ = lambda_
     
@@ -146,11 +147,11 @@ class A2CPolicy(OnPolicy):
             gamma_=gamma_,
             lambda_=lambda_,
             action_space=action_space,
+            loss_fn=loss_fn
         )
         
         self.network = network
         self.optimizer = optimizer
-        self.loss_fn = loss_fn
         self.gamma_ = gamma_
         self.lambda_ = lambda_
         self.entropy_beta_ = entropy_beta_
@@ -166,7 +167,7 @@ class A2CPolicy(OnPolicy):
 
         # calculation policy loss
         log_probs = output.dist.log_prob(actions)
-        sum_log_probs = log_probs.sum(-1)
+        sum_log_probs = log_probs.sum(-1) if not isinstance(self.action_space, Discrete) else log_probs
         assert sum_log_probs.shape == results.shape, "Wrong shapes of value"
         actor_loss = -(sum_log_probs * advantages.detach()).mean()
         

@@ -5,7 +5,7 @@ import numpy as np
 import random
 import torch as T
 from torch import nn
-from torch.distributions import Distribution
+from torch.distributions import Distribution, Categorical
 from typing import Tuple, Generator, NamedTuple, Any
 
 from utils.utils import step_return_discounting
@@ -21,6 +21,7 @@ class PolicyMixin(ABC):
         device: T.device = T.device('cpu'),
         gamma_: float = 0.99,
         lambda_: float = 1,
+        loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         *args,
         **kwargs
     ):
@@ -29,6 +30,7 @@ class PolicyMixin(ABC):
         self.num_actions = num_actions
         self.device = device
         self.action_space = action_space
+        self.loss_fn = loss_fn
         self.buffer: ReplayBuffer
 
     @property
@@ -38,9 +40,9 @@ class PolicyMixin(ABC):
         pass
 
     def _action_sample_from_distribution(self, dist: Distribution) -> T.Tensor:
-        action = dist.rsample()
-        high = getattr(self.action_space, "high")
-        low = getattr(self.action_space, "low")
+        action = dist.sample()
+        high = getattr(self.action_space, "high", None)
+        low = getattr(self.action_space, "low", None)
         if high is not None and low is not None:
             high = T.tensor(high, device=self.device)
             low = T.tensor(low, device=self.device)
@@ -52,6 +54,8 @@ class PolicyMixin(ABC):
         return action
 
     def _action_best_from_distribution(self, dist: Distribution) -> T.Tensor:
+        if isinstance(dist, Categorical):
+            return dist.logits.argmax(keepdim=True)
         base_dist = getattr(dist, "base_dist", dist)
         transforms = getattr(dist, "transforms", None)
         

@@ -11,7 +11,7 @@ class Worker:
         self,
         env_name: str,
         agent: BasePolicy,
-        method: str = "egreedy",
+        action_exploration_method: str = "egreedy",
         device: T.device = T.device("cpu"),
         epsilon_start_: float = 0.5,
         epsilon_decay_factor_: float = 0.9999,
@@ -36,7 +36,7 @@ class Worker:
         self.batch_size: int = 32
         self.minibatch_size: int = 32
         self.epsilon: float = 1.
-        self.method = method
+        self.action_exploration_method = action_exploration_method
     
     def _reset_training_vars(
         self,
@@ -65,7 +65,7 @@ class Worker:
         
         while not done:
             try:
-                action_output = self.agent.action(method=self.method, state=state, epsilon_=self.epsilon)
+                action_output = self.agent.action(method=self.action_exploration_method, state=state, epsilon_=self.epsilon)
                 action = action_output.action
                 next_state, reward, terminated, truncated, _ = self.env.step(
                     action.detach().cpu().numpy() if self.env_box_type else action.item()
@@ -77,6 +77,7 @@ class Worker:
             done = terminated or truncated
             reward = T.as_tensor(reward)
             done = T.as_tensor(done)
+            action = T.as_tensor(action if self.env_box_type else action.item())
             
             record = {
                 "state": state,
@@ -121,6 +122,7 @@ class Worker:
         *args,
         **kwargs
     ):
+        print(20 * "=", "Start training", 20 * "=")
         rewards_list = []
         self._reset_training_vars(
             train_step=train_step,
@@ -174,7 +176,7 @@ class Worker:
         terminated = False
         while not done:
             state = T.as_tensor(state, dtype=T.float32, device=self.device)
-            action_output = self.agent.action(method="entropy", state=state)
+            action_output = self.agent.action(method="best", state=state)
             action = action_output.action
             next_state, reward, terminated, truncated, _ = env.step(
                     action.detach().cpu().numpy() if self.env_box_type else action.item()
