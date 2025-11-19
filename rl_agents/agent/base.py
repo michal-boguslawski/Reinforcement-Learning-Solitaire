@@ -4,7 +4,7 @@ import torch as T
 from torch import nn
 from typing import Tuple, Any
 
-from models.models import ActionOutput
+from models.models import ActionOutput, OnPolicyMinibatch
 
 
 class BasePolicy(ABC):
@@ -17,7 +17,7 @@ class BasePolicy(ABC):
         pass
 
     @abstractmethod
-    def calculate_loss(self, batch: Tuple[T.Tensor, ...]) -> Tuple[float, ...]:
+    def calculate_loss(self, batch: OnPolicyMinibatch) -> Tuple[float, ...]:
         pass
 
     @abstractmethod

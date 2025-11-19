@@ -42,7 +42,16 @@ class ReplayBuffer:
         return sample
     
     def get_all(self) -> Observation:
-        sample = tuple(T.stack(column, dim=0).to(self.device) for column in zip(*self.buffer) if not any(v is None for v in column))
-        sample = Observation(*sample)
+        if len(self.buffer) == 0:
+            raise ValueError("Cannot get_all from empty buffer")
+        
+        try:
+            sample = tuple(T.stack(column, dim=1).to(self.device) for column in zip(*self.buffer) if not any(v is None for v in column))
+            if len(sample) == 0:
+                raise ValueError("No valid columns found in buffer data")
+            sample = Observation(*sample)
+        except (RuntimeError, ValueError) as e:
+            raise RuntimeError(f"Failed to stack buffer data: {e}")
+        
         self.buffer.clear()
         return sample

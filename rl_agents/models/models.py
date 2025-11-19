@@ -1,3 +1,4 @@
+import gymnasium as gym
 from typing import NamedTuple
 import numpy as np
 import torch as T
@@ -11,6 +12,7 @@ class Observation(NamedTuple):
     action: T.Tensor
     reward: T.Tensor
     done: T.Tensor
+    log_probs: T.Tensor
     value: T.Tensor | None = None
 
 class QOutput(NamedTuple):
@@ -27,3 +29,17 @@ class ActionOutput(NamedTuple):
     logits: T.Tensor
     log_probs: T.Tensor
     value: T.Tensor | None = None
+
+class OnPolicyMinibatch(NamedTuple):
+    states: T.Tensor
+    returns: T.Tensor
+    actions: T.Tensor
+    advantages: T.Tensor
+    log_probs: T.Tensor
+
+class EnvDetails(NamedTuple):
+    state_dim: int
+    action_dim: int
+    action_space: gym.Space
+    action_low: T.Tensor | None
+    action_high: T.Tensor | None

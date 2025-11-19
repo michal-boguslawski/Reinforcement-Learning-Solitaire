@@ -1,7 +1,7 @@
 import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.distributions import Categorical, Normal, Distribution, TransformedDistribution, AffineTransform, TanhTransform
+from torch.distributions import Categorical, Normal, Distribution, TransformedDistribution, AffineTransform, TanhTransform, Independent
 
 from models.models import QOutput, A2COutput
 
@@ -56,6 +56,8 @@ class ActorCriticNetwork(nn.Module):
         distribution: str = "categorical",
         low: T.Tensor | None = None,
         high: T.Tensor | None = None,
+        initial_log_std: float = 0.0,
+        device: T.device = T.device("cpu"),
         *args,
         **kwargs
     ):
@@ -85,8 +87,15 @@ class ActorCriticNetwork(nn.Module):
             nn.Linear(hidden_dim, 1),
         )
         self.distribution = distribution
-        self.log_std = nn.Parameter(T.zeros(out_features,))
-        # self.log_std = nn.Parameter(T.full((out_features, ), -1.))
+        # self.log_std = nn.Parameter(T.zeros(out_features,))
+        self.log_std = nn.Parameter(T.full((out_features, ), initial_log_std))
+        
+        # Precompute transform parameters for efficiency
+        if self.low is not None and self.high is not None:
+            self.transform_loc = (self.high + self.low) / 2
+            self.transform_scale = (self.high - self.low) / 2
+        
+        self.to(device)
 
     def _set_distribution(self, logits: T.Tensor) -> Distribution:
         if T.isnan(logits).any():
@@ -106,17 +115,20 @@ class ActorCriticNetwork(nn.Module):
             print("Invalid std values:", std)
             raise ValueError("Invalid standard deviation")
         if self.distribution == "normal":
-            # logits = logits.clamp(-3, 3)
+            logits = logits.clamp(-3, 3)
             dist = Normal(loc=logits, scale=std)
             if self.low is not None and self.high is not None:
                 transforms = [
                     TanhTransform(),
                     AffineTransform(
-                        loc = (self.high + self.low) / 2,
-                        scale = (self.high - self.low) / 2
+                        loc=self.transform_loc,
+                        scale=self.transform_scale
                     )
                 ]
-                dist = TransformedDistribution(dist, transforms=transforms)
+                dist = TransformedDistribution(
+                    Independent(dist,1),
+                    transforms=transforms
+                )
         else:
             dist = Categorical(logits=logits)
         return dist

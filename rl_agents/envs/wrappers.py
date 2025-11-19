@@ -2,9 +2,9 @@ import gymnasium as gym
 import torch as T
 
 class TerminalBonusWrapper(gym.RewardWrapper):
-    def __init__(self, env, terminal_bonus: float | None = 0., truncated_bonus: float | None = 0.):
+    def __init__(self, env, terminated_bonus: float | None = 0., truncated_bonus: float | None = 0.):
         super().__init__(env)
-        self.terminal_bonus = terminal_bonus or 0
+        self.terminated_bonus = terminated_bonus or 0
         self.truncated_bonus = truncated_bonus or 0
 
     def step(self, action):
@@ -13,7 +13,7 @@ class TerminalBonusWrapper(gym.RewardWrapper):
         # Add extra reward when the episode terminates
         reward = float(reward)
         if terminated:
-            reward += self.terminal_bonus
+            reward += self.terminated_bonus
         if truncated:
             reward += self.truncated_bonus
 

@@ -1,6 +1,8 @@
 import gymnasium as gym
 from gymnasium.wrappers import NumpyToTorch, RecordVideo
 from gymnasium.vector import SyncVectorEnv
+import gymnasium.wrappers.vector as vec_wrappers
+import numpy as np
 import torch as T
 
 from .wrappers import TerminalBonusWrapper, PowerObsRewardWrapper, NoMovementInvPunishmentRewardWrapper
@@ -17,7 +19,9 @@ def make_env(
     config = EnvConfig(env_name).get_config()
     env = gym.make(
         env_name,
-        render_mode="rgb_array" if record else None
+        render_mode="rgb_array" if record else None,
+        # disable_env_checker=True,
+        # apply_api_compatibility=True,
     )
 
     if record:
@@ -31,10 +35,10 @@ def make_env(
 
     env = NumpyToTorch(env, device=device)
 
-    terminal_bonus = config.get("terminal_bonus")
+    terminated_bonus = config.get("terminated_bonus")
     truncated_bonus = config.get("truncated_bonus")
-    if terminal_bonus or truncated_bonus:
-        env = TerminalBonusWrapper(env, terminal_bonus=terminal_bonus, truncated_bonus=truncated_bonus)
+    if terminated_bonus or truncated_bonus:
+        env = TerminalBonusWrapper(env, terminated_bonus=terminated_bonus, truncated_bonus=truncated_bonus)
     
     pow_factors = config.get("pow_factors")
     abs_factors = config.get("abs_factors")
@@ -51,9 +55,10 @@ def make_env(
     if no_movement_inv_punishment:
         env = NoMovementInvPunishmentRewardWrapper(env, T.tensor(no_movement_inv_punishment, device=device))
 
-    scale_reward = config.get("scale_reward")
-    if scale_reward:
-        env = gym.wrappers.TransformReward(env, lambda x: x * scale_reward)
+    scale_reward = config.get("scale_reward", 1.)
+    loc_reward = config.get("loc_reward", 0.)
+    if scale_reward != 1. or loc_reward != 0.:
+        env = gym.wrappers.TransformReward(env, lambda x: x * scale_reward + loc_reward)
 
     return env
 
@@ -63,7 +68,17 @@ def make_vec(
     num_envs: int,
     device: T.device = T.device('cpu'),
 ):
-    envs = SyncVectorEnv(
-        num_envs * [lambda: make_env(env_name=env_name, device=device), ]
-    )
+    if num_envs <= 0:
+        raise ValueError(f"num_envs must be positive, got {num_envs}")
+    
+    try:
+        # Fix lambda closure issue by using default parameter
+        envs = SyncVectorEnv(
+            [lambda name=env_name, dev=device: make_env(env_name=name, device=dev) for _ in range(num_envs)],
+        )
+        envs = vec_wrappers.NumpyToTorch(envs)
+        # envs = vec_wrappers.ArrayConversion(envs, env_xp=np, target_xp=np)
+    except Exception as e:
+        raise RuntimeError(f"Failed to create vectorized environment '{env_name}' with {num_envs} envs: {e}")
+    
     return envs

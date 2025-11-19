@@ -5,6 +5,7 @@ import numpy as np
 import random
 import torch as T
 from torch import nn
+from torch.optim import Adam
 from torch.distributions import Distribution, Categorical
 from typing import Tuple, Generator, NamedTuple, Any
 
@@ -22,6 +23,7 @@ class PolicyMixin(ABC):
         gamma_: float = 0.99,
         lambda_: float = 1,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
+        lr: float = 1e-3,
         *args,
         **kwargs
     ):
@@ -32,6 +34,9 @@ class PolicyMixin(ABC):
         self.action_space = action_space
         self.loss_fn = loss_fn
         self.buffer: ReplayBuffer
+        if self.action_network is None:
+            raise ValueError("action_network must be implemented")
+        self.optimizer = Adam(self.action_network.parameters(), lr=lr)
 
     @property
     @abstractmethod
@@ -68,12 +73,19 @@ class PolicyMixin(ABC):
 
     def _action_egreedy(self, epsilon_: float, logits: T.Tensor, dist: Distribution) -> T.Tensor:
         if random.random() > epsilon_:
-            if isinstance(self.action_space, Discrete):
+            if isinstance(dist, Categorical):
                 action = logits.argmax(keepdim=True)
             else:
                 action = self._action_sample_from_distribution(dist)
         else:
-            action = T.tensor(self.action_space.sample(), device=self.device)
+            # Handle vectorized environments by sampling for each environment
+            batch_size = logits.shape[0] if logits.ndim > 1 else 1
+            if batch_size > 1:
+                # Sample actions for each environment in the batch
+                random_actions = [self.action_space.sample() for _ in range(batch_size)]
+                action = T.tensor(random_actions, device=self.device, dtype=T.float32)
+            else:
+                action = T.tensor(self.action_space.sample(), device=self.device, dtype=T.float32)
         
         return action
 
@@ -134,6 +146,7 @@ class PolicyMixin(ABC):
         reward = T.as_tensor(batch.reward, dtype=T.float32)
         done = T.as_tensor(batch.done, dtype=T.float32)
         value = T.as_tensor(batch.value, dtype=T.float32) if batch.value is not None else None
+        log_probs = T.as_tensor(batch.log_probs, dtype=T.float32)
         preprocessed_batch = type(batch)(
             state=state,
             next_state=next_state,
@@ -142,6 +155,7 @@ class PolicyMixin(ABC):
             reward=reward,
             done=done,
             value=value,
+            log_probs=log_probs,
         )
         return preprocessed_batch
     
