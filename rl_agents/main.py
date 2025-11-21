@@ -1,5 +1,6 @@
 import os
 import shutil
+import os
 import sys
 
 from config.config import Config
@@ -8,15 +9,21 @@ from network.general import ActorCriticNetwork, MLPNetwork
 from worker.worker import Worker
 
 
+os.environ["MUJOCO_GL"] = "osmesa"
+
+
 if __name__ == "__main__":
-    env_name = sys.argv[1] if len(sys.argv) > 1 else "Pendulum-v1"
+    experiment_name = sys.argv[1] if len(sys.argv) > 1 else "Pendulum-v1"
+    # experiment_name = "BipedalWalker-v3-hardcore"
+    # env_name = "HalfCheetah-v5"
     policy_name = sys.argv[2] if len(sys.argv) > 2 else "a2c"
-    config = Config(env_name=env_name).get_config()
+    # policy_name = "ppo"
+    config = Config(experiment_name=experiment_name).get_config()
 
-    if os.path.exists(f"logs/{env_name}"):
-        shutil.rmtree(f"logs/{env_name}")
+    if os.path.exists(f"logs/{experiment_name}"):
+        shutil.rmtree(f"logs/{experiment_name}")
 
-    env_details = get_env_details(env_name=env_name)
+    env_details = get_env_details(experiment_name=experiment_name)
 
     # ActorCriticNetwork
     network = ActorCriticNetwork(
@@ -32,7 +39,7 @@ if __name__ == "__main__":
     policy_kwargs["num_actions"] = env_details.action_dim
 
     worker = Worker(
-        env_name=env_name,
+        experiment_name=experiment_name,
         network=network,
         policy_name=policy_name,
         policy_kwargs=policy_kwargs,

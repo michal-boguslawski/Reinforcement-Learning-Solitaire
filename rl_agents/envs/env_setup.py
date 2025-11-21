@@ -1,25 +1,49 @@
 import gymnasium as gym
-from gymnasium.wrappers import NumpyToTorch, RecordVideo
+from gymnasium.wrappers import NumpyToTorch, RecordVideo, TransformReward
 from gymnasium.vector import SyncVectorEnv
 import gymnasium.wrappers.vector as vec_wrappers
 import numpy as np
 import torch as T
+from typing import Tuple, Callable, Any, Dict
 
 from .wrappers import TerminalBonusWrapper, PowerObsRewardWrapper, NoMovementInvPunishmentRewardWrapper
-from config.config import EnvConfig
+from config.config import EnvConfig, Config
+import inspect
+
+
+wrappers_dict: Dict[str, Callable] = {
+    "scale_reward": lambda env, scale_factor, loc_factor: 
+        TransformReward(env, lambda r: scale_factor * r + loc_factor),
+    "clip_action": gym.wrappers.ClipAction,
+    "record_video": RecordVideo,
+}
+
+
+def clean_kwargs(func, kwargs: dict):
+    """
+    Return a new dict containing only keys that appear
+    in the function's signature.
+    """
+    sig = inspect.signature(func)
+    valid = set(sig.parameters.keys())
+
+    return {k: v for k, v in kwargs.items() if k in valid}
 
 
 def make_env(
-    env_name: str,
+    experiment_name: str,
     device: T.device = T.device('cpu'),
     record: bool = False,
     video_folder: str = "logs/videos",
     name_prefix: str = "eval"
 ) -> gym.Env:
-    config = EnvConfig(env_name).get_config()
+    config = Config(experiment_name).get_config()
+    env_details = config.get("env", {})
     env = gym.make(
-        env_name,
+        # id=env_details.get("env_name"),
         render_mode="rgb_array" if record else None,
+        **{k: v for k, v in env_details.items() if k != "vectorization_mode"}
+        # **clean_kwargs(gym.make, env_details)
         # disable_env_checker=True,
         # apply_api_compatibility=True,
     )
@@ -33,52 +57,42 @@ def make_env(
         )
         return env
 
-    env = NumpyToTorch(env, device=device)
-
-    terminated_bonus = config.get("terminated_bonus")
-    truncated_bonus = config.get("truncated_bonus")
-    if terminated_bonus or truncated_bonus:
-        env = TerminalBonusWrapper(env, terminated_bonus=terminated_bonus, truncated_bonus=truncated_bonus)
-    
-    pow_factors = config.get("pow_factors")
-    abs_factors = config.get("abs_factors")
-    decay_factor = config.get("decay_factor")
-    if pow_factors or abs_factors:
-        env = PowerObsRewardWrapper(
-            env,
-            pow_factors=T.tensor(pow_factors, device=device) if pow_factors else None,
-            abs_factors=T.tensor(abs_factors, device=device) if abs_factors else None,
-            decay_factor=decay_factor
-        )
-    
-    no_movement_inv_punishment = config.get("no_movement_inv_punishment")
-    if no_movement_inv_punishment:
-        env = NoMovementInvPunishmentRewardWrapper(env, T.tensor(no_movement_inv_punishment, device=device))
-
-    scale_reward = config.get("scale_reward", 1.)
-    loc_reward = config.get("loc_reward", 0.)
-    if scale_reward != 1. or loc_reward != 0.:
-        env = gym.wrappers.TransformReward(env, lambda x: x * scale_reward + loc_reward)
-
     return env
 
 
 def make_vec(
-    env_name: str,
+    experiment_name: str,
     num_envs: int,
     device: T.device = T.device('cpu'),
 ):
+    config = Config(experiment_name).get_config()
+    env_details = config.get("env", {})
+    env_config = EnvConfig(env_details.get("env_name")).get_config()
+    wrappers = []
+    wrappers_config = env_config.get("wrappers")
+    if wrappers_config:
+        for wrapper_name, wrapper_kwargs in wrappers_config.items():
+            wrapper = wrappers_dict.get(wrapper_name, None)
+            if wrapper is None:
+                raise ValueError(f"Unknown wrapper '{wrapper_name}'")
+            wrappers.append(lambda env, w=wrapper, kw=wrapper_kwargs: w(env=env, **kw))
+
     if num_envs <= 0:
         raise ValueError(f"num_envs must be positive, got {num_envs}")
     
     try:
         # Fix lambda closure issue by using default parameter
-        envs = SyncVectorEnv(
-            [lambda name=env_name, dev=device: make_env(env_name=name, device=dev) for _ in range(num_envs)],
+        envs = gym.make_vec(
+            # id=env_details.get("env_name"),
+            num_envs=num_envs,
+            # vectorization_mode=env_details.get("vectorization_mode", "sync"),
+            vector_kwargs=None,
+            wrappers=wrappers,
+            **env_details
         )
-        envs = vec_wrappers.NumpyToTorch(envs)
-        # envs = vec_wrappers.ArrayConversion(envs, env_xp=np, target_xp=np)
+        envs = vec_wrappers.DtypeObservation(envs, np.float32)
+        envs = vec_wrappers.NumpyToTorch(envs, device=device)
     except Exception as e:
-        raise RuntimeError(f"Failed to create vectorized environment '{env_name}' with {num_envs} envs: {e}")
+        raise RuntimeError(f"Failed to create vectorized environment '{experiment_name}' with {num_envs} envs: {e}")
     
     return envs

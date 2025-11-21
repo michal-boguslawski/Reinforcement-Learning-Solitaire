@@ -4,10 +4,10 @@ from .env_setup import make_env
 from models.models import EnvDetails
 
 
-def get_env_details(env_name: str):
+def get_env_details(experiment_name: str):
     
     try:
-        with make_env(env_name) as env:
+        with make_env(experiment_name) as env:
             # env = make_vec(config["env_name"], num_envs=4, device=config["device"])
             
             action_n = getattr(env.action_space, "n", None)

@@ -31,7 +31,25 @@ class EnvConfig:
             },
         "BipedalWalker-v3":
             {
-                "loc_reward": -0.1,
+                "wrappers":
+                    {
+                        "scale_reward":
+                            {
+                                "scale_factor": 1,
+                                "loc_factor": -0.1
+                            }
+                    }                
+            },
+        "HalfCheetah-v5":
+            {
+                "wrappers":
+                    {
+                        "scale_reward":
+                            {
+                                "scale_factor": 1,
+                                "loc_factor": 0
+                            }
+                    }                
             },
     }
 
@@ -227,13 +245,18 @@ class Config:
                     "worker_kwargs": {
                         "num_envs": 32,
                         "action_exploration_method": "distribution",
-                        "device": device
+                        "device": device,
+                        # "env_experiment_name": "HalfCheetah-v5",
                     },
                     "train_kwargs": {
-                        "num_steps": int(5e5),
+                        "num_steps": int(1e6),
                         "batch_size": 2048,
                         "minibatch_size": 256,
                     }
+                },
+                "env": {
+                    "id": "HalfCheetah-v5",
+                    "vectorization_mode": "sync",
                 },
                 "network_kwargs": {
                     "hidden_dim": 32,
@@ -242,10 +265,45 @@ class Config:
                     "initial_log_std": 0.,
                 },
             },
+        "BipedalWalker-v3-hardcore":
+            {
+                "ppo": {
+                    "policy_config_kwargs": {
+                        "gamma_": 0.99,
+                        "lambda_": 0.95,
+                        "entropy_beta": 0.05,
+                        "device": device,
+                        "lr": 3e-4,
+                        "num_epochs": 10,
+                        "clip_epsilon": 0.2,
+                    },
+                    "worker_kwargs": {
+                        "num_envs": 64,
+                        "action_exploration_method": "distribution",
+                        "device": device
+                    },
+                    "train_kwargs": {
+                        "num_steps": int(1e6),
+                        "batch_size": 2048,
+                        "minibatch_size": 256,
+                    }
+                },
+                "env": {
+                    "id": "BipedalWalker-v3",
+                    "hardcore": True,
+                    "vectorization_mode": "sync",
+                },
+                "network_kwargs": {
+                    "hidden_dim": 64,
+                    "distribution": "normal",
+                    "device": device,
+                    "initial_log_std": 0.,
+                },
+            },
     }
 
-    def __init__(self, env_name: str):
-        self.env_name = env_name
+    def __init__(self, experiment_name: str):
+        self.experiment_name = experiment_name
     
     def get_config(self) -> dict[str, Any]:
-        return self.config.get(self.env_name, {})
+        return self.config.get(self.experiment_name, {})
