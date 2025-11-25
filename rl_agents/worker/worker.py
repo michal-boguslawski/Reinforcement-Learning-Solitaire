@@ -206,6 +206,7 @@ class Worker:
         done = False
         truncated = False
         terminated = False
+        action_output = None
         env_discrete_type = isinstance(env.action_space, Discrete)
         while not done:
             state = T.as_tensor(state, dtype=T.float32, device=self.device)
@@ -219,8 +220,13 @@ class Worker:
             total_reward += float(reward)
             state = next_state
             step_count += 1
+        env.close()
         print(
             f"Step {num_step}: {step_count} steps, reward = {total_reward:.2f}, truncated = {truncated}, terminated = {terminated}"
         )
         print(state.round(2))
-        env.close()
+        if action_output and action_output.dist:
+            try:
+                print(action_output.dist.base_dist.covariance_matrix)  # type: ignore
+            except AttributeError:
+                pass

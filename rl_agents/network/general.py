@@ -1,7 +1,7 @@
 import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.distributions import Categorical, Normal, Distribution, TransformedDistribution, AffineTransform, TanhTransform, Independent
+from torch.distributions import Categorical, Normal, Distribution, TransformedDistribution, AffineTransform, TanhTransform, Independent, MultivariateNormal
 
 from models.models import QOutput, A2COutput
 
@@ -87,8 +87,9 @@ class ActorCriticNetwork(nn.Module):
             nn.Linear(hidden_dim, 1),
         )
         self.distribution = distribution
-        # self.log_std = nn.Parameter(T.zeros(out_features,))
-        self.log_std = nn.Parameter(T.full((out_features, ), initial_log_std))
+        self.out_features = out_features
+        self.log_std = nn.Parameter(T.full((out_features, out_features), initial_log_std))
+        self.raw_scale_tril = nn.Parameter(T.eye(out_features))
         
         # Precompute transform parameters for efficiency
         if self.low is not None and self.high is not None:
@@ -96,6 +97,15 @@ class ActorCriticNetwork(nn.Module):
             self.transform_scale = (self.high - self.low) / 2
         
         self.to(device)
+
+    def _build_scale_tril(self):
+        L = T.tril(self.raw_scale_tril)
+        diag = T.diagonal(L)
+        diag = F.softplus(diag) + 1e-5
+        
+        L = L.clone()
+        L[range(len(diag)), range(len(diag))] = diag
+        return L
 
     def _set_distribution(self, logits: T.Tensor) -> Distribution:
         if T.isnan(logits).any():
@@ -109,28 +119,30 @@ class ActorCriticNetwork(nn.Module):
             print("Raw log_std:", self.log_std)
             print("Clamped log_std:", log_std)
             raise ValueError("NaN/Inf in log_std")
-        
-        std = T.exp(log_std).expand_as(logits)
-        if T.isnan(std).any() or (std <= 0).any():
-            print("Invalid std values:", std)
-            raise ValueError("Invalid standard deviation")
         if self.distribution == "normal":
-            logits = logits.clamp(-3, 3)
+            std = T.exp(log_std).expand_as(logits)
             dist = Normal(loc=logits, scale=std)
-            if self.low is not None and self.high is not None:
-                transforms = [
-                    TanhTransform(),
-                    AffineTransform(
-                        loc=self.transform_loc,
-                        scale=self.transform_scale
-                    )
-                ]
-                dist = TransformedDistribution(
-                    Independent(dist,1),
-                    transforms=transforms
-                )
+            dist = Independent(dist, 1)
+
+        elif self.distribution == "multivariatenormal":
+            scale_tril = self._build_scale_tril()
+            dist = MultivariateNormal(loc=logits, scale_tril=scale_tril)
+
         else:
             dist = Categorical(logits=logits)
+
+        if self.low is not None and self.high is not None:
+            transforms = [
+                TanhTransform(),
+                AffineTransform(
+                    loc=self.transform_loc,
+                    scale=self.transform_scale
+                )
+            ]
+            dist = TransformedDistribution(
+                dist,
+                transforms=transforms
+            )
         return dist
 
     def forward(self, input_tensor: T.Tensor) -> A2COutput:

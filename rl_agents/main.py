@@ -14,8 +14,7 @@ os.environ["MUJOCO_GL"] = "osmesa"
 
 if __name__ == "__main__":
     experiment_name = sys.argv[1] if len(sys.argv) > 1 else "Pendulum-v1"
-    # experiment_name = "BipedalWalker-v3-hardcore"
-    # env_name = "HalfCheetah-v5"
+    # experiment_name = "BipedalWalker-v3"
     policy_name = sys.argv[2] if len(sys.argv) > 2 else "a2c"
     # policy_name = "ppo"
     config = Config(experiment_name=experiment_name).get_config()

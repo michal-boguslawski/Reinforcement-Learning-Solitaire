@@ -237,6 +237,7 @@ class PPOPolicy(OnPolicy):
         action_space: Space,
         gamma_: float = 0.99,
         lambda_: float = 1,
+        critic_coef_: float = 0.5,
         entropy_beta_: float = 0.01,
         num_epochs: int = 10,
         clip_epsilon: float = 0.2,
@@ -259,6 +260,7 @@ class PPOPolicy(OnPolicy):
         )
         self.gamma_ = gamma_
         self.lambda_ = lambda_
+        self.critic_coef_ = critic_coef_
         self.entropy_beta_ = entropy_beta_
         self.clip_epsilon = clip_epsilon
     
@@ -323,7 +325,7 @@ class PPOPolicy(OnPolicy):
             raise ValueError("Empty entropy tensor")
         entropy = entropy.mean()
 
-        loss = actor_loss + 0.5 * critic_loss - self.entropy_beta_ * entropy
+        loss = actor_loss + self.critic_coef_ * critic_loss - self.entropy_beta_ * entropy
 
         # backpropagation of the error
         self.optimizer.zero_grad()

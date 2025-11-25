@@ -23,3 +23,9 @@ class BasePolicy(ABC):
     @abstractmethod
     def train(self, minibatch_size: int, *args, **kwargs) -> list[float] | None:
         pass
+
+    @property
+    @abstractmethod
+    def action_network(self) -> nn.Module:
+        """Return the torch.nn.Module used to generate actions."""
+        pass

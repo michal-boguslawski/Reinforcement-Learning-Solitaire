@@ -113,7 +113,8 @@ class PolicyMixin(ABC):
             action=action,
             logits=logits,
             log_probs=logprob,
-            value=value
+            value=value,
+            dist=output.dist
         )
         return action_output
 

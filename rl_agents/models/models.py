@@ -29,6 +29,7 @@ class ActionOutput(NamedTuple):
     logits: T.Tensor
     log_probs: T.Tensor
     value: T.Tensor | None = None
+    dist: Distribution | None = None
 
 class OnPolicyMinibatch(NamedTuple):
     states: T.Tensor
