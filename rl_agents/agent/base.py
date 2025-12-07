@@ -29,3 +29,13 @@ class BasePolicy(ABC):
     def action_network(self) -> nn.Module:
         """Return the torch.nn.Module used to generate actions."""
         pass
+
+    @abstractmethod
+    def eval_mode(self) -> None:
+        """Changing action network to eval mode"""
+        pass
+
+    @abstractmethod
+    def train_mode(self) -> None:
+        """Changing action network to train mode"""
+        pass

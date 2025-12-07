@@ -1,4 +1,5 @@
 import gymnasium as gym
+import numpy as np
 import torch as T
 
 class TerminalBonusWrapper(gym.RewardWrapper):
@@ -6,6 +7,7 @@ class TerminalBonusWrapper(gym.RewardWrapper):
         super().__init__(env)
         self.terminated_bonus = terminated_bonus or 0
         self.truncated_bonus = truncated_bonus or 0
+        print(f"TerminalBonusWrapper attached with params {terminated_bonus} {truncated_bonus}")
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
@@ -33,14 +35,15 @@ class PowerObsRewardWrapper(gym.RewardWrapper):
         self.abs_factors = abs_factors
         self.decay = 1
         self.decay_factor = decay_factor or 1
+        print(f"PowerObsRewardWrapper attached with params {pow_factors} {abs_factors} {decay_factor}")
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
         reward = float(reward)
         if self.pow_factors is not None:
-            reward += T.sum(obs ** 2 * self.pow_factors).item() * self.decay
+            reward += (obs ** 2 * self.pow_factors).sum().item() * self.decay
         if self.abs_factors is not None:
-            reward += T.sum(obs.abs() * self.abs_factors).item() * self.decay
+            reward += (np.abs(obs) * self.abs_factors).sum().item() * self.decay
         if terminated:
             self.decay *= self.decay_factor
         elif truncated:
@@ -58,7 +61,7 @@ class NoMovementInvPunishmentRewardWrapper(gym.RewardWrapper):
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
         reward = float(reward)
-        inv_obs = 1 / (obs.abs() + 1e-6)
-        reward += T.sum(inv_obs.clip(0, 100) * self.punishment).item()
+        inv_obs = 1 / (np.abs(obs) + 1e-6)
+        reward += (inv_obs.clip(0, 100) * self.punishment).sum().item()
 
         return obs, reward, terminated, truncated, info

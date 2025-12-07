@@ -14,7 +14,7 @@ os.environ["MUJOCO_GL"] = "osmesa"
 
 if __name__ == "__main__":
     experiment_name = sys.argv[1] if len(sys.argv) > 1 else "Pendulum-v1"
-    # experiment_name = "BipedalWalker-v3"
+    # experiment_name = "MountainCarContinuous-v0"
     policy_name = sys.argv[2] if len(sys.argv) > 2 else "a2c"
     # policy_name = "ppo"
     config = Config(experiment_name=experiment_name).get_config()
@@ -26,14 +26,14 @@ if __name__ == "__main__":
 
     # ActorCriticNetwork
     network = ActorCriticNetwork(
-        in_features=env_details.state_dim,
-        out_features=env_details.action_dim,
+        input_shape=env_details.state_dim,
+        num_actions=env_details.action_dim,
         low=env_details.action_low,
         high=env_details.action_high,
         **config["network_kwargs"]
     )
 
-    policy_kwargs = config[policy_name]["policy_config_kwargs"].copy()
+    policy_kwargs = config[policy_name].copy()
     policy_kwargs["action_space"] = env_details.action_space
     policy_kwargs["num_actions"] = env_details.action_dim
 
@@ -42,6 +42,6 @@ if __name__ == "__main__":
         network=network,
         policy_name=policy_name,
         policy_kwargs=policy_kwargs,
-        **config[policy_name]["worker_kwargs"]
+        **config["worker_kwargs"]
     )
-    worker.train(**config[policy_name]["train_kwargs"])
+    worker.train(**config["train_kwargs"])

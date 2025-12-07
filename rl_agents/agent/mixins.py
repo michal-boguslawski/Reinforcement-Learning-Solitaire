@@ -44,6 +44,14 @@ class PolicyMixin(ABC):
         """Return the torch.nn.Module used to generate actions."""
         pass
 
+    def eval_mode(self) -> None:
+        """Changing action network to eval mode"""
+        self.action_network.eval()
+
+    def train_mode(self) -> None:
+        """Changing action network to train mode"""
+        self.action_network.train()
+
     def _action_sample_from_distribution(self, dist: Distribution) -> T.Tensor:
         action = dist.sample()
         high = getattr(self.action_space, "high", None)

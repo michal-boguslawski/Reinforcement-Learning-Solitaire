@@ -239,6 +239,7 @@ class PPOPolicy(OnPolicy):
         lambda_: float = 1,
         critic_coef_: float = 0.5,
         entropy_beta_: float = 0.01,
+        entropy_decay: float = 1.,
         num_epochs: int = 10,
         clip_epsilon: float = 0.2,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
@@ -262,11 +263,15 @@ class PPOPolicy(OnPolicy):
         self.lambda_ = lambda_
         self.critic_coef_ = critic_coef_
         self.entropy_beta_ = entropy_beta_
+        self.entropy_decay = entropy_decay
         self.clip_epsilon = clip_epsilon
     
     @property
     def action_network(self) -> nn.Module:
         return self.network
+
+    def step_entropy_decay(self) -> None:
+        self.entropy_beta_ *= self.entropy_decay
 
     def calculate_loss(self, batch: OnPolicyMinibatch) -> Tuple[float, ...]:
         states, returns, actions, advantages, old_log_probs = (

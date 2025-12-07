@@ -3,56 +3,33 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.distributions import Categorical, Normal, Distribution, TransformedDistribution, AffineTransform, TanhTransform, Independent, MultivariateNormal
 
-from models.models import QOutput, A2COutput
-
-
-class MLPNetwork(nn.Module):
-    act_fn_dict = {
-        "tanh": nn.Tanh,
-        "relu": nn.ReLU,
-        "gelu": nn.GELU,
-        "sigmoid": nn.Sigmoid,
-        "leaky_relu": nn.LeakyReLU,
-    }
-    def __init__(
-        self,
-        in_features: int = 4,
-        out_features: int = 2,
-        hidden_dim: int = 64,
-        *args,
-        **kwargs
-    ):
-        super().__init__()
-        self.hidden_dim = hidden_dim
-        
-        self.layers = nn.Sequential(
-            nn.Linear(in_features, hidden_dim),
-            nn.LayerNorm(hidden_dim),
-            nn.GELU(),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),
-            nn.GELU(),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),
-            nn.GELU(),
-            nn.Linear(hidden_dim, out_features),
-        )
-        self.distribution = Categorical # if out_activation == "identity" else Normal
-        self.log_std = nn.Parameter(T.zeros(out_features))
-
-    def forward(self, input_tensor: T.Tensor) -> QOutput:
-        logits = self.layers(input_tensor)
-        
-        dist = self.distribution(logits=logits)
-        return QOutput(logits, dist)
+from models.models import A2COutput
+from .cv import SimpleConvNetwork
+from .flat import MLPNetwork
+from .head import ActorCriticHead
 
 
 class ActorCriticNetwork(nn.Module):
+    backbone_type_dict = {
+        "mlp": MLPNetwork,
+        "simple_cv": SimpleConvNetwork
+    }
+    
+    head_type_dict = {
+        "a2c": ActorCriticHead
+    }
+    
     def __init__(
         self,
-        in_features: int = 4,
-        out_features: int = 2,
-        hidden_dim: int = 64,
+        input_shape: int | tuple,
+        num_actions: int,
+        channels: int = 64,
+
+        backbone_type: str = "mlp",
+        backbone_kwargs: dict = {},
+        head_type: str = "a2c",
+        head_kwargs: dict = {},
+        
         distribution: str = "categorical",
         low: T.Tensor | None = None,
         high: T.Tensor | None = None,
@@ -62,41 +39,43 @@ class ActorCriticNetwork(nn.Module):
         **kwargs
     ):
         super().__init__()
-        self.hidden_dim = hidden_dim
-        self.low = low
-        self.high = high
-
-        self.backbone = nn.Sequential(
-            nn.Linear(in_features, hidden_dim),
-            # nn.LayerNorm(hidden_dim),
-            nn.Tanh(),
-            nn.Linear(hidden_dim, hidden_dim),
-            # nn.LayerNorm(hidden_dim),
-            nn.Tanh(),
-        )
-        self.actor = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim),
-            # nn.LayerNorm(hidden_dim),
-            nn.Tanh(),
-            nn.Linear(hidden_dim, out_features),
-        )
-        self.critic = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim),
-            # nn.LayerNorm(hidden_dim),
-            nn.Tanh(),
-            nn.Linear(hidden_dim, 1),
-        )
-        self.distribution = distribution
-        self.out_features = out_features
-        self.log_std = nn.Parameter(T.full((out_features, out_features), initial_log_std))
-        self.raw_scale_tril = nn.Parameter(T.eye(out_features))
+        self.input_shape = input_shape
+        self.num_actions = num_actions
+        self.channels = channels
+        self.backbone_type = backbone_type
+        self.backbone_kwargs = backbone_kwargs
+        self.head_type = head_type
+        self.head_kwargs = head_kwargs
         
+        self.distribution = distribution
+        self.initial_log_std = initial_log_std
+        self.high = high
+        self.low = low
+
+        self._setup()
+        
+        self.to(device)
+
+    def _setup(self):
+        self.log_std = nn.Parameter(T.full((self.num_actions, self.num_actions), self.initial_log_std))
+        self.raw_scale_tril = nn.Parameter(T.eye(self.num_actions))
         # Precompute transform parameters for efficiency
         if self.low is not None and self.high is not None:
             self.transform_loc = (self.high + self.low) / 2
             self.transform_scale = (self.high - self.low) / 2
-        
-        self.to(device)
+        self._build_network()
+
+    def _build_network(self):
+        self.backbone = self.backbone_type_dict[self.backbone_type](
+            input_shape=self.input_shape,
+            channels=self.channels,
+            **self.backbone_kwargs
+        )
+
+        self.head = self.head_type_dict[self.head_type](
+            channels=self.channels,
+            num_actions=self.num_actions
+        )
 
     def _build_scale_tril(self):
         L = T.tril(self.raw_scale_tril)
@@ -148,8 +127,7 @@ class ActorCriticNetwork(nn.Module):
     def forward(self, input_tensor: T.Tensor) -> A2COutput:
         x = self.backbone(input_tensor)
 
-        actor_out = self.actor(x)
-        critic_out = self.critic(x)
+        actor_out, critic_out = self.head(x)
 
         dist = self._set_distribution(logits=actor_out)
         return A2COutput(actor_out, critic_out, dist)

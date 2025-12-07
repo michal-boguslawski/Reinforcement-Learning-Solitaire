@@ -1,6 +1,7 @@
 from gymnasium.spaces import Discrete
 import numpy as np
 import torch as T
+from tqdm import tqdm
 from typing import Any
 
 from agent.base import BasePolicy
@@ -28,9 +29,9 @@ class Worker:
         policy_kwargs: dict[str, Any],
         action_exploration_method: str = "egreedy",
         device: T.device = T.device("cpu"),
-        epsilon_start_: float = 0.5,
-        epsilon_decay_factor_: float = 0.9999,
-        temperature_start_: float = 1,
+        epsilon_start_: float = 1.,
+        epsilon_decay_factor_: float = 1.,
+        temperature_start_: float = 1.,
         *args,
         **kwargs
     ):
@@ -161,14 +162,23 @@ class Worker:
             timesteps=timesteps,
         )
         
-        for num_step in range(int(num_steps)):
+        tq_iter = tqdm(range(int(num_steps)), desc=f"Training {self.experiment_name}", unit="steps")
+        
+        for num_step in tq_iter:
             done = self._train_one_step()
             if sum(done):
                 total_rewards = self.total_reward * done
                 rewards_list.append(total_rewards.sum() / done.sum())
                 self.total_reward *= T.logical_not(done)
+
+                temp_reward_mean = np.mean(rewards_list)
+                tq_iter.set_postfix_str(f"temp mean rewards {temp_reward_mean:.2f}")
             
-            if num_step % 10000 == 0:
+            if num_step % 10_000 == 0:
+                try:
+                    self.agent.step_entropy_decay()  # type: ignore
+                except AttributeError:
+                    pass
                 self._print_results(num_step, rewards_list)
 
         self._print_results(num_steps, rewards_list)
@@ -187,11 +197,11 @@ class Worker:
                 )
             recent_rewards.clear()
             recent_losses.clear()
-            if num_step % 100000 == 0:
+            if num_step % 100_000 == 0:
                 self._eval_record_video(num_step=num_step)
         except Exception as e:
             print(f"Error printing results: {e}")
-            # raise e
+            raise e
 
     def _eval_record_video(self, num_step: int) -> None:
         env = make_env(
@@ -208,10 +218,11 @@ class Worker:
         terminated = False
         action_output = None
         env_discrete_type = isinstance(env.action_space, Discrete)
+        self.agent.eval_mode()
         while not done:
-            state = T.as_tensor(state, dtype=T.float32, device=self.device)
+            state = T.as_tensor(state, dtype=T.float32, device=self.device).unsqueeze(0)
             action_output = self.agent.action(method="best", state=state)
-            action = action_output.action
+            action = action_output.action.squeeze(0)
             action = action.item() if env_discrete_type else action.detach().cpu().numpy()
             next_state, reward, terminated, truncated, _ = env.step(
                     action
@@ -221,12 +232,17 @@ class Worker:
             state = next_state
             step_count += 1
         env.close()
+        self.agent.train_mode()
         print(
             f"Step {num_step}: {step_count} steps, reward = {total_reward:.2f}, truncated = {truncated}, terminated = {terminated}"
         )
-        print(state.round(2))
+        if state.ndim < 3:
+            print("Evaluation stopped in state", state.round(2))
         if action_output and action_output.dist:
             try:
-                print(action_output.dist.base_dist.covariance_matrix)  # type: ignore
+                if "covariance_matrix" in dir(action_output.dist.base_dist):  # type: ignore
+                    print("Covariance matrix \n", action_output.dist.base_dist.covariance_matrix[0].numpy())  # type: ignore
+                else:
+                    print("Standard deviation \n", action_output.dist.base_dist.stddev[0].numpy())  # type: ignore
             except AttributeError:
                 pass

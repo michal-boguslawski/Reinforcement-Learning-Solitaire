@@ -1,5 +1,5 @@
 import gymnasium as gym
-from gymnasium.wrappers import NumpyToTorch, RecordVideo, TransformReward
+from gymnasium.wrappers import NumpyToTorch, RecordVideo, TransformReward, DtypeObservation
 from gymnasium.vector import SyncVectorEnv
 import gymnasium.wrappers.vector as vec_wrappers
 import numpy as np
@@ -14,6 +14,8 @@ import inspect
 wrappers_dict: Dict[str, Callable] = {
     "scale_reward": lambda env, scale_factor, loc_factor: 
         TransformReward(env, lambda r: scale_factor * r + loc_factor),
+    "terminal_bonus": TerminalBonusWrapper,
+    "power_obs_reward": PowerObsRewardWrapper,
     "clip_action": gym.wrappers.ClipAction,
     "record_video": RecordVideo,
 }
@@ -47,6 +49,7 @@ def make_env(
         # disable_env_checker=True,
         # apply_api_compatibility=True,
     )
+    env = DtypeObservation(env, np.float32)
 
     if record:
         env = RecordVideo(
@@ -67,7 +70,7 @@ def make_vec(
 ):
     config = Config(experiment_name).get_config()
     env_details = config.get("env", {})
-    env_config = EnvConfig(env_details.get("env_name")).get_config()
+    env_config = EnvConfig(env_details.get("id")).get_config()
     wrappers = []
     wrappers_config = env_config.get("wrappers")
     if wrappers_config:
