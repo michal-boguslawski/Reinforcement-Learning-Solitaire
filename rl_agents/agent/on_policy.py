@@ -10,7 +10,7 @@ from typing import Generator, Tuple
 from .base import BasePolicy
 from .mixins import PolicyMixin
 from memory.replay_buffer import ReplayBuffer
-from models.models import Observation, OnPolicyMinibatch
+from models.models import Observation, OnPolicyMinibatch, ActionSpaceType
 
 
 class OnPolicy(PolicyMixin, BasePolicy):
@@ -234,7 +234,7 @@ class PPOPolicy(OnPolicy):
         self, 
         network: nn.Module,
         num_actions: int,
-        action_space: Space,
+        action_space_type: ActionSpaceType,
         gamma_: float = 0.99,
         lambda_: float = 1,
         critic_coef_: float = 0.5,
@@ -254,7 +254,7 @@ class PPOPolicy(OnPolicy):
             num_actions=num_actions,
             gamma_=gamma_,
             lambda_=lambda_,
-            action_space=action_space,
+            action_space_type=action_space_type,
             loss_fn=loss_fn,
             lr=lr,
             num_epochs=num_epochs,

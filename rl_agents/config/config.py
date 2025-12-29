@@ -72,185 +72,43 @@ class EnvConfig:
 
 
 class Config:
-    device = T.device("cuda" if T.cuda.is_available() else "cpu")
     config = {
-        "MountainCarContinuous-v0":
-            {
-                "env": {
-                    "id": "MountainCarContinuous-v0",
-                    "vectorization_mode": "async",
-                },
-                "ppo": {
-                    "gamma_": 0.99,
-                    "lambda_": 0.95,
-                    "entropy_beta_": 0.02,
-                    "entropy_decay": 0.95,
-                    "device": device,
-                    "lr": 3e-4,
-                    "num_epochs": 10,
-                    "clip_epsilon": 0.2,
-                },
-                "worker_kwargs": {
-                    "num_envs": 8,
-                    "action_exploration_method": "distribution",
-                    "device": device
-                },
-                "train_kwargs": {
-                    "num_steps": int(5e5),
-                    "batch_size": 2048,
-                    "minibatch_size": 256,
-                },
-                "network_kwargs": {
-                    "hidden_dim": 32,
-                    "distribution": "normal",
-                    "device": device,
-                    "initial_log_std": 0.,
-                },
+        "experiment_name": "MountainCarContinuous-PPO",
+        "env_kwargs": {
+            "id": "MountainCarContinuous-v0",
+            "vectorization_mode": "async",
+            "num_envs": 8,
+        },
+        "policy": {
+            "type": "ppo",
+            "kwargs": {
+                "gamma_": 0.99,
+                "lambda_": 0.95,
+                "entropy_beta_": 0.02,
+                "entropy_decay": 0.95,
+                "lr": 3e-4,
+                "num_epochs": 10,
+                "clip_epsilon": 0.2,
             },
-        "BipedalWalker-v3":
-            {
-                "ppo": {
-                    "gamma_": 0.99,
-                    "lambda_": 0.95,
-                    "entropy_beta_": 0.05,
-                    "entropy_decay": 0.95,
-                    "device": device,
-                    "lr": 3e-4,
-                    "num_epochs": 10,
-                    "clip_epsilon": 0.2,
-                },
-                "worker_kwargs": {
-                    "num_envs": 32,
-                    "action_exploration_method": "distribution",
-                    "device": device
-                },
-                "train_kwargs": {
-                    "num_steps": int(5e5),
-                    "batch_size": 2048,
-                    "minibatch_size": 256,
-                },
-                "env": {
-                    "id": "BipedalWalker-v3",
-                    "vectorization_mode": "async",
-                },
-                "network_kwargs": {
-                    "hidden_dim": 64,
-                    "distribution": "multivariatenormal",
-                    "device": device,
-                    "initial_log_std": 0.,
-                },
+        },
+        "worker_kwargs": {
+            "action_exploration_method": "distribution",
+            "device": T.device("cuda" if T.cuda.is_available() else "cpu"),
+        },
+        "train_kwargs": {
+            "num_steps": int(5e5),
+            "batch_size": 2048,
+            "minibatch_size": 256,
+        },
+        "network": {
+            "type": "ac_network",
+            "kwargs": {
+                "distribution": "normal",
+                "initial_log_std": 0.,
             },
-        "HalfCheetah-v5":
-            {
-                "ppo": {
-                    "gamma_": 0.99,
-                    "lambda_": 0.95,
-                    "entropy_beta_": 0.01,
-                    "entropy_decay": 0.95,
-                    "device": device,
-                    "lr": 3e-4,
-                    "num_epochs": 10,
-                    "clip_epsilon": 0.2,
-                },
-                "worker_kwargs": {
-                    "num_envs": 32,
-                    "action_exploration_method": "distribution",
-                    "device": device,
-                    # "env_experiment_name": "HalfCheetah-v5",
-                },
-                "train_kwargs": {
-                    "num_steps": int(1e6),
-                    "batch_size": 2048,
-                    "minibatch_size": 256,
-                },
-                "env": {
-                    "id": "HalfCheetah-v5",
-                    "vectorization_mode": "sync",
-                },
-                "network_kwargs": {
-                    "hidden_dim": 32,
-                    "distribution": "normal",
-                    "device": device,
-                    "initial_log_std": 0.,
-                },
-            },
-        "BipedalWalker-v3-hardcore":
-            {
-                "ppo": {
-                    "gamma_": 0.99,
-                    "lambda_": 0.95,
-                    "critic_coef_": 0.5,
-                    "entropy_beta_": 0.01,
-                    "entropy_decay": 0.95,
-                    "device": device,
-                    "lr": 3e-4,
-                    "num_epochs": 10,
-                    "clip_epsilon": 0.2,
-                },
-                "worker_kwargs": {
-                    "num_envs": 8,
-                    "action_exploration_method": "distribution",
-                    "device": device
-                },
-                "train_kwargs": {
-                    "num_steps": int(1e7),
-                    "batch_size": 2048,
-                    "minibatch_size": 256,
-                },
-                "env": {
-                    "id": "BipedalWalker-v3",
-                    "hardcore": True,
-                    "vectorization_mode": "async",
-                },
-                "network_kwargs": {
-                    "hidden_dim": 64,
-                    "distribution": "multivariatenormal",
-                    "device": device,
-                    "initial_log_std": 0.,
-                },
-            },
-        "CarRacing-v3":
-            {
-                "ppo": {
-                    "gamma_": 0.99,
-                    "lambda_": 0.95,
-                    "critic_coef_": 0.5,
-                    "entropy_beta_": 0.01,
-                    "num_epochs": 10,
-                    "clip_epsilon": 0.2,
-                    "device": device,
-                    "lr": 3e-4,
-                },
-
-                "worker_kwargs": {
-                    "num_envs": 1,
-                    "action_exploration_method": "distribution",
-                    "device": device
-                },
-                
-                "train_kwargs": {
-                    "num_steps": int(1e6),
-                    "batch_size": 256,
-                    "minibatch_size": 64,
-                },
-                "env": {
-                    "id": "CarRacing-v3",
-                    "vectorization_mode": "async",
-                    "domain_randomize": True,
-                    "continuous": True,
-                },
-                "network_kwargs": {
-                    "channels": 256,
-                    "backbone_type": "simple_cv",
-                    "distribution": "multivariatenormal",
-                    "device": device,
-                    "initial_log_std": 0.,
-                },
-            },
+        }
     }
 
-    def __init__(self, experiment_name: str):
-        self.experiment_name = experiment_name
-    
+    @property
     def get_config(self) -> dict[str, Any]:
-        return self.config.get(self.experiment_name, {})
+        return self.config

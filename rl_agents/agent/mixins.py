@@ -11,14 +11,14 @@ from typing import Tuple, Generator, NamedTuple, Any
 
 from utils.utils import step_return_discounting
 from memory.replay_buffer import ReplayBuffer
-from models.models import Observation, ActionOutput
+from models.models import Observation, ActionOutput, ActionSpaceType
 
 
 class PolicyMixin(ABC):
     def __init__(
         self,
-        action_space: Space,
         num_actions: int,
+        action_space_type: ActionSpaceType,
         device: T.device = T.device('cpu'),
         gamma_: float = 0.99,
         lambda_: float = 1,
@@ -31,7 +31,6 @@ class PolicyMixin(ABC):
         self.lambda_ = lambda_
         self.num_actions = num_actions
         self.device = device
-        self.action_space = action_space
         self.loss_fn = loss_fn
         self.buffer: ReplayBuffer
         if self.action_network is None:
@@ -54,15 +53,6 @@ class PolicyMixin(ABC):
 
     def _action_sample_from_distribution(self, dist: Distribution) -> T.Tensor:
         action = dist.sample()
-        high = getattr(self.action_space, "high", None)
-        low = getattr(self.action_space, "low", None)
-        if high is not None and low is not None:
-            high = T.tensor(high, device=self.device)
-            low = T.tensor(low, device=self.device)
-            action = action.clamp(
-                low + 1e-6,
-                high - 1e-6
-            )
         
         return action
 
@@ -81,19 +71,11 @@ class PolicyMixin(ABC):
 
     def _action_egreedy(self, epsilon_: float, logits: T.Tensor, dist: Distribution) -> T.Tensor:
         if random.random() > epsilon_:
-            if isinstance(dist, Categorical):
-                action = logits.argmax(keepdim=True)
-            else:
-                action = self._action_sample_from_distribution(dist)
+            action = logits.argmax(keepdim=True)
         else:
             # Handle vectorized environments by sampling for each environment
             batch_size = logits.shape[0] if logits.ndim > 1 else 1
-            if batch_size > 1:
-                # Sample actions for each environment in the batch
-                random_actions = [self.action_space.sample() for _ in range(batch_size)]
-                action = T.tensor(random_actions, device=self.device, dtype=T.float32)
-            else:
-                action = T.tensor(self.action_space.sample(), device=self.device, dtype=T.float32)
+            pass
         
         return action
 
@@ -114,8 +96,10 @@ class PolicyMixin(ABC):
             action = self._action_egreedy(epsilon_=epsilon_, logits=logits, dist=output.dist)
         elif method == "best":
             action = self._action_best_from_distribution(dist=output.dist)
-        else:
+        elif method == "distribution":
             action = self._action_sample_from_distribution(dist=output.dist)
+        else:
+            raise ValueError(f"Unknown method: {method}")
         logprob = output.dist.log_prob(action)
         action_output = ActionOutput(
             action=action,
@@ -146,7 +130,6 @@ class PolicyMixin(ABC):
 
     def _preprocess_batch(self, batch: Observation) -> Observation:
         state = T.as_tensor(batch.state, dtype=T.float32)
-        next_state = T.as_tensor(batch.next_state, dtype=T.float32)
         logits = T.as_tensor(batch.logits, dtype=T.float32)
         action = T.as_tensor(
             batch.action,
@@ -158,7 +141,6 @@ class PolicyMixin(ABC):
         log_probs = T.as_tensor(batch.log_probs, dtype=T.float32)
         preprocessed_batch = type(batch)(
             state=state,
-            next_state=next_state,
             logits=logits,
             action=action,
             reward=reward,

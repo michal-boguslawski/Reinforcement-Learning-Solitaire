@@ -4,7 +4,6 @@ import torch.nn.functional as F
 from torch.distributions import Categorical, Normal, Distribution, TransformedDistribution, AffineTransform, TanhTransform, Independent, MultivariateNormal
 
 from models.models import A2COutput
-from .cv import SimpleConvNetwork
 from .flat import MLPNetwork
 from .head import ActorCriticHead
 
@@ -12,7 +11,6 @@ from .head import ActorCriticHead
 class ActorCriticNetwork(nn.Module):
     backbone_type_dict = {
         "mlp": MLPNetwork,
-        "simple_cv": SimpleConvNetwork
     }
     
     head_type_dict = {
@@ -49,8 +47,8 @@ class ActorCriticNetwork(nn.Module):
         
         self.distribution = distribution
         self.initial_log_std = initial_log_std
-        self.high = high
-        self.low = low
+        self.high = T.as_tensor(high, device=device)
+        self.low = T.as_tensor(low, device=device)
 
         self._setup()
         
@@ -124,8 +122,11 @@ class ActorCriticNetwork(nn.Module):
             )
         return dist
 
+    def _feature_extractor(self, input_tensor: T.Tensor) -> T.Tensor:
+        return self.backbone(input_tensor)
+
     def forward(self, input_tensor: T.Tensor) -> A2COutput:
-        x = self.backbone(input_tensor)
+        x = self._feature_extractor(input_tensor)
 
         actor_out, critic_out = self.head(x)
 

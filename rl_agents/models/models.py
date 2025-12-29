@@ -1,13 +1,13 @@
 import gymnasium as gym
-from typing import NamedTuple
+from typing import NamedTuple, Literal, Tuple
 import numpy as np
 import torch as T
 from torch.distributions import Distribution
 
+ActionSpaceType = Literal["discrete", "continuous"]
 
 class Observation(NamedTuple):
     state: T.Tensor
-    next_state: T.Tensor
     logits: T.Tensor
     action: T.Tensor
     reward: T.Tensor
@@ -39,8 +39,8 @@ class OnPolicyMinibatch(NamedTuple):
     log_probs: T.Tensor
 
 class EnvDetails(NamedTuple):
-    state_dim: int
     action_dim: int
-    action_space: gym.Space
+    state_dim: Tuple[int, ...]
+    action_space_type: ActionSpaceType
     action_low: T.Tensor | None
     action_high: T.Tensor | None

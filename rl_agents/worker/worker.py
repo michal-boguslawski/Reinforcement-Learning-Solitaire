@@ -1,32 +1,49 @@
-from gymnasium.spaces import Discrete
+from gymnasium.vector import VectorEnv
 import numpy as np
 import torch as T
+import torch.nn as nn
 from tqdm import tqdm
 from typing import Any
 
 from agent.base import BasePolicy
 from agent.on_policy import OnPolicy, A2CPolicy, PPOPolicy, SarsaPolicy
 from envs.env_setup import make_env, make_vec
-import torch.nn as nn
+from envs.utils import get_env_vec_details
+from models.models import ActionSpaceType, EnvDetails
+from network.general import ActorCriticNetwork, MLPNetwork
 
 
 np.set_printoptions(linewidth=1000)
 
 
 class Worker:
+    env: VectorEnv
+    action_space_type: ActionSpaceType
+    env_details: EnvDetails
+    agent: BasePolicy
+    i: int
+    losses_list: list[float]
+    train_step: int
+    batch_size: int
+    minibatch_size: int
+    epsilon: float
+
     policy_dict = {
         "a2c": A2CPolicy,
         "ppo": PPOPolicy,
         "sarsa": SarsaPolicy,
     }
+    
+    network_dict = {
+        "ac_network": ActorCriticNetwork
+    }
 
     def __init__(
         self,
         experiment_name: str,
-        num_envs: int,
-        network: nn.Module,
-        policy_name: str,
-        policy_kwargs: dict[str, Any],
+        env_config: dict[str, Any],
+        policy_config: dict[str, Any],
+        network_config: dict[str, Any] = {},
         action_exploration_method: str = "egreedy",
         device: T.device = T.device("cpu"),
         epsilon_start_: float = 1.,
@@ -35,38 +52,51 @@ class Worker:
         *args,
         **kwargs
     ):
-        if policy_name not in self.policy_dict:
-            raise ValueError(f"Policy {policy_name} not supported")
-
-        if not isinstance(network, nn.Module):
-            raise TypeError(f"Expected nn.Module, got {type(network)}")
-
-        try:
-            self.agent: BasePolicy = self.policy_dict[policy_name](
-                network=network,
-                **policy_kwargs
-            )
-        except Exception as e:
-            raise RuntimeError(f"Failed to initialize {policy_name} policy: {e}")
         self.experiment_name = experiment_name
         self.device = device
-        self.num_envs = num_envs
-        self.env = make_vec(self.experiment_name, num_envs=num_envs, device=device)
-        self.env_discrete_type = isinstance(self.env.action_space, Discrete)
-
         self.epsilon_start_ = epsilon_start_
         self.epsilon_decay_factor_ = epsilon_decay_factor_
         self.temperature_start_ = temperature_start_
-        
-        # training vars
-        self.i: int = 0
-        self.losses_list = []
-        self.train_step: int = 1
-        self.batch_size: int = 32
-        self.minibatch_size: int = 32
-        self.epsilon: float = 1.
         self.action_exploration_method = action_exploration_method
-    
+
+        self._setup_env(env_config)
+        self._setup_network(network_config, device)
+        self._setup_policy(policy_config)
+
+    def _setup_env(self, env_config: dict[str, Any]) -> None:
+        self.env = make_vec(**env_config)
+        self.env_details = get_env_vec_details(self.env)
+        self.action_space_type = self.env_details.action_space_type
+
+    def _setup_network(self, network_config: dict[str, Any], device: T.device = T.device("cpu")) -> None:
+        network_type = network_config.get("type", "ac_network")
+        if network_type is None or network_type not in self.network_dict:
+            raise ValueError(f"Network {network_type} not supported")
+
+        network_kwargs = network_config.get("kwargs", {})
+        self.network = self.network_dict[network_type](
+            input_shape=self.env_details.state_dim,
+            num_actions=self.env_details.action_dim,
+            low=self.env_details.action_low,
+            high=self.env_details.action_high,
+            device=device,
+            **network_kwargs
+        )
+
+    def _setup_policy(self, policy_config: dict[str, Any]) -> None:
+        policy_type = policy_config.get("type", "a2c")
+        if policy_type is None or policy_type not in self.policy_dict:
+            raise ValueError(f"Policy {policy_type} not supported")
+
+        policy_kwargs = policy_config.get("kwargs", {})
+        self.agent = self.policy_dict[policy_type](
+            network=self.network,
+            num_actions=self.env_details.action_dim,
+            action_space_type=self.action_space_type,
+            device=self.device,
+            **policy_kwargs
+        )
+
     def _reset_training_vars(
         self,
         train_step: int,
@@ -84,14 +114,14 @@ class Worker:
         self.timesteps = timesteps
         
         self.state, _ = self.env.reset()
-        self.total_reward = T.zeros(self.num_envs, device=self.device)
+        self.total_reward = T.zeros(len(self.state))
 
     def _train_one_step(self):
         try:
-            state = self.state  # .to(T.float)
+            state = self.state.to(self.device)
             action_output = self.agent.action(method=self.action_exploration_method, state=state, epsilon_=self.epsilon)
             action = action_output.action
-            if self.env_discrete_type:
+            if self.action_space_type == "discrete":
                 # For discrete actions, convert to scalar for single env or keep tensor for multiple envs
                 action = action.item() if action.numel() == 1 else action.detach().cpu().numpy()
             else:
@@ -111,7 +141,6 @@ class Worker:
         
         record = {
             "state": state,
-            "next_state": next_state,
             "logits": action_output.logits,
             "action": action,
             "reward": reward,
@@ -197,8 +226,8 @@ class Worker:
                 )
             recent_rewards.clear()
             recent_losses.clear()
-            if num_step % 100_000 == 0:
-                self._eval_record_video(num_step=num_step)
+            # if num_step % 100_000 == 0:
+            #     self._eval_record_video(num_step=num_step)
         except Exception as e:
             print(f"Error printing results: {e}")
             raise e

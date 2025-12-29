@@ -64,13 +64,12 @@ def make_env(
 
 
 def make_vec(
-    experiment_name: str,
+    id: str,
     num_envs: int,
-    device: T.device = T.device('cpu'),
+    *args,
+    **kwargs
 ):
-    config = Config(experiment_name).get_config()
-    env_details = config.get("env", {})
-    env_config = EnvConfig(env_details.get("id")).get_config()
+    env_config = EnvConfig(id).get_config()
     wrappers = []
     wrappers_config = env_config.get("wrappers")
     if wrappers_config:
@@ -87,15 +86,17 @@ def make_vec(
         # Fix lambda closure issue by using default parameter
         envs = gym.make_vec(
             # id=env_details.get("env_name"),
+            id=id,
             num_envs=num_envs,
             # vectorization_mode=env_details.get("vectorization_mode", "sync"),
             vector_kwargs=None,
             wrappers=wrappers,
-            **env_details
+            *args,
+            **kwargs
         )
         envs = vec_wrappers.DtypeObservation(envs, np.float32)
-        envs = vec_wrappers.NumpyToTorch(envs, device=device)
+        envs = vec_wrappers.NumpyToTorch(envs)
     except Exception as e:
-        raise RuntimeError(f"Failed to create vectorized environment '{experiment_name}' with {num_envs} envs: {e}")
+        raise RuntimeError(f"Failed to create vectorized environment '{id}' with {num_envs} envs: {e}")
     
     return envs

@@ -14,8 +14,7 @@ class MLPNetwork(nn.Module):
         activation_fn: str = "tanh"
     ):
         super().__init__()
-        assert isinstance(input_shape, int)
-        self.input_shape = input_shape
+        self.input_shape = input_shape if isinstance(input_shape, int) else input_shape[0]
         self.hidden_dims = hidden_dims
         self.num_layers = num_layers
         self.channels = channels
