@@ -1,10 +1,4 @@
-experiment_name: MountainCarContinuous-PPO
-
-env_kwargs:
-  id: MountainCarContinuous-v0
-  vectorization_mode: async
-  num_envs: 8
-
+# PPO
 policy:
   type: ppo
   kwargs:
@@ -19,17 +13,8 @@ policy:
     exploration_method: distribution
     advantage_normalize: global
 
-worker_kwargs:
-  device: auto
-  record_step: 50000
-
-train_kwargs:
-  num_steps: 200000
-  batch_size: 2048
-  minibatch_size: 256
-
 network:
-  type: ac_network
+  type: mlp_network
   kwargs:
     distribution: normal
     initial_log_std: 0.

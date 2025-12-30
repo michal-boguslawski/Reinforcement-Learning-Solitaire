@@ -14,6 +14,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
         self,
         action_space_type: ActionSpaceType,
         exploration_method: str,
+        advantage_normalize: str | None = None,
         num_epochs: int = 1,
         gamma_: float = 0.99,
         lambda_: float = 1.,
@@ -34,6 +35,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
                 *args,
                 **kwargs
             )
+            self.advantage_normalize = advantage_normalize
             self.buffer = ReplayBuffer(device=device)
             self.device = device
             self.num_epochs = num_epochs
@@ -45,19 +47,16 @@ class OnPolicy(PolicyMixin, BasePolicy):
         if not batch:
             return
         losses = []
+        batches = self._prepare_batches(batch)
         for _ in range(self.num_epochs):
-            minibatches = self._generate_minibatches(batch=batch, minibatch_size=minibatch_size)
+            minibatches = self._generate_minibatches(minibatch_size=minibatch_size, **batches)
             for minibatch in minibatches:
                 loss = self.calculate_loss(minibatch)
                 losses.append(loss)
 
         return [np.mean(column).item() for column in zip(*losses)]
 
-    def _generate_minibatches(
-        self,
-        batch: Observation,
-        minibatch_size: int = 64
-    ) -> Generator[OnPolicyMinibatch, None, None]:
+    def _prepare_batches(self, batch: Observation) -> dict[str, T.Tensor]:
         batch = self._preprocess_batch(batch=batch)
         
         try:
@@ -83,20 +82,43 @@ class OnPolicy(PolicyMixin, BasePolicy):
         except (IndexError, RuntimeError, ValueError) as e:
             raise RuntimeError(f"Failed to compute advantages: {e}")
 
+        if self.advantage_normalize == "global":
+            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-6)
+        
+        return {
+            "returns": returns.flatten(0, 1),
+            "advantages": advantages.flatten(0, 1),
+            "states": batch.state[:, :-1].flatten(0, 1),
+            "actions": batch.action[:, :-1].flatten(0, 1),
+            "log_probs": batch.log_probs[:, :-1].flatten(0, 1)
+        }
+
+    def _generate_minibatches(
+        self,
+        returns: T.Tensor,
+        advantages: T.Tensor,
+        states: T.Tensor,
+        actions: T.Tensor,
+        log_probs: T.Tensor,
+        minibatch_size: int = 64
+    ) -> Generator[OnPolicyMinibatch, None, None]:
         batch_size = int(np.prod(returns.shape))
         indices = T.arange(0, batch_size, device=self.device)
         minibatch_size = min(batch_size, minibatch_size)
+
         for start in range(0, batch_size, minibatch_size):
             end = min(start + minibatch_size, batch_size - 1)
             mb_idx = indices[start:end]
-            batch_advantages = advantages.flatten(0, 1)[mb_idx]
-            batch_advantages = (batch_advantages - batch_advantages.mean()) / (batch_advantages.std() + 1e-6)
+            batch_advantages = advantages[mb_idx]
+
+            if self.advantage_normalize == "batch":
+                batch_advantages = (batch_advantages - batch_advantages.mean()) / (batch_advantages.std() + 1e-6)
             yield OnPolicyMinibatch(
-                states=batch.state[:, :-1].flatten(0, 1)[mb_idx],
-                returns=returns.flatten(0, 1)[mb_idx],
-                actions=batch.action[:, :-1].flatten(0, 1)[mb_idx],
+                states=states[mb_idx],
+                returns=returns[mb_idx],
+                actions=actions[mb_idx],
                 advantages=batch_advantages,
-                log_probs=batch.log_probs[:, :-1].flatten(0, 1)[mb_idx]
+                log_probs=log_probs[mb_idx]
             )
 
 
@@ -245,6 +267,7 @@ class PPOPolicy(OnPolicy):
         network: nn.Module,
         action_space_type: ActionSpaceType,
         exploration_method: str = "distribution",
+        advantage_normalize: str | None = None,
         gamma_: float = 0.99,
         lambda_: float = 1,
         value_loss_coef: float = 0.5,
@@ -265,6 +288,7 @@ class PPOPolicy(OnPolicy):
             lambda_=lambda_,
             exploration_method=exploration_method,
             action_space_type=action_space_type,
+            advantage_normalize=advantage_normalize,
             loss_fn=loss_fn,
             lr=lr,
             num_epochs=num_epochs,

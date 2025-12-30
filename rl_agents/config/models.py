@@ -20,6 +20,7 @@ class PolicyPPOKwargs(BaseModel):
     num_epochs: int = Field(10, ge=1)
     clip_epsilon: float = Field(0.2)
     exploration_method: Literal["distribution", "egreedy", "best"]
+    advantage_normalize: Literal["batch", "global"] | None
 
 
 class PolicyConfig(BaseModel):
@@ -29,6 +30,7 @@ class PolicyConfig(BaseModel):
 
 class WorkerConfig(BaseModel):
     device: Literal["auto", "cpu", "cuda"]
+    record_step: int = Field(100_000, ge=10_000)
 
 
 class TrainConfig(BaseModel):

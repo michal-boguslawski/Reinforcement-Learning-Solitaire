@@ -62,6 +62,6 @@ class NoMovementInvPunishmentRewardWrapper(gym.RewardWrapper):
         obs, reward, terminated, truncated, info = self.env.step(action)
         reward = float(reward)
         inv_obs = 1 / (np.abs(obs) + 1e-6)
-        reward += (inv_obs.clip(0, 100) * self.punishment).sum().item()
+        reward -= (inv_obs.clip(0, 100) * self.punishment).sum().item()
 
         return obs, reward, terminated, truncated, info

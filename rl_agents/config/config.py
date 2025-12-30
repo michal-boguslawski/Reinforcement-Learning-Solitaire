@@ -21,14 +21,18 @@ class EnvConfig:
             {
                 "wrappers":
                     {
-                        "terminal_bonus": {
-                            "truncated_bonus": -10
-                        },
+                        # "terminal_bonus": {
+                        #     "truncated_bonus": -10
+                        # },
                         "power_obs_reward": {
-                            "pow_factors": [0, 5],
-                            "abs_factors": [0, 0.05],
-                            "decay_factor": 0.999,
-                        }
+                            "pow_factors": [0, 50],
+                            "abs_factors": [0, 0.5],
+                            "decay_factor": 0.9,
+                        },
+                        "scale_reward": {
+                            "scale_factor": 0.1,
+                            "loc_factor": 0.
+                        },
                     }
             },
         "Acrobot-v1":

@@ -49,6 +49,7 @@ class Worker:
         epsilon_start_: float = 1.,
         epsilon_decay_factor_: float = 1.,
         temperature_start_: float = 1.,
+        record_step: int = 100_000,
         *args,
         **kwargs
     ):
@@ -57,6 +58,7 @@ class Worker:
         self.epsilon_start_ = epsilon_start_
         self.epsilon_decay_factor_ = epsilon_decay_factor_
         self.temperature_start_ = temperature_start_
+        self.record_step = record_step
 
         self._setup_env(env_config)
         self._setup_network(network_config, self.device)
@@ -204,8 +206,13 @@ class Worker:
             
             if num_step % 10_000 == 0:
                 self._print_results(num_step, rewards_list)
+            # Record video
+            if num_step % self.record_step == 0:
+                self._eval_record_video(num_step=num_step)
 
         self._print_results(num_steps, rewards_list)
+        self._eval_record_video(num_step=num_steps)
+        
         self.env.close()
 
     def _print_results(self, num_step: int, rewards_list: list[float]) -> None:
@@ -222,9 +229,6 @@ class Worker:
             recent_rewards.clear()
             recent_losses.clear()
 
-            # Record video
-            if num_step % 100_000 == 0:
-                self._eval_record_video(num_step=num_step)
         except Exception as e:
             print(f"Error printing results: {e}")
             raise e
@@ -270,8 +274,8 @@ class Worker:
         if action_output and action_output.dist:
             try:
                 if "covariance_matrix" in dir(action_output.dist.base_dist):  # type: ignore
-                    print("Covariance matrix \n", action_output.dist.base_dist.covariance_matrix[0].numpy())  # type: ignore
+                    print("Covariance matrix \n", action_output.dist.base_dist.covariance_matrix[0].cpu().numpy())  # type: ignore
                 else:
-                    print("Standard deviation \n", action_output.dist.base_dist.stddev[0].numpy())  # type: ignore
+                    print("Standard deviation \n", action_output.dist.base_dist.stddev[0].cpu().numpy())  # type: ignore
             except AttributeError:
                 pass

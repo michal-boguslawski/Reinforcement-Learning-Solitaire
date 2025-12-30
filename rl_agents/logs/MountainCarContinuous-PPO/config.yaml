@@ -1,0 +1,30 @@
+env_kwargs:
+  id: MountainCarContinuous-v0
+  num_envs: 8
+  vectorization_mode: async
+experiment_name: MountainCarContinuous-PPO
+network:
+  kwargs:
+    distribution: normal
+    initial_log_std: 0.0
+  type: ac_network
+policy:
+  kwargs:
+    advantage_normalize: global
+    clip_epsilon: 0.2
+    entropy_coef: 0.001
+    entropy_decay: 0.99
+    exploration_method: distribution
+    gamma: 0.995
+    lambda_: 0.95
+    lr: 0.0003
+    num_epochs: 10
+    value_loss_coef: 0.5
+  type: ppo
+train_kwargs:
+  batch_size: 2048
+  minibatch_size: 256
+  num_steps: 200000
+worker_kwargs:
+  device: auto
+  record_step: 50000
