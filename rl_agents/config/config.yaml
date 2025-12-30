@@ -29,7 +29,11 @@ train_kwargs:
   minibatch_size: 256
 
 network:
-  type: ac_network
   kwargs:
-    distribution: normal
     initial_log_std: 0.
+    num_features: 64
+    backbone_name: mlp
+    feature_extractor_name: shared
+    head_name: actor_critic
+    policy_name: actor_critic
+    distribution: normal

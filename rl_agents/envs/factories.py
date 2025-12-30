@@ -1,27 +1,16 @@
 import gymnasium as gym
-from gymnasium.wrappers import NumpyToTorch, RecordVideo, TransformReward, DtypeObservation
-from gymnasium.vector import SyncVectorEnv
+from gymnasium.wrappers import NumpyToTorch, RecordVideo, DtypeObservation
 import gymnasium.wrappers.vector as vec_wrappers
 import numpy as np
 import torch as T
-from typing import Tuple, Callable, Any, Dict
+from typing import Any, Dict
 
-from .wrappers import TerminalBonusWrapper, PowerObsRewardWrapper, NoMovementInvPunishmentRewardWrapper
+from .registry import WRAPPERS
 from config.config import EnvConfig
 
 
-wrappers_dict: Dict[str, Callable] = {
-    "scale_reward": lambda env, scale_factor, loc_factor: 
-        TransformReward(env, lambda r: scale_factor * r + loc_factor),
-    "terminal_bonus": TerminalBonusWrapper,
-    "power_obs_reward": PowerObsRewardWrapper,
-    "clip_action": gym.wrappers.ClipAction,
-    "record_video": RecordVideo,
-}
-
-
 def make_env(
-    env_config: dict[str, Any],
+    env_config: Dict[str, Any],
     record: bool = False,
     video_folder: str = "logs/videos",
     name_prefix: str = "eval"
@@ -59,7 +48,7 @@ def make_vec(
     wrappers_config = env_config.get("wrappers")
     if wrappers_config:
         for wrapper_name, wrapper_kwargs in wrappers_config.items():
-            wrapper = wrappers_dict.get(wrapper_name, None)
+            wrapper = WRAPPERS.get(wrapper_name, None)
             if wrapper is None:
                 raise ValueError(f"Unknown wrapper '{wrapper_name}'")
             wrappers.append(lambda env, w=wrapper, kw=wrapper_kwargs: w(env=env, **kw))

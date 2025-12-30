@@ -39,14 +39,23 @@ class TrainConfig(BaseModel):
     minibatch_size: int
 
 
-class ACNetworkKwargs(BaseModel):
-    distribution: Literal["normal"]
-    initial_log_std: float
+class NetworkKwargs(BaseModel):
+    num_features: int = 64
+
+    backbone_name: str = "mlp"
+    backbone_kwargs: dict = {}
+    feature_extractor_name: str = "shared"
+
+    head_name: str = "actor_critic"
+    head_kwargs: dict = {}
+    policy_name: str = "actor_critic"
+
+    distribution: Literal["normal", "mvp", "categorical"] = "normal"
+    initial_log_std: float = 0.0
 
 
 class NetworkConfig(BaseModel):
-    type: Literal["ac_network"]
-    kwargs: ACNetworkKwargs
+    kwargs: NetworkKwargs
 
 
 # ---------- Root config ----------

@@ -4,7 +4,6 @@ import os
 import sys
 
 from config.config import ExperimentConfig
-from network.general import ActorCriticNetwork, MLPNetwork
 from worker.worker import Worker
 
 

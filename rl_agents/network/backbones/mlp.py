@@ -1,14 +1,14 @@
 import torch as T
 import torch.nn as nn
 
-from .utils import activation_fns_dict
+from ..utils import activation_fns_dict
 
 
 class MLPNetwork(nn.Module):
     def __init__(
         self,
         input_shape: int | tuple,
-        channels: int = 64,
+        num_features: int = 64,
         hidden_dims: int = 64,
         num_layers: int = 2,
         activation_fn: str = "tanh"
@@ -17,7 +17,7 @@ class MLPNetwork(nn.Module):
         self.input_shape = input_shape if isinstance(input_shape, int) else input_shape[0]
         self.hidden_dims = hidden_dims
         self.num_layers = num_layers
-        self.channels = channels
+        self.num_features = num_features
         self.activation_fn = activation_fns_dict[activation_fn]
 
         self._build_network()
@@ -28,7 +28,7 @@ class MLPNetwork(nn.Module):
             modules.append(
                 nn.Linear(
                     in_features=self.input_shape if i == 0 else self.hidden_dims,
-                    out_features=self.channels if i == (self.num_layers - 1) else self.hidden_dims
+                    out_features=self.num_features if i == (self.num_layers - 1) else self.hidden_dims
                 )
             )
             modules.append(self.activation_fn())

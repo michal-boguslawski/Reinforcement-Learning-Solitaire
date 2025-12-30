@@ -7,10 +7,10 @@ from typing import Any, Literal
 
 from agent.base import BasePolicy
 from agent.on_policy import OnPolicy, A2CPolicy, PPOPolicy, SarsaPolicy
-from envs.env_setup import make_env, make_vec
+from envs.factories import make_env, make_vec
 from envs.utils import get_env_vec_details
 from models.models import ActionSpaceType, EnvDetails
-from network.general import ActorCriticNetwork, MLPNetwork
+from network.model import RLModel
 from .utils import get_device
 
 
@@ -33,10 +33,6 @@ class Worker:
         "a2c": A2CPolicy,
         "ppo": PPOPolicy,
         "sarsa": SarsaPolicy,
-    }
-    
-    network_dict = {
-        "ac_network": ActorCriticNetwork
     }
 
     def __init__(
@@ -71,12 +67,8 @@ class Worker:
         self.action_space_type = self.env_details.action_space_type
 
     def _setup_network(self, network_config: dict[str, Any], device: T.device = T.device("cpu")) -> None:
-        network_type = network_config.get("type", "ac_network")
-        if network_type is None or network_type not in self.network_dict:
-            raise ValueError(f"Network {network_type} not supported")
-
         network_kwargs = network_config.get("kwargs", {})
-        self.network = self.network_dict[network_type](
+        self.network = RLModel(
             input_shape=self.env_details.state_dim,
             num_actions=self.env_details.action_dim,
             low=self.env_details.action_low,
