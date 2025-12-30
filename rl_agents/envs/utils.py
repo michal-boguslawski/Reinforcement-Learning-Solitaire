@@ -1,8 +1,7 @@
+import inspect
+
 from gymnasium.spaces import Discrete
 from gymnasium.vector import VectorEnv
-import numpy as np
-import torch as T
-from .env_setup import make_env
 from models.models import EnvDetails
 
 
@@ -22,3 +21,14 @@ def get_env_vec_details(env: VectorEnv):
         action_low=low,
         action_high=high,
     )
+
+
+def clean_kwargs(func, kwargs: dict):
+    """
+    Return a new dict containing only keys that appear
+    in the function's signature.
+    """
+    sig = inspect.signature(func)
+    valid = set(sig.parameters.keys())
+
+    return {k: v for k, v in kwargs.items() if k in valid}

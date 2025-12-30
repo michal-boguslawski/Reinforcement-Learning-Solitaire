@@ -3,7 +3,7 @@ import numpy as np
 import torch as T
 import torch.nn as nn
 from tqdm import tqdm
-from typing import Any
+from typing import Any, Literal
 
 from agent.base import BasePolicy
 from agent.on_policy import OnPolicy, A2CPolicy, PPOPolicy, SarsaPolicy
@@ -11,6 +11,7 @@ from envs.env_setup import make_env, make_vec
 from envs.utils import get_env_vec_details
 from models.models import ActionSpaceType, EnvDetails
 from network.general import ActorCriticNetwork, MLPNetwork
+from .utils import get_device
 
 
 np.set_printoptions(linewidth=1000)
@@ -22,7 +23,7 @@ class Worker:
     env_details: EnvDetails
     agent: BasePolicy
     i: int
-    losses_list: list[float]
+    losses_list: list[list[float] | float]
     train_step: int
     batch_size: int
     minibatch_size: int
@@ -44,8 +45,7 @@ class Worker:
         env_config: dict[str, Any],
         policy_config: dict[str, Any],
         network_config: dict[str, Any] = {},
-        action_exploration_method: str = "egreedy",
-        device: T.device = T.device("cpu"),
+        device: T.device | Literal["auto", "cpu", "cuda"] = T.device("cpu"),
         epsilon_start_: float = 1.,
         epsilon_decay_factor_: float = 1.,
         temperature_start_: float = 1.,
@@ -53,17 +53,17 @@ class Worker:
         **kwargs
     ):
         self.experiment_name = experiment_name
-        self.device = device
+        self.device = get_device(device)
         self.epsilon_start_ = epsilon_start_
         self.epsilon_decay_factor_ = epsilon_decay_factor_
         self.temperature_start_ = temperature_start_
-        self.action_exploration_method = action_exploration_method
 
         self._setup_env(env_config)
-        self._setup_network(network_config, device)
-        self._setup_policy(policy_config)
+        self._setup_network(network_config, self.device)
+        self._setup_policy(policy_config, self.device)
 
     def _setup_env(self, env_config: dict[str, Any]) -> None:
+        self.env_config = env_config
         self.env = make_vec(**env_config)
         self.env_details = get_env_vec_details(self.env)
         self.action_space_type = self.env_details.action_space_type
@@ -83,7 +83,7 @@ class Worker:
             **network_kwargs
         )
 
-    def _setup_policy(self, policy_config: dict[str, Any]) -> None:
+    def _setup_policy(self, policy_config: dict[str, Any], device: T.device = T.device("cpu")) -> None:
         policy_type = policy_config.get("type", "a2c")
         if policy_type is None or policy_type not in self.policy_dict:
             raise ValueError(f"Policy {policy_type} not supported")
@@ -91,9 +91,8 @@ class Worker:
         policy_kwargs = policy_config.get("kwargs", {})
         self.agent = self.policy_dict[policy_type](
             network=self.network,
-            num_actions=self.env_details.action_dim,
             action_space_type=self.action_space_type,
-            device=self.device,
+            device=device,
             **policy_kwargs
         )
 
@@ -119,7 +118,7 @@ class Worker:
     def _train_one_step(self):
         try:
             state = self.state.to(self.device)
-            action_output = self.agent.action(method=self.action_exploration_method, state=state, epsilon_=self.epsilon)
+            action_output = self.agent.action(state=state, epsilon_=self.epsilon)
             action = action_output.action
             if self.action_space_type == "discrete":
                 # For discrete actions, convert to scalar for single env or keep tensor for multiple envs
@@ -204,10 +203,6 @@ class Worker:
                 tq_iter.set_postfix_str(f"temp mean rewards {temp_reward_mean:.2f}")
             
             if num_step % 10_000 == 0:
-                try:
-                    self.agent.step_entropy_decay()  # type: ignore
-                except AttributeError:
-                    pass
                 self._print_results(num_step, rewards_list)
 
         self._print_results(num_steps, rewards_list)
@@ -226,19 +221,22 @@ class Worker:
                 )
             recent_rewards.clear()
             recent_losses.clear()
-            # if num_step % 100_000 == 0:
-            #     self._eval_record_video(num_step=num_step)
+
+            # Record video
+            if num_step % 100_000 == 0:
+                self._eval_record_video(num_step=num_step)
         except Exception as e:
             print(f"Error printing results: {e}")
             raise e
 
     def _eval_record_video(self, num_step: int) -> None:
         env = make_env(
-            self.experiment_name,
-            device=self.device,
+            env_config=self.env_config,
             record=True,
             video_folder = f"logs/{self.experiment_name}/videos/num_step_{num_step}",
         )
+        
+        # Initialize evaluation metrics
         total_reward = 0.
         step_count = 0
         state, _ = env.reset()
@@ -246,11 +244,13 @@ class Worker:
         truncated = False
         terminated = False
         action_output = None
-        env_discrete_type = isinstance(env.action_space, Discrete)
+        env_discrete_type = self.action_space_type == "discrete"
+
+        # Start env inference
         self.agent.eval_mode()
         while not done:
             state = T.as_tensor(state, dtype=T.float32, device=self.device).unsqueeze(0)
-            action_output = self.agent.action(method="best", state=state)
+            action_output = self.agent.action(state=state, training=False)
             action = action_output.action.squeeze(0)
             action = action.item() if env_discrete_type else action.detach().cpu().numpy()
             next_state, reward, terminated, truncated, _ = env.step(

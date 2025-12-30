@@ -7,8 +7,7 @@ import torch as T
 from typing import Tuple, Callable, Any, Dict
 
 from .wrappers import TerminalBonusWrapper, PowerObsRewardWrapper, NoMovementInvPunishmentRewardWrapper
-from config.config import EnvConfig, Config
-import inspect
+from config.config import EnvConfig
 
 
 wrappers_dict: Dict[str, Callable] = {
@@ -21,30 +20,16 @@ wrappers_dict: Dict[str, Callable] = {
 }
 
 
-def clean_kwargs(func, kwargs: dict):
-    """
-    Return a new dict containing only keys that appear
-    in the function's signature.
-    """
-    sig = inspect.signature(func)
-    valid = set(sig.parameters.keys())
-
-    return {k: v for k, v in kwargs.items() if k in valid}
-
-
 def make_env(
-    experiment_name: str,
-    device: T.device = T.device('cpu'),
+    env_config: dict[str, Any],
     record: bool = False,
     video_folder: str = "logs/videos",
     name_prefix: str = "eval"
 ) -> gym.Env:
-    config = Config(experiment_name).get_config()
-    env_details = config.get("env", {})
     env = gym.make(
         # id=env_details.get("env_name"),
         render_mode="rgb_array" if record else None,
-        **{k: v for k, v in env_details.items() if k != "vectorization_mode"}
+        **{k: v for k, v in env_config.items() if k not in  ["vectorization_mode", "num_envs"]}
         # **clean_kwargs(gym.make, env_details)
         # disable_env_checker=True,
         # apply_api_compatibility=True,

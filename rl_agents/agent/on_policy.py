@@ -1,11 +1,7 @@
-from gymnasium.spaces.space import Space
-from gymnasium.spaces.discrete import Discrete
 import numpy as np
 import torch as T
 import torch.nn as nn
-from torch.optim import Optimizer
-import random
-from typing import Generator, Tuple
+from typing import Generator, Tuple, Any
 
 from .base import BasePolicy
 from .mixins import PolicyMixin
@@ -14,9 +10,30 @@ from models.models import Observation, OnPolicyMinibatch, ActionSpaceType
 
 
 class OnPolicy(PolicyMixin, BasePolicy):
-    def __init__(self, num_epochs: int = 1, device: T.device = T.device('cpu'), *args, **kwargs):
+    def __init__(
+        self,
+        action_space_type: ActionSpaceType,
+        exploration_method: str,
+        num_epochs: int = 1,
+        gamma_: float = 0.99,
+        lambda_: float = 1.,
+        loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
+        device: T.device = T.device('cpu'),
+        lr: float = 1e-3,
+        *args,
+        **kwargs
+    ):
         try:
-            super().__init__(*args, **kwargs)
+            super().__init__(
+                action_space_type=action_space_type,
+                exploration_method=exploration_method,
+                gamma_=gamma_,
+                lambda_=lambda_,
+                lr=lr,
+                loss_fn=loss_fn,
+                *args,
+                **kwargs
+            )
             self.buffer = ReplayBuffer(device=device)
             self.device = device
             self.num_epochs = num_epochs
@@ -87,9 +104,8 @@ class SarsaPolicy(OnPolicy):
     def __init__(
         self, 
         network: nn.Module,
-        num_actions: int,
-        optimizer: Optimizer,
-        action_space: Space,
+        action_space_type: ActionSpaceType,
+        exploration_method: str = "egreedy",
         gamma_: float = 0.99,
         lambda_: float = 1,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
@@ -99,31 +115,31 @@ class SarsaPolicy(OnPolicy):
     ):
         super().__init__(
             device=device,
-            num_actions=num_actions,
             gamma_=gamma_,
             lambda_=lambda_,
-            action_space=action_space,
+            exploration_method=exploration_method,
+            action_space_type=action_space_type,
             loss_fn=loss_fn
         )
-        
         self.network = network
-        self.optimizer = optimizer
-        self.gamma_ = gamma_
-        self.lambda_ = lambda_
     
     @property
     def action_network(self) -> nn.Module:
         return self.network
         
-    def calculate_loss(self, batch: Tuple[T.Tensor, ...]) -> Tuple[float, ...]:
-        states, results, actions, _ = batch
+    def calculate_loss(self, batch: OnPolicyMinibatch) -> Tuple[float, ...]:
+        states, results, actions = (
+            batch.states,
+            batch.returns,
+            batch.actions
+        )
         
         output = self.network(states)
         logits = output.logits
         assert isinstance(logits, T.Tensor)
 
         q_values = logits.gather(dim=-1, index=actions).squeeze(-1)
-        
+
         loss = self.loss_fn(results, q_values)
         
         self.optimizer.zero_grad()
@@ -131,18 +147,19 @@ class SarsaPolicy(OnPolicy):
         nn.utils.clip_grad_norm_(self.network.parameters(), max_norm=1)
         self.optimizer.step()
         
-        return loss.item()
+        return (loss.item(), )
 
 
 class A2CPolicy(OnPolicy):
     def __init__(
         self, 
         network: nn.Module,
-        num_actions: int,
-        action_space: Space,
+        action_space_type: ActionSpaceType,
+        exploration_method: str = "distribution",
         gamma_: float = 0.99,
         lambda_: float = 1,
-        entropy_beta_: float = 0.01,
+        value_loss_coef: float = 0.5,
+        entropy_coef: float = 0.01,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         device: T.device = T.device('cpu'),
         lr: float = 1e-3,
@@ -152,16 +169,15 @@ class A2CPolicy(OnPolicy):
         self.network = network
         super().__init__(
             device=device,
-            num_actions=num_actions,
             gamma_=gamma_,
             lambda_=lambda_,
-            action_space=action_space,
+            exploration_method=exploration_method,
+            action_space_type=action_space_type,
             loss_fn=loss_fn,
             lr=lr,
         )
-        self.gamma_ = gamma_
-        self.lambda_ = lambda_
-        self.entropy_beta_ = entropy_beta_
+        self.value_loss_coef = value_loss_coef
+        self.entropy_coef = entropy_coef
     
     @property
     def action_network(self) -> nn.Module:
@@ -179,17 +195,11 @@ class A2CPolicy(OnPolicy):
 
         # calculation policy loss
         log_probs = output.dist.log_prob(actions)
-        if isinstance(self.action_space, Discrete):
+        if len(log_probs.shape) == 1:
             sum_log_probs = log_probs
         else:
-            # TransformedDistribution.log_prob() already sums across action dimensions
-            # Regular Normal distribution returns [batch_size, action_dim], needs summing
-            if hasattr(output.dist, 'transforms'):
-                # TransformedDistribution already returns summed log_prob
-                sum_log_probs = log_probs
-            else:
-                # Regular distribution, need to sum across action dimensions
-                sum_log_probs = log_probs.sum(-1)
+            sum_log_probs = log_probs.sum(-1)
+
         assert sum_log_probs.shape == returns.shape, "Wrong shapes of value"
         actor_loss = -(sum_log_probs * advantages.detach()).mean()
         
@@ -217,7 +227,7 @@ class A2CPolicy(OnPolicy):
             raise ValueError("Empty entropy tensor")
         entropy = entropy.mean()
 
-        loss = actor_loss + 0.5 * critic_loss - self.entropy_beta_ * entropy
+        loss = actor_loss + self.value_loss_coef * critic_loss - self.entropy_coef * entropy
 
         # backpropagation of the error
         self.optimizer.zero_grad()
@@ -233,12 +243,12 @@ class PPOPolicy(OnPolicy):
     def __init__(
         self, 
         network: nn.Module,
-        num_actions: int,
         action_space_type: ActionSpaceType,
+        exploration_method: str = "distribution",
         gamma_: float = 0.99,
         lambda_: float = 1,
-        critic_coef_: float = 0.5,
-        entropy_beta_: float = 0.01,
+        value_loss_coef: float = 0.5,
+        entropy_coef: float = 0.01,
         entropy_decay: float = 1.,
         num_epochs: int = 10,
         clip_epsilon: float = 0.2,
@@ -251,18 +261,16 @@ class PPOPolicy(OnPolicy):
         self.network = network
         super().__init__(
             device=device,
-            num_actions=num_actions,
             gamma_=gamma_,
             lambda_=lambda_,
+            exploration_method=exploration_method,
             action_space_type=action_space_type,
             loss_fn=loss_fn,
             lr=lr,
             num_epochs=num_epochs,
         )
-        self.gamma_ = gamma_
-        self.lambda_ = lambda_
-        self.critic_coef_ = critic_coef_
-        self.entropy_beta_ = entropy_beta_
+        self.value_loss_coef = value_loss_coef
+        self.entropy_coef = entropy_coef
         self.entropy_decay = entropy_decay
         self.clip_epsilon = clip_epsilon
     
@@ -271,7 +279,12 @@ class PPOPolicy(OnPolicy):
         return self.network
 
     def step_entropy_decay(self) -> None:
-        self.entropy_beta_ *= self.entropy_decay
+        self.entropy_coef *= self.entropy_decay
+
+    def train(self, minibatch_size: int = 64, **kwargs) -> list[float] | None:
+        output = super().train(minibatch_size, **kwargs)
+        self.step_entropy_decay()
+        return output
 
     def calculate_loss(self, batch: OnPolicyMinibatch) -> Tuple[float, ...]:
         states, returns, actions, advantages, old_log_probs = (
@@ -289,17 +302,11 @@ class PPOPolicy(OnPolicy):
         
         r_t = T.exp(log_probs - old_log_probs)
         
-        if isinstance(self.action_space, Discrete):
+        if len(r_t.shape) == 1:
             sum_r_t = r_t
         else:
-            # TransformedDistribution.log_prob() already sums across action dimensions
-            # Regular Normal distribution returns [batch_size, action_dim], needs summing
-            if hasattr(output.dist, 'transforms'):
-                # TransformedDistribution already returns summed log_prob
-                sum_r_t = r_t
-            else:
-                # Regular distribution, need to sum across action dimensions
-                sum_r_t = r_t.sum(-1)
+            sum_r_t = r_t.sum(-1)
+
         assert r_t.shape == returns.shape, "Wrong shapes of value"
         actor_loss = -(T.min(
             sum_r_t * advantages.detach(),
@@ -330,7 +337,7 @@ class PPOPolicy(OnPolicy):
             raise ValueError("Empty entropy tensor")
         entropy = entropy.mean()
 
-        loss = actor_loss + self.critic_coef_ * critic_loss - self.entropy_beta_ * entropy
+        loss = actor_loss + self.value_loss_coef * critic_loss - self.entropy_coef * entropy
 
         # backpropagation of the error
         self.optimizer.zero_grad()

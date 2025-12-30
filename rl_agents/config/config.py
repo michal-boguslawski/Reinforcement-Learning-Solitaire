@@ -1,5 +1,10 @@
+import os
+from pathlib import Path
 import torch as T
 from typing import Any
+import yaml
+
+from .models import ExperimentConfigModel
 
 
 class EnvConfig:
@@ -20,8 +25,8 @@ class EnvConfig:
                             "truncated_bonus": -10
                         },
                         "power_obs_reward": {
-                            "pow_factors": [0, 50],
-                            "abs_factors": [0, 0.5],
+                            "pow_factors": [0, 5],
+                            "abs_factors": [0, 0.05],
                             "decay_factor": 0.999,
                         }
                     }
@@ -71,44 +76,19 @@ class EnvConfig:
         return self.env_config.get(self.env_name, {})
 
 
-class Config:
-    config = {
-        "experiment_name": "MountainCarContinuous-PPO",
-        "env_kwargs": {
-            "id": "MountainCarContinuous-v0",
-            "vectorization_mode": "async",
-            "num_envs": 8,
-        },
-        "policy": {
-            "type": "ppo",
-            "kwargs": {
-                "gamma_": 0.99,
-                "lambda_": 0.95,
-                "entropy_beta_": 0.02,
-                "entropy_decay": 0.95,
-                "lr": 3e-4,
-                "num_epochs": 10,
-                "clip_epsilon": 0.2,
-            },
-        },
-        "worker_kwargs": {
-            "action_exploration_method": "distribution",
-            "device": T.device("cuda" if T.cuda.is_available() else "cpu"),
-        },
-        "train_kwargs": {
-            "num_steps": int(5e5),
-            "batch_size": 2048,
-            "minibatch_size": 256,
-        },
-        "network": {
-            "type": "ac_network",
-            "kwargs": {
-                "distribution": "normal",
-                "initial_log_std": 0.,
-            },
-        }
-    }
+class ExperimentConfig:
+    def __init__(self, config_path: str = os.path.join(Path(__file__).parent.absolute(), "config.yaml")):
+        self.config_path = config_path
+        self._load_config()
 
-    @property
+    def _load_config(self):
+        with open(self.config_path, "r") as f:
+            data = yaml.safe_load(f)
+        self.config = ExperimentConfigModel.model_validate(data)
+
     def get_config(self) -> dict[str, Any]:
-        return self.config
+        return self.config.model_dump()
+
+    def save_config(self, write_path: str):
+        with open(write_path, "w") as f:
+            yaml.dump(self.config.model_dump(), f)
