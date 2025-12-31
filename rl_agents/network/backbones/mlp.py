@@ -1,7 +1,7 @@
 import torch as T
 import torch.nn as nn
 
-from ..utils import activation_fns_dict
+from ..registry import ACTIVATION_FUNCTIONS
 
 
 class MLPNetwork(nn.Module):
@@ -18,7 +18,7 @@ class MLPNetwork(nn.Module):
         self.hidden_dims = hidden_dims
         self.num_layers = num_layers
         self.num_features = num_features
-        self.activation_fn = activation_fns_dict[activation_fn]
+        self.activation_fn = ACTIVATION_FUNCTIONS[activation_fn]
 
         self._build_network()
 
@@ -35,5 +35,5 @@ class MLPNetwork(nn.Module):
         self.network = nn.Sequential(*modules)
 
     def forward(self, input_tensor: T.Tensor) -> T.Tensor:
-        output_tensor = self.network(input_tensor)
-        return output_tensor
+        features = self.network(input_tensor)
+        return features

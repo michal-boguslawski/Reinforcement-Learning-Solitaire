@@ -46,22 +46,29 @@ class ReplayBuffer:
         if len(self.buffer) == 0:
             raise ValueError("Cannot get_all from empty buffer")
 
-        data = {}
+        field_names = [f.name for f in fields(Observation)]
+        columns = {name: [] for name in field_names}
+        has_none = {name: False for name in field_names}
 
         try:
-            for f in fields(Observation):
-                values = [getattr(item, f.name) for item in self.buffer]
+            # Single pass over buffer
+            for item in self.buffer:
+                for name in field_names:
+                    value = getattr(item, name)
+                    if value is None:
+                        has_none[name] = True
+                    columns[name].append(value)
 
-                # Skip optional / None fields (same behavior as before)
-                if any(v is None for v in values):
+            stacked = {}
+            for name, values in columns.items():
+                if has_none[name]:
                     continue
+                stacked[name] = T.stack(values, dim=1).to(self.device)
 
-                data[f.name] = T.stack(values, dim=0).to(self.device)
-
-            if not data:
+            if not stacked:
                 raise ValueError("No valid columns found in buffer data")
 
-            sample = Observation(**data)
+            sample = Observation(**stacked)
 
         except (RuntimeError, ValueError) as e:
             raise RuntimeError(f"Failed to stack buffer data: {e}")

@@ -1,14 +1,14 @@
-experiment_name: MountainCarContinuous-PPO
+experiment_name: CartPole-PPO
 
 env_kwargs:
-  id: MountainCarContinuous-v0
+  id: CartPole-v1
   vectorization_mode: async
   num_envs: 8
 
 policy:
   type: ppo
   kwargs:
-    gamma: 0.995
+    gamma: 0.99
     lambda_: 0.95
     value_loss_coef: 0.5
     entropy_coef: 0.001
@@ -17,7 +17,7 @@ policy:
     num_epochs: 10
     clip_epsilon: 0.2
     exploration_method: distribution
-    advantage_normalize: global
+    advantage_normalize: batch
 
 worker_kwargs:
   device: auto
@@ -25,15 +25,15 @@ worker_kwargs:
 
 train_kwargs:
   num_steps: 200000
-  batch_size: 2048
-  minibatch_size: 256
+  batch_size: 256
+  minibatch_size: 64
 
 network:
   kwargs:
-    initial_log_std: 0.
+    initial_log_std: -1.
     num_features: 64
     backbone_name: mlp
     feature_extractor_name: shared
     head_name: actor_critic
     policy_name: actor_critic
-    distribution: normal
+    distribution: categorical

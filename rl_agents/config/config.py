@@ -11,23 +11,23 @@ class EnvConfig:
     env_config = {
         "CartPole-v1":
             {
-                # "terminated_bonus": -100,
-                # "pow_factors": [-1, 0, -1000, 0],
-                # "abs_factors": [-0.1, 0, -1, 0],
-                # "loc_reward": -0.9,
-                # "scale_reward": 0.01,
+                "wrappers": {
+                    "terminal_bonus": {
+                        "terminated_bonus": -100
+                    },
+                    "power_obs_reward": {
+                        "abs_factors": [-0.1, 0, -1, 0],
+                    },
+                }
             },
         "MountainCarContinuous-v0":
             {
                 "wrappers":
                     {
-                        # "terminal_bonus": {
-                        #     "truncated_bonus": -10
-                        # },
                         "power_obs_reward": {
                             "pow_factors": [0, 50],
                             "abs_factors": [0, 0.5],
-                            "decay_factor": 0.9,
+                            "decay_factor": 0.5,
                         },
                         "scale_reward": {
                             "scale_factor": 0.1,

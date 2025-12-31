@@ -46,9 +46,6 @@ class PowerObsRewardWrapper(gym.RewardWrapper):
             reward += (np.abs(obs) * self.abs_factors).sum().item() * self.decay
         if terminated:
             self.decay *= self.decay_factor
-        elif truncated:
-            self.decay /= (self.decay_factor ** (1/10))
-            self.decay = min(self.decay, 1)
         
         return obs, reward, terminated, truncated, info
 

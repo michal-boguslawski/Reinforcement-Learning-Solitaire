@@ -1,7 +1,6 @@
 import os
 import shutil
 import os
-import sys
 
 from config.config import ExperimentConfig
 from worker.worker import Worker
