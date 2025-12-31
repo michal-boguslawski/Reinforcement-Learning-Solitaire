@@ -5,7 +5,7 @@ from ..torch_registry import ACTIVATION_FUNCTIONS
 
 
 class SimpleCNN(nn.Module):
-    def __init__(self, input_shape: tuple, num_features: int = 512, activation_fn: str = "relu"):
+    def __init__(self, input_shape: tuple, num_features: int = 64, activation_fn: str = "relu"):
         super().__init__()
         self.input_shape = input_shape
         self.num_features = num_features

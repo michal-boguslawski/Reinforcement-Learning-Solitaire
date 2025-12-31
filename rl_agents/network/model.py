@@ -43,8 +43,8 @@ class RLModel(nn.Module):
         
         self.distribution = distribution
         self.initial_log_std = initial_log_std
-        self.high = T.as_tensor(high, device=device) if high else high
-        self.low = T.as_tensor(low, device=device) if low else low
+        self.high = T.as_tensor(high, device=device) if high is not None else high
+        self.low = T.as_tensor(low, device=device) if low is not None else low
 
         self._setup()
         

@@ -1,7 +1,7 @@
-experiment_name: CartPole-PPO
+experiment_name: CarRacing-PPO
 
 env_kwargs:
-  id: CartPole-v1
+  id: CarRacing-v3
   vectorization_mode: async
   num_envs: 8
 
@@ -21,18 +21,18 @@ policy:
 
 worker_kwargs:
   device: auto
-  record_step: 10000
+  record_step: 50000
 
 train_kwargs:
-  num_steps: 50000
-  batch_size: 256
-  minibatch_size: 64
+  num_steps: 500000
+  batch_size: 1024
+  minibatch_size: 128
 
 network:
   kwargs:
     initial_log_std: -1.
-    num_features: 64
-    backbone_name: mlp
+    num_features: 512
+    backbone_name: simple_cnn
     feature_extractor_name: shared
     head_name: actor_critic
     policy_name: actor_critic

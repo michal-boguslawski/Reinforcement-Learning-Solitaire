@@ -20,11 +20,11 @@ def get_env_vec_details(env: VectorEnv):
         action_dim = action_space.shape[-1]
 
     low = getattr(action_space, "low", None)
-    if low:
+    if low is not None:
         low = low[0]
 
     high = getattr(action_space, "high", None)
-    if high:
+    if high is not None:
         high = high[0]
     
     return EnvDetails(

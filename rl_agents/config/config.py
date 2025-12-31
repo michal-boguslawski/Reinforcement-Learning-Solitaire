@@ -46,9 +46,13 @@ class EnvConfig:
                 # "scale_reward": 2/16.2736044,
                 # "loc_reward": -1,
             },
-        "LunarLander-v3":{
-            
-        },
+        "LunarLander-v3":
+            {
+                "wrappers":
+                    {
+                        "transpose_image": None
+                    }
+            },
         "BipedalWalker-v3":
             {
                 "wrappers":

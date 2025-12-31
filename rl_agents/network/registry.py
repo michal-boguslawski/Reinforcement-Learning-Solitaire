@@ -13,6 +13,7 @@ from .policies.a2c import ActorCriticPolicy
 
 # Backbones
 from .backbones.mlp import MLPNetwork
+from .backbones.cnn import SimpleCNN
 
 # Feature extractors
 from .feature_extractors.shared import SharedFeatureExtractor
@@ -42,7 +43,8 @@ POLICIES = {
 
 
 BACKBONES = {
-    "mlp": MLPNetwork
+    "mlp": MLPNetwork,
+    "simple_cnn": SimpleCNN
 }
 
 

@@ -42,7 +42,7 @@ class TrainConfig(BaseModel):
 class NetworkKwargs(BaseModel):
     num_features: int = 64
 
-    backbone_name: str = "mlp"
+    backbone_name: Literal["mlp", "simple_cnn"] = "mlp"
     backbone_kwargs: dict = {}
     feature_extractor_name: str = "shared"
 
