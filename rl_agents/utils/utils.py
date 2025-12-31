@@ -20,10 +20,10 @@ def step_return_discounting(
         T.Tensor: discounted returns, shape [N, T]
     """
     
-    returns = T.zeros_like(values, dtype=T.float)
+    returns = T.zeros_like(values, dtype=T.float32)
     T_steps = values.shape[-1]
     if next_values is None:
-        next_values = T.zeros(returns.shape[:-1])
+        next_values = T.zeros_like(returns[:, 0], dtype=T.float32)
     g = next_values
     
     for t in reversed(range(T_steps)):

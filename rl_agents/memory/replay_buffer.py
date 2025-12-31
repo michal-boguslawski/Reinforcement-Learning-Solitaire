@@ -1,4 +1,5 @@
 from collections import deque, namedtuple
+from dataclasses import fields
 import numpy as np
 import random
 import torch as T
@@ -44,14 +45,33 @@ class ReplayBuffer:
     def get_all(self) -> Observation:
         if len(self.buffer) == 0:
             raise ValueError("Cannot get_all from empty buffer")
-        
+
+        field_names = [f.name for f in fields(Observation)]
+        columns = {name: [] for name in field_names}
+        has_none = {name: False for name in field_names}
+
         try:
-            sample = tuple(T.stack(column, dim=1).to(self.device) for column in zip(*self.buffer) if not any(v is None for v in column))
-            if len(sample) == 0:
+            # Single pass over buffer
+            for item in self.buffer:
+                for name in field_names:
+                    value = getattr(item, name)
+                    if value is None:
+                        has_none[name] = True
+                    columns[name].append(value)
+
+            stacked = {}
+            for name, values in columns.items():
+                if has_none[name]:
+                    continue
+                stacked[name] = T.stack(values, dim=1).to(self.device)
+
+            if not stacked:
                 raise ValueError("No valid columns found in buffer data")
-            sample = Observation(*sample)
+
+            sample = Observation(**stacked)
+
         except (RuntimeError, ValueError) as e:
             raise RuntimeError(f"Failed to stack buffer data: {e}")
-        
+
         self.buffer.clear()
         return sample

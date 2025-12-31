@@ -4,12 +4,13 @@ import torch as T
 from torch import nn
 from typing import Tuple, Any
 
+from memory.replay_buffer import ReplayBuffer
 from models.models import ActionOutput, OnPolicyMinibatch
 
 
 class BasePolicy(ABC):
     @abstractmethod
-    def action(self, state: T.Tensor, method: str, *args, **kwargs) -> ActionOutput:
+    def action(self, state: T.Tensor, training: bool = True, *args, **kwargs) -> ActionOutput:
         pass
 
     @abstractmethod
