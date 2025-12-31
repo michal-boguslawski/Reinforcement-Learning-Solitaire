@@ -63,7 +63,7 @@ class ReplayBuffer:
             for name, values in columns.items():
                 if has_none[name]:
                     continue
-                stacked[name] = T.stack(values, dim=1).to(self.device)
+                stacked[name] = T.stack(values, dim=1)
 
             if not stacked:
                 raise ValueError("No valid columns found in buffer data")

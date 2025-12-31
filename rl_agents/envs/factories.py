@@ -6,6 +6,7 @@ import torch as T
 from typing import Any, Dict
 
 from .registry import WRAPPERS
+from .wrappers import VecTransposeObservationWrapper, TransposeObservationWrapper
 from config.config import EnvConfig
 
 
@@ -13,17 +14,21 @@ def make_env(
     env_config: Dict[str, Any],
     record: bool = False,
     video_folder: str = "logs/videos",
-    name_prefix: str = "eval"
+    name_prefix: str = "eval",
 ) -> gym.Env:
     env = gym.make(
         # id=env_details.get("env_name"),
         render_mode="rgb_array" if record else None,
-        **{k: v for k, v in env_config.items() if k not in  ["vectorization_mode", "num_envs"]}
+        **{k: v for k, v in env_config.items() if k not in  ["vectorization_mode", "num_envs", "permute_observations"]}
         # **clean_kwargs(gym.make, env_details)
         # disable_env_checker=True,
         # apply_api_compatibility=True,
     )
     env = DtypeObservation(env, np.float32)
+    if env_config.get("permute_observations"):
+        env = TransposeObservationWrapper(env)
+
+    env_config = EnvConfig(env_config["id"]).get_config()
 
     if record:
         env = RecordVideo(
@@ -40,6 +45,7 @@ def make_env(
 def make_vec(
     id: str,
     num_envs: int,
+    permute_observations: bool = False,
     *args,
     **kwargs
 ):
@@ -70,6 +76,8 @@ def make_vec(
         )
         envs = vec_wrappers.DtypeObservation(envs, np.float32)
         envs = vec_wrappers.NumpyToTorch(envs)
+        if permute_observations:
+            envs = VecTransposeObservationWrapper(envs)
     except Exception as e:
         raise RuntimeError(f"Failed to create vectorized environment '{id}' with {num_envs} envs: {e}")
     

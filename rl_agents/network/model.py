@@ -56,7 +56,7 @@ class RLModel(nn.Module):
         self._setup_policy()
 
     def _setup_dist(self):
-        self.log_std = nn.Parameter(T.full((self.num_actions, self.num_actions), self.initial_log_std))
+        self.log_std = nn.Parameter(T.full((self.num_actions, ), self.initial_log_std))
         self.raw_scale_tril = nn.Parameter(T.eye(self.num_actions))
         self.dist = make_action_distribution(
             dist_name=self.distribution,

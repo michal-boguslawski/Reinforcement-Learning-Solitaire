@@ -48,10 +48,7 @@ class EnvConfig:
             },
         "LunarLander-v3":
             {
-                "wrappers":
-                    {
-                        "transpose_image": None
-                    }
+                
             },
         "BipedalWalker-v3":
             {
@@ -75,9 +72,17 @@ class EnvConfig:
                             }
                     }                
             },
-        "RacingCar-v3":
+        "CarRacing-v3":
             {
-                
+                "wrappers": {
+                    "action_reward": {
+                            "abs_factors": [-0.1, 0.01, -0.01],
+                            "decay_factor": 0.99,
+                        },
+                    "terminal_bonus": {
+                        "truncated_bonus": -100
+                    },
+                }
             }
     }
 

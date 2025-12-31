@@ -1,11 +1,12 @@
 import os
 import shutil
+import torch as T
 
 from config.config import ExperimentConfig
 from worker.worker import Worker
 
 
-os.environ["MUJOCO_GL"] = "osmesa"
+os.environ["MUJOCO_GL"] = "egl" if T.cuda.is_available() else "osmesa"
 
 
 if __name__ == "__main__":

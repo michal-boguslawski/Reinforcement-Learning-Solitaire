@@ -8,6 +8,7 @@ class EnvConfig(BaseModel):
     id: str
     vectorization_mode: Literal["sync", "async"]
     num_envs: int
+    permute_observations: bool = False
 
 
 class PolicyPPOKwargs(BaseModel):

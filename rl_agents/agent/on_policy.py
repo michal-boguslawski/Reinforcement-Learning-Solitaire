@@ -86,11 +86,11 @@ class OnPolicy(PolicyMixin, BasePolicy):
             advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-6)
         
         return {
-            "returns": returns.flatten(0, 1),
-            "advantages": advantages.flatten(0, 1),
-            "states": batch.state[:, :-1].flatten(0, 1),
-            "actions": batch.action[:, :-1].flatten(0, 1),
-            "log_probs": batch.log_probs[:, :-1].flatten(0, 1)
+            "returns": returns.flatten(0, 1).contiguous(),
+            "advantages": advantages.flatten(0, 1).contiguous(),
+            "states": batch.state[:, :-1].flatten(0, 1).contiguous(),
+            "actions": batch.action[:, :-1].flatten(0, 1).contiguous(),
+            "log_probs": batch.log_probs[:, :-1].flatten(0, 1).contiguous()
         }
 
     def _generate_minibatches(

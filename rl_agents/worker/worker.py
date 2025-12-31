@@ -107,7 +107,7 @@ class Worker:
         self.timesteps = timesteps
         
         self.state, _ = self.env.reset()
-        self.total_reward = T.zeros(len(self.state))
+        self.total_reward = T.zeros(len(self.state), device=self.device)
 
     def _train_one_step(self):
         try:
@@ -116,21 +116,21 @@ class Worker:
             action = action_output.action
             if self.action_space_type == "discrete":
                 # For discrete actions, convert to scalar for single env or keep tensor for multiple envs
-                action = action.item() if action.numel() == 1 else action.detach().cpu().numpy()
+                env_action = action.item() if action.numel() == 1 else action.detach().cpu().numpy()
             else:
                 # For continuous actions, always convert to numpy array
-                action = action.detach().cpu().numpy()
+                env_action = action.detach().cpu().numpy()
             next_state, reward, terminated, truncated, _ = self.env.step(
-                action
+                env_action
             )
         except Exception as e:
             print(f"Error during episode step: {e}")
             raise e
         
         done = T.logical_or(terminated, truncated)
-        reward = T.as_tensor(reward)
-        done = T.as_tensor(done, dtype=T.bool)
-        action = T.as_tensor(action)
+        reward = T.as_tensor(reward, device=self.device)
+        done = T.as_tensor(done, dtype=T.bool, device=self.device)
+        action = T.as_tensor(action, device=self.device)
         
         record = {
             "state": state,
@@ -190,13 +190,13 @@ class Worker:
             done = self._train_one_step()
             if sum(done):
                 total_rewards = self.total_reward * done
-                rewards_list.append(total_rewards.sum() / done.sum())
+                rewards_list.append(total_rewards.sum().cpu() / done.sum().cpu())
                 self.total_reward *= T.logical_not(done)
 
                 temp_reward_mean = np.mean(rewards_list)
                 tq_iter.set_postfix_str(f"temp mean rewards {temp_reward_mean:.2f}")
             
-            if num_step % 10_000 == 0:
+            if num_step % 5_000 == 0:
                 self._print_results(num_step, rewards_list)
             # Record video
             if num_step % self.record_step == 0:

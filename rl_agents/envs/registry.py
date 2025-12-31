@@ -1,8 +1,8 @@
 
-from gymnasium.wrappers import RecordVideo, TransformReward, ClipAction, TransformObservation
+from gymnasium.wrappers import RecordVideo, TransformReward, ClipAction
 from typing import Callable, Dict
 
-from .wrappers import TerminalBonusWrapper, PowerObsRewardWrapper
+from .wrappers import TerminalBonusWrapper, PowerObsRewardWrapper, ActionPowerRewardWrapper
 
 
 WRAPPERS: Dict[str, Callable] = {
@@ -12,5 +12,5 @@ WRAPPERS: Dict[str, Callable] = {
     "power_obs_reward": PowerObsRewardWrapper,
     "clip_action": ClipAction,
     "record_video": RecordVideo,
-    "transpose_image": lambda env: TransformObservation(env, lambda obs: obs.transpose(2, 0, 1), None)
+    "action_reward": ActionPowerRewardWrapper,
 }

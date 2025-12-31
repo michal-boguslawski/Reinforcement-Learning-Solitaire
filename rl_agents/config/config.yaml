@@ -4,6 +4,7 @@ env_kwargs:
   id: CarRacing-v3
   vectorization_mode: async
   num_envs: 8
+  permute_observations: True
 
 policy:
   type: ppo
@@ -11,10 +12,10 @@ policy:
     gamma: 0.99
     lambda_: 0.95
     value_loss_coef: 0.5
-    entropy_coef: 0.001
+    entropy_coef: 0.01
     entropy_decay: 0.99
     lr: 0.0003
-    num_epochs: 10
+    num_epochs: 5
     clip_epsilon: 0.2
     exploration_method: distribution
     advantage_normalize: batch
@@ -25,8 +26,8 @@ worker_kwargs:
 
 train_kwargs:
   num_steps: 500000
-  batch_size: 1024
-  minibatch_size: 128
+  batch_size: 32
+  minibatch_size: 64
 
 network:
   kwargs:
@@ -36,4 +37,4 @@ network:
     feature_extractor_name: shared
     head_name: actor_critic
     policy_name: actor_critic
-    distribution: categorical
+    distribution: normal
