@@ -1,7 +1,7 @@
 import torch as T
 import torch.nn as nn
 
-from ..registry import ACTIVATION_FUNCTIONS
+from ..torch_registry import ACTIVATION_FUNCTIONS
 
 
 class SimpleCNN(nn.Module):

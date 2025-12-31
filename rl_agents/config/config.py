@@ -16,7 +16,8 @@ class EnvConfig:
                         "terminated_bonus": -100
                     },
                     "power_obs_reward": {
-                        "abs_factors": [-0.1, 0, -1, 0],
+                        "pow_factors": [-0.01, 0, -10, 0],
+                        "abs_factors": [-1, 0, -10, 0],
                     },
                 }
             },
@@ -45,6 +46,9 @@ class EnvConfig:
                 # "scale_reward": 2/16.2736044,
                 # "loc_reward": -1,
             },
+        "LunarLander-v3":{
+            
+        },
         "BipedalWalker-v3":
             {
                 "wrappers":

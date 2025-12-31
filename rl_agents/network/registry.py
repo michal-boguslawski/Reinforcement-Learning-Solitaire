@@ -1,5 +1,3 @@
-from torch import nn
-
 # Distributions
 from .distributions.categorical import CategoricalDistribution
 from .distributions.normal import NormalDistribution, MultivariateNormalDistribution
@@ -18,15 +16,6 @@ from .backbones.mlp import MLPNetwork
 
 # Feature extractors
 from .feature_extractors.shared import SharedFeatureExtractor
-
-
-ACTIVATION_FUNCTIONS = {
-    "tanh": nn.Tanh,
-    "relu": nn.ReLU,
-    "sigmoid": nn.Sigmoid,
-    "identity": nn.Identity,
-    "gelu": nn.GELU
-}
 
 
 DISTRIBUTIONS = {

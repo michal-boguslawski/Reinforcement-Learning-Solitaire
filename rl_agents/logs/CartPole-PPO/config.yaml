@@ -30,7 +30,7 @@ policy:
 train_kwargs:
   batch_size: 256
   minibatch_size: 64
-  num_steps: 200000
+  num_steps: 50000
 worker_kwargs:
   device: auto
-  record_step: 50000
+  record_step: 10000
