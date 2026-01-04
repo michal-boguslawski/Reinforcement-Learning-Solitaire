@@ -12,11 +12,9 @@ class SimpleCNN(nn.Module):
         self.activation = ACTIVATION_FUNCTIONS[activation_fn]
 
         self.network = nn.Sequential(
-            nn.Conv2d(input_shape[2], 32, 8, 4),
+            nn.Conv2d(input_shape[2], 6, 8, 4),
             self.activation(),
-            nn.Conv2d(32, 64, 4, 2),
-            self.activation(),
-            nn.Conv2d(64, 64, 3, 1),
+            nn.Conv2d(6, 16, 4, 4),
             self.activation(),
             nn.Flatten(),
             nn.LazyLinear(num_features),

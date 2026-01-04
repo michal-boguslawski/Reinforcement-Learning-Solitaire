@@ -75,13 +75,13 @@ class EnvConfig:
         "CarRacing-v3":
             {
                 "wrappers": {
-                    "action_reward": {
-                            "abs_factors": [-0.1, 0.01, -0.01],
-                            "decay_factor": 0.99,
-                        },
-                    "terminal_bonus": {
-                        "truncated_bonus": -100
-                    },
+                    # "action_reward": {
+                    #         "abs_factors": [-0.1, 0.01, -0.01],
+                    #         "decay_factor": 0.99,
+                    #     },
+                    # "terminal_bonus": {
+                    #     "truncated_bonus": -100
+                    # },
                 }
             }
     }
