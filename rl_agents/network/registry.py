@@ -6,10 +6,11 @@ from .distributions.normal import NormalDistribution, MultivariateNormalDistribu
 from .distributions.transforms import TanhAffineTransform
 
 # Heads
-from .heads.actor_critic import ActorCriticHead
+from .heads.actor_critic import ActorCriticHead, ActorHead
 
 # Policies
 from .policies.a2c import ActorCriticPolicy
+from .policies.actor import ActorPolicy
 
 # Backbones
 from .backbones.mlp import MLPNetwork
@@ -33,12 +34,14 @@ TRANSFORMS = {
 
 
 HEADS = {
-    "actor_critic": ActorCriticHead
+    "actor_critic": ActorCriticHead,
+    "actor": ActorHead,
 }
 
 
 POLICIES = {
-    "actor_critic": ActorCriticPolicy
+    "actor_critic": ActorCriticPolicy,
+    "actor": ActorPolicy,
 }
 
 

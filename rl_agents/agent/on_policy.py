@@ -68,6 +68,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
             else:
                 if batch.action.max() >= batch.logits.shape[-1]:
                     raise ValueError(f"Action index {batch.action.max()} out of bounds for logits shape {batch.logits.shape}")
+
                 state_values = batch.logits.gather(dim=-1, index=batch.action).squeeze(-1)
                 next_state_values = state_values[:, 1:]
 
@@ -130,11 +131,13 @@ class SarsaPolicy(OnPolicy):
         exploration_method: str = "egreedy",
         gamma_: float = 0.99,
         lambda_: float = 1,
+        value_loss_coef: float = 0.5,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         device: T.device = T.device('cpu'),
         *args,
         **kwargs
     ):
+        self.network = network
         super().__init__(
             device=device,
             gamma_=gamma_,
@@ -143,7 +146,7 @@ class SarsaPolicy(OnPolicy):
             action_space_type=action_space_type,
             loss_fn=loss_fn
         )
-        self.network = network
+        self.value_loss_coef = value_loss_coef
     
     @property
     def action_network(self) -> nn.Module:

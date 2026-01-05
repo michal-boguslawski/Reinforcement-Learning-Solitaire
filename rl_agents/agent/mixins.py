@@ -72,10 +72,12 @@ class PolicyMixin(ABC):
 
     def _action_egreedy(self, epsilon_: float, logits: T.Tensor, dist: Distribution) -> T.Tensor:
         if random.random() > epsilon_:
-            action = logits.argmax(keepdim=True)
+            action = logits.argmax(-1, keepdim=True)
         else:
             # Handle vectorized environments by sampling for each environment
-            batch_size = logits.shape[0] if logits.ndim > 1 else 1
+            if isinstance(dist, Categorical):
+                batch_size, n = dist.param_shape
+                action = T.randint(0, n, (batch_size, 1))
             pass
         
         return action

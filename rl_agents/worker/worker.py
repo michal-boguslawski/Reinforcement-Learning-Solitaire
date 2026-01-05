@@ -116,7 +116,8 @@ class Worker:
             action = action_output.action
             if self.action_space_type == "discrete":
                 # For discrete actions, convert to scalar for single env or keep tensor for multiple envs
-                env_action = action.item() if action.numel() == 1 else action.detach().cpu().numpy()
+                env_action = action.item() if action.numel() == 1 else action.detach().squeeze(-1).cpu().numpy()
+                
             else:
                 # For continuous actions, always convert to numpy array
                 env_action = action.detach().cpu().numpy()
