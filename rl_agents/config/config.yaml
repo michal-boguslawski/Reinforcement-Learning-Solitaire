@@ -3,7 +3,7 @@ experiment_name: CarRacing-PPO
 env_kwargs:
   id: CarRacing-v3
   vectorization_mode: async
-  num_envs: 16
+  num_envs: 24
   permute_observations: True
 
 policy:
@@ -13,7 +13,7 @@ policy:
     lambda_: 0.95
     value_loss_coef: 0.5
     entropy_coef: 0.01
-    entropy_decay: 0.999
+    entropy_decay: 1.
     lr: 0.0003
     num_epochs: 10
     clip_epsilon: 0.2
@@ -31,10 +31,9 @@ train_kwargs:
 
 network:
   kwargs:
-    initial_log_std: -1.
-    num_features: 128
+    num_features: 256
     backbone_name: simple_cnn
     feature_extractor_name: shared
     head_name: actor_critic
     policy_name: actor_critic
-    distribution: normal
+    distribution: mvn

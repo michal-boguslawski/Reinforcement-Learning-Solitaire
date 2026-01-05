@@ -75,6 +75,11 @@ class EnvConfig:
         "CarRacing-v3":
             {
                 "wrappers": {
+                    "actions_interactions":
+                        {
+                            "factors":
+                                {(0, 1): -1., (1, 2): -1.}
+                        }
                     # "action_reward": {
                     #         "abs_factors": [-0.1, 0.01, -0.01],
                     #         "decay_factor": 0.99,

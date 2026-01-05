@@ -6,16 +6,17 @@ from .base import ActionBaseDistribution
 
 
 class NormalDistribution(ActionBaseDistribution):
-    def __init__(self, log_std, *args, **kwargs):
+    def __init__(self, log_std: T.Tensor, *args, **kwargs):
         self.log_std = log_std
 
-    def __call__(self, logits) -> Distribution:
-        std = T.exp(self.log_std).expand_as(logits)
+    def __call__(self, logits: T.Tensor) -> Distribution:
+        log_std = self.log_std.clamp(-5, 2)
+        std = T.exp(log_std).expand_as(logits)
         return Independent(Normal(logits, std), 1)
 
 
 class MultivariateNormalDistribution(ActionBaseDistribution):
-    def __init__(self, raw_scale_tril, *args, **kwargs):
+    def __init__(self, raw_scale_tril: T.Tensor, *args, **kwargs):
         self.raw_scale_tril = raw_scale_tril
 
     def _build_scale_tril(self) -> T.Tensor:
@@ -25,7 +26,7 @@ class MultivariateNormalDistribution(ActionBaseDistribution):
         L[range(len(diag)), range(len(diag))] = diag
         return L
 
-    def __call__(self, logits) -> Distribution:
+    def __call__(self, logits: T.Tensor) -> Distribution:
         return MultivariateNormal(
             loc=logits,
             scale_tril=self._build_scale_tril()

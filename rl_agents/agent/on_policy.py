@@ -322,7 +322,8 @@ class PPOPolicy(OnPolicy):
         output = self.network(states)
 
         # calculation policy loss
-        log_probs = output.dist.log_prob(actions)
+        log_probs = output.dist.log_prob(actions).clamp(-10, 10)
+        log_probs = log_probs.nan_to_num(0)
         
         r_t = T.exp(log_probs - old_log_probs)
         
@@ -338,8 +339,7 @@ class PPOPolicy(OnPolicy):
         )).mean()
         
         if T.isnan(log_probs.cpu()).any():
-            print("actor_loss:", actor_loss.cpu().item())
-            print("Actions:", actions.cpu().mean())
+            print("Actions:", actions.cpu().mean(0))
             print("log_probs:", log_probs.cpu())
             print("advantages:", advantages.cpu())
             print("results:", returns.cpu())

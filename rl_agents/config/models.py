@@ -51,7 +51,7 @@ class NetworkKwargs(BaseModel):
     head_kwargs: dict = {}
     policy_name: str = "actor_critic"
 
-    distribution: Literal["normal", "mvp", "categorical"] = "normal"
+    distribution: Literal["normal", "mvn", "categorical"] = "normal"
     initial_log_std: float = 0.0
 
 

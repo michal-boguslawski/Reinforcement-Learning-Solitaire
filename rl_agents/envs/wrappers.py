@@ -102,3 +102,33 @@ class ActionPowerRewardWrapper(gym.RewardWrapper):
             self.decay *= self.decay_factor
         
         return obs, reward, terminated, truncated, info
+
+
+class ActionInteractionWrapper(gym.RewardWrapper):
+    def __init__(
+        self,
+        env: gym.Env,
+        factors: dict,
+    ):
+        super().__init__(env)
+        self.factors = self._parse_factors(factors)
+        print(f"PowerObsRewardWrapper attached with params {self.factors}")
+
+    def _parse_factors(self, factors: dict) -> np.ndarray:
+        env_shape = self.env.action_space.shape
+        if env_shape is None:
+            raise ValueError("No valid shape for environment")
+        n = env_shape[-1]
+        squared_tensor = np.zeros((n, n))
+        for key, value in factors.items():
+            squared_tensor[key[0], key[1]] = value
+        return squared_tensor
+
+    def step(self, action: np.ndarray):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        reward = float(reward)
+        if self.factors is not None:
+            abs_action = np.abs(action)
+            reward += float((abs_action @ self.factors.T) @ abs_action.T)
+        
+        return obs, reward, terminated, truncated, info
