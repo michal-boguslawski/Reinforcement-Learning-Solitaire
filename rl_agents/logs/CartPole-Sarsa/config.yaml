@@ -21,7 +21,13 @@ policy:
     clip_epsilon: 0.2
     entropy_coef: 0.01
     entropy_decay: 1
-    exploration_method: egreedy
+    exploration_method:
+      kwargs:
+        decay_step_: 1000
+        epsilon_decay_: 0.9
+        epsilon_start_: 1.0
+        min_epsilon_: 0.02
+      name: egreedy
     gamma: 0.99
     lambda_: 0.0
     lr: 0.001
@@ -34,6 +40,4 @@ train_kwargs:
   num_steps: 100000
 worker_kwargs:
   device: auto
-  epsilon_decay_factor_: 0.99995
-  epsilon_start_: 1.0
   record_step: 20000

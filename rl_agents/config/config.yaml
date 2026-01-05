@@ -12,12 +12,17 @@ policy:
     lambda_: 0
     value_loss_coef: 0.5
     lr: 0.001
-    exploration_method: egreedy
+    exploration_method: 
+      name: egreedy
+      kwargs:
+        epsilon_start_: 1.
+        epsilon_decay_: 0.9
+        decay_step_: 1000
+        min_epsilon_: 0.02
 
 worker_kwargs:
   device: auto
   record_step: 20000
-  epsilon_decay_factor_: 0.99995
 
 train_kwargs:
   num_steps: 100000

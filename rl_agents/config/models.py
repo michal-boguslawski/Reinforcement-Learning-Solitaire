@@ -11,7 +11,12 @@ class EnvConfig(BaseModel):
     permute_observations: bool = False
 
 
-class PolicyPPOKwargs(BaseModel):
+class ExplorationMethod(BaseModel):
+    name: Literal["distribution", "egreedy"]
+    kwargs: dict = {}
+
+
+class PolicyKwargs(BaseModel):
     gamma: float = Field(0.99, ge=0, le=1)
     lambda_: float = Field(0.95, ge=0, le=1)
     value_loss_coef: float = Field(0.5)
@@ -20,20 +25,18 @@ class PolicyPPOKwargs(BaseModel):
     lr: float = Field(0.001)
     num_epochs: int = Field(10, ge=1)
     clip_epsilon: float = Field(0.2)
-    exploration_method: Literal["distribution", "egreedy", "best"]
     advantage_normalize: Literal["batch", "global"] | None = None
+    exploration_method: ExplorationMethod
 
 
 class PolicyConfig(BaseModel):
     type: Literal["ppo", "sarsa"]
-    kwargs: PolicyPPOKwargs
+    kwargs: PolicyKwargs
 
 
 class WorkerConfig(BaseModel):
     device: Literal["auto", "cpu", "cuda"]
     record_step: int = Field(100_000, ge=10_000)
-    epsilon_decay_factor_: float = Field(1., ge=0, le=1)
-    epsilon_start_: float = Field(1., ge=0, le=1)
 
 
 class TrainConfig(BaseModel):

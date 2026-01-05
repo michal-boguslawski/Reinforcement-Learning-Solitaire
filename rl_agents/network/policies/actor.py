@@ -12,7 +12,7 @@ class ActorPolicy(Policy):
         self.head = head
         self.dist = dist
 
-    def forward(self, features: T.Tensor) -> ActorOutput:
+    def forward(self, features: T.Tensor, temperature: float = 1.) -> ActorOutput:
         logits = self.head(features)
-        dist = self.dist(logits)
+        dist = self.dist(logits = logits / temperature)
         return ActorOutput(logits, dist)
