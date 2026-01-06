@@ -12,7 +12,8 @@ class ActorCriticPolicy(Policy):
         self.head = head
         self.dist = dist
 
-    def forward(self, features: T.Tensor) -> ActorCriticOutput:
+    def forward(self, features: T.Tensor, temperature: float = 1.) -> ActorCriticOutput:
         actor_logits, critic_value = self.head(features)
         dist = self.dist(logits=actor_logits)
+        dist = self.dist(logits = actor_logits / temperature)
         return ActorCriticOutput(actor_logits, critic_value, dist)

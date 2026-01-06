@@ -7,5 +7,5 @@ from ..model_outputs import ActorCriticOutput, ActorOutput
 
 class Policy(nn.Module, ABC):
     @abstractmethod
-    def forward(self, features: T.Tensor) -> ActorCriticOutput | ActorOutput:
+    def forward(self, features: T.Tensor, temperature: float) -> ActorCriticOutput | ActorOutput:
         pass

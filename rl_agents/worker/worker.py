@@ -42,18 +42,12 @@ class Worker:
         policy_config: dict[str, Any],
         network_config: dict[str, Any] = {},
         device: T.device | Literal["auto", "cpu", "cuda"] = T.device("cpu"),
-        epsilon_start_: float = 1.,
-        epsilon_decay_factor_: float = 1.,
-        temperature_start_: float = 1.,
         record_step: int = 100_000,
         *args,
         **kwargs
     ):
         self.experiment_name = experiment_name
         self.device = get_device(device)
-        self.epsilon_start_ = epsilon_start_
-        self.epsilon_decay_factor_ = epsilon_decay_factor_
-        self.temperature_start_ = temperature_start_
         self.record_step = record_step
 
         self._setup_env(env_config)
@@ -95,28 +89,26 @@ class Worker:
         train_step: int,
         batch_size: int,
         minibatch_size: int,
-        epsilon_start: float,
         timesteps: int | None = None
     ):
-        self.i = 0
         self.losses_list = []
         self.train_step = batch_size if isinstance(self.agent, OnPolicy) else train_step
         self.batch_size = batch_size
         self.minibatch_size = minibatch_size
-        self.epsilon = epsilon_start
         self.timesteps = timesteps
         
         self.state, _ = self.env.reset()
         self.total_reward = T.zeros(len(self.state), device=self.device)
 
-    def _train_one_step(self):
+    def _step(self):
         try:
             state = self.state.to(self.device)
-            action_output = self.agent.action(state=state, epsilon_=self.epsilon)
+            action_output = self.agent.action(state=state)
             action = action_output.action
             if self.action_space_type == "discrete":
                 # For discrete actions, convert to scalar for single env or keep tensor for multiple envs
-                env_action = action.item() if action.numel() == 1 else action.detach().cpu().numpy()
+                env_action = action.item() if action.numel() == 1 else action.detach().squeeze(-1).cpu().numpy()
+                
             else:
                 # For continuous actions, always convert to numpy array
                 env_action = action.detach().cpu().numpy()
@@ -143,26 +135,21 @@ class Worker:
         }
         
         self.agent.update_buffer(record)
-        self.i += 1
-
-        if (
-            (self.i % self.train_step == 0 and self.i > 0) or 
-            (isinstance(self.agent, OnPolicy) and (len(self.agent.buffer) == self.batch_size))
-        ):
-            loss = self.agent.train(
-                batch_size=self.batch_size,
-                minibatch_size=self.minibatch_size,
-                timesteps = self.timesteps
-            )
-            if loss:
-                self.losses_list.append(loss)
         
         self.state = next_state
         
         self.total_reward += reward
 
-        self.epsilon *= self.epsilon_decay_factor_
         return done
+
+    def _train_agent(self):
+        loss = self.agent.train(
+            batch_size=self.batch_size,
+            minibatch_size=self.minibatch_size,
+            timesteps = self.timesteps
+        )
+        if loss:
+            self.losses_list.append(loss)
 
     def train(
         self,
@@ -180,14 +167,17 @@ class Worker:
             train_step=train_step,
             batch_size=batch_size,
             minibatch_size=minibatch_size,
-            epsilon_start=self.epsilon_start_,
             timesteps=timesteps,
         )
         
         tq_iter = tqdm(range(int(num_steps)), desc=f"Training {self.experiment_name}", unit="steps")
         
         for num_step in tq_iter:
-            done = self._train_one_step()
+            done = self._step()
+
+            if (num_step % self.train_step == 0 and num_step > 0):
+                self._train_agent()
+
             if sum(done):
                 total_rewards = self.total_reward * done
                 rewards_list.append(total_rewards.sum().cpu() / done.sum().cpu())
@@ -214,8 +204,8 @@ class Worker:
             recent_losses = self.losses_list if self.losses_list else [(0,)]
             mean_losses = [np.mean(column).round(8).item() for column in zip(*recent_losses)]
             print(
-                f"Step {num_step}, i {self.i}, Avg Reward {np.mean(recent_rewards):.4f},",
-                f"Max Reward {max(recent_rewards):.4f}, Loss {mean_losses}, epsilon {self.epsilon:.4f}",
+                f"Step {num_step}, Avg Reward {np.mean(recent_rewards):.4f},",
+                f"Max Reward {max(recent_rewards):.4f}, Loss {mean_losses}",
                 # f"Decay {decay:.6f}"
                 )
             recent_rewards.clear()
@@ -240,15 +230,14 @@ class Worker:
         truncated = False
         terminated = False
         action_output = None
-        env_discrete_type = self.action_space_type == "discrete"
 
         # Start env inference
         self.agent.eval_mode()
         while not done:
             state = T.as_tensor(state, dtype=T.float32, device=self.device).unsqueeze(0)
-            action_output = self.agent.action(state=state, training=False)
+            action_output = self.agent.action(state=state, training=False, temperature=0.1)
             action = action_output.action.squeeze(0)
-            action = action.item() if env_discrete_type else action.detach().cpu().numpy()
+            action = action.item() if self.action_space_type == "discrete" else action.detach().cpu().numpy()
             next_state, reward, terminated, truncated, _ = env.step(
                     action
                 )

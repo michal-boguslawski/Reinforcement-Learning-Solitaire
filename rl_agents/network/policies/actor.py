@@ -8,10 +8,11 @@ from ..model_outputs import ActorOutput
 
 class ActorPolicy(Policy):
     def __init__(self, head: nn.Module, dist: ActionDistribution):
+        super().__init__()
         self.head = head
         self.dist = dist
 
-    def forward(self, features: T.Tensor):
+    def forward(self, features: T.Tensor, temperature: float = 1.) -> ActorOutput:
         logits = self.head(features)
-        dist = self.dist(logits)
+        dist = self.dist(logits = logits / temperature)
         return ActorOutput(logits, dist)

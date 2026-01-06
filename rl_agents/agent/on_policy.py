@@ -1,7 +1,7 @@
 import numpy as np
 import torch as T
 import torch.nn as nn
-from typing import Generator, Tuple, Any
+from typing import Generator, Tuple, Any, Dict
 
 from .base import BasePolicy
 from .mixins import PolicyMixin
@@ -13,7 +13,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
     def __init__(
         self,
         action_space_type: ActionSpaceType,
-        exploration_method: str,
+        exploration_method: Dict[str, Any],
         advantage_normalize: str | None = None,
         num_epochs: int = 1,
         gamma_: float = 0.99,
@@ -68,6 +68,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
             else:
                 if batch.action.max() >= batch.logits.shape[-1]:
                     raise ValueError(f"Action index {batch.action.max()} out of bounds for logits shape {batch.logits.shape}")
+
                 state_values = batch.logits.gather(dim=-1, index=batch.action).squeeze(-1)
                 next_state_values = state_values[:, 1:]
 
@@ -127,14 +128,16 @@ class SarsaPolicy(OnPolicy):
         self, 
         network: nn.Module,
         action_space_type: ActionSpaceType,
-        exploration_method: str = "egreedy",
+        exploration_method: Dict[str, Any],
         gamma_: float = 0.99,
         lambda_: float = 1,
+        value_loss_coef: float = 0.5,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         device: T.device = T.device('cpu'),
         *args,
         **kwargs
     ):
+        self.network = network
         super().__init__(
             device=device,
             gamma_=gamma_,
@@ -143,7 +146,7 @@ class SarsaPolicy(OnPolicy):
             action_space_type=action_space_type,
             loss_fn=loss_fn
         )
-        self.network = network
+        self.value_loss_coef = value_loss_coef
     
     @property
     def action_network(self) -> nn.Module:
@@ -177,7 +180,7 @@ class A2CPolicy(OnPolicy):
         self, 
         network: nn.Module,
         action_space_type: ActionSpaceType,
-        exploration_method: str = "distribution",
+        exploration_method: Dict[str, Any],
         gamma_: float = 0.99,
         lambda_: float = 1,
         value_loss_coef: float = 0.5,
@@ -266,7 +269,7 @@ class PPOPolicy(OnPolicy):
         self, 
         network: nn.Module,
         action_space_type: ActionSpaceType,
-        exploration_method: str = "distribution",
+        exploration_method: Dict[str, Any],
         advantage_normalize: str | None = None,
         gamma_: float = 0.99,
         lambda_: float = 1,

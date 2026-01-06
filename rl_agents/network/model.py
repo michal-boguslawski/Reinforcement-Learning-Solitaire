@@ -87,7 +87,7 @@ class RLModel(nn.Module):
             dist=self.dist
         )
 
-    def forward(self, input_tensor: T.Tensor) -> ActorCriticOutput:
+    def forward(self, input_tensor: T.Tensor, temperature: float = 1.) -> ActorCriticOutput:
         features = self.feature_extractor(input_tensor=input_tensor)
-        output = self.policy(features)
+        output = self.policy(features=features, temperature=temperature)
         return output

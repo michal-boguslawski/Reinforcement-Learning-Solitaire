@@ -4,11 +4,12 @@ import torch as T
 from torch import nn
 from torch.optim import Adam
 from torch.distributions import Distribution, Categorical
-from typing import Tuple, Any
+from typing import Tuple, Any, Dict
 
 from utils.utils import step_return_discounting
 from memory.replay_buffer import ReplayBuffer
 from models.models import Observation, ActionOutput, ActionSpaceType
+from .factories import get_exploration
 
 
 class PolicyMixin(ABC):
@@ -17,7 +18,7 @@ class PolicyMixin(ABC):
     def __init__(
         self,
         action_space_type: ActionSpaceType,
-        exploration_method: str,
+        exploration_method: Dict[str, Any],
         gamma_: float = 0.99,
         lambda_: float = 1.,
         lr: float = 1e-3,
@@ -26,7 +27,11 @@ class PolicyMixin(ABC):
         **kwargs
     ):
         self.action_space_type = action_space_type
-        self.exploration_method = exploration_method
+        self.exploration_method_params = exploration_method
+        self._exploration_method = get_exploration(
+            exploration_method_name=exploration_method["name"],
+            exploration_kwargs=exploration_method.get("kwargs", {})
+        )
         self.gamma_ = gamma_
         self.lambda_ = lambda_
         self.optimizer = Adam(self.action_network.parameters(), lr=lr)
@@ -52,55 +57,28 @@ class PolicyMixin(ABC):
         """Changing action network to train mode"""
         self.action_network.train()
 
-    def _action_sample_from_distribution(self, dist: Distribution) -> T.Tensor:
-        action = dist.sample()
-        
-        return action
-
-    def _action_best_from_distribution(self, dist: Distribution) -> T.Tensor:
-        if isinstance(dist, Categorical):
-            return dist.logits.argmax(keepdim=True)
-        base_dist = getattr(dist, "base_dist", dist)
-        transforms = getattr(dist, "transforms", None)
-        
-        mean = base_dist.mean
-        if transforms:
-            for transform in transforms:
-                mean = transform(mean)
-
-        return mean
-
-    def _action_egreedy(self, epsilon_: float, logits: T.Tensor, dist: Distribution) -> T.Tensor:
-        if random.random() > epsilon_:
-            action = logits.argmax(keepdim=True)
-        else:
-            # Handle vectorized environments by sampling for each environment
-            batch_size = logits.shape[0] if logits.ndim > 1 else 1
-            pass
-        
-        return action
-
     def action(
         self,
         state: T.Tensor,
         epsilon_: float = 0.5,
         training: bool = True,
+        temperature: float = 1.,
     ) -> ActionOutput:
         net = self.action_network
         assert isinstance(net, nn.Module), f"Expected nn.Module, got {type(net)}"
         with T.no_grad():
-            output = net(state)
+            output = net(state, temperature)
 
         logits = output.logits
         value = getattr(output, "value", None)
-        if training and ( self.exploration_method == "egreedy" ):
-            action = self._action_egreedy(epsilon_=epsilon_, logits=logits, dist=output.dist)
-        elif training and ( self.exploration_method == "distribution" ):
-            action = self._action_sample_from_distribution(dist=output.dist)
-        elif ( not training ) or ( self.exploration_method == "best") :
-            action = self._action_best_from_distribution(dist=output.dist)
-        else:
-            raise ValueError(f"Unknown method: {self.exploration_method}")
+        
+        action = self._exploration_method(
+            logits = logits,
+            dist = output.dist,
+            training = training,
+            temperature = temperature
+        )
+
         logprob = output.dist.log_prob(action)
         action_output = ActionOutput(
             action=action,
