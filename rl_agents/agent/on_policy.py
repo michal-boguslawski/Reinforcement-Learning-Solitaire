@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 import torch as T
 import torch.nn as nn
@@ -7,6 +8,9 @@ from .base import BasePolicy
 from .mixins import PolicyMixin
 from memory.replay_buffer import ReplayBuffer
 from models.models import Observation, OnPolicyMinibatch, ActionSpaceType
+
+
+logger = logging.getLogger(__name__)
 
 
 class OnPolicy(PolicyMixin, BasePolicy):
@@ -54,7 +58,9 @@ class OnPolicy(PolicyMixin, BasePolicy):
                 loss = self.calculate_loss(minibatch)
                 losses.append(loss)
 
-        return [np.mean(column).item() for column in zip(*losses)]
+        mean_losses = [np.mean(column).item() for column in zip(*losses)]
+        logger.debug(f"Mean Losses: {mean_losses}")
+        return mean_losses
 
     def _prepare_batches(self, batch: Observation) -> dict[str, T.Tensor]:
         batch = self._preprocess_batch(batch=batch)

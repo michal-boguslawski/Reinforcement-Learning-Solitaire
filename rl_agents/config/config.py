@@ -38,8 +38,15 @@ class EnvConfig:
             },
         "Acrobot-v1":
             {
-                # "terminated_bonus": 100,
-                # "pow_factors": [0, 0, 0, 0, 0.01, 0.01],
+                "wrappers":
+                    {
+                        "terminal_bonus": {
+                            "terminated_bonus": 100
+                        },
+                        "power_obs_reward": {
+                                "pow_factors": [0, 0, 0, 0, 0.01, 0.01],
+                        }
+                    }
             },
         "Pendulum-v1":
             {
