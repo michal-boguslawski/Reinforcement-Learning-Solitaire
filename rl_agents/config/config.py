@@ -78,12 +78,17 @@ class EnvConfig:
                     "actions_interactions":
                         {
                             "factors":
-                                {(0, 1): -1., (1, 2): -1.}
+                                {(0, 1): -0.1, (1, 2): -0.1}
+                        },
+                    "action_reward": {
+                            "abs_factors": [0., 0.1, -0.01],
+                            "decay_factor": 1.,
+                        },
+                    "scale_reward":
+                        {
+                            "scale_factor": 0.1,
+                            "loc_factor": 0
                         }
-                    # "action_reward": {
-                    #         "abs_factors": [-0.1, 0.01, -0.01],
-                    #         "decay_factor": 0.99,
-                    #     },
                     # "terminal_bonus": {
                     #     "truncated_bonus": -100
                     # },

@@ -26,11 +26,13 @@ class ActorCriticHead(nn.Module):
         
         self.actor = nn.Sequential(
             nn.Linear(self.num_features, self.hidden_dim),
+            nn.LayerNorm(self.hidden_dim),
             self.activation_fn(),
             nn.Linear(self.hidden_dim, self.num_actions),
         )
         self.critic = nn.Sequential(
             nn.Linear(self.num_features, self.hidden_dim),
+            nn.LayerNorm(self.hidden_dim),
             self.activation_fn(),
             nn.Linear(self.hidden_dim, 1),
         )
