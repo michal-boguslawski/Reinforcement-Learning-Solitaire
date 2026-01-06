@@ -310,7 +310,7 @@ class PPOPolicy(OnPolicy):
 
     def train(self, minibatch_size: int = 64, **kwargs) -> list[float] | None:
         output = super().train(minibatch_size, **kwargs)
-        self.step_entropy_decay()
+        # self.step_entropy_decay()
         return output
 
     def calculate_loss(self, batch: OnPolicyMinibatch) -> Tuple[float, ...]:
@@ -325,10 +325,10 @@ class PPOPolicy(OnPolicy):
         output = self.network(states)
 
         # calculation policy loss
-        log_probs = output.dist.log_prob(actions).clamp(-10, 10)
+        log_probs = output.dist.log_prob(actions)
         log_probs = log_probs.nan_to_num(0)
         
-        r_t = T.exp(log_probs - old_log_probs)
+        r_t = T.exp((log_probs - old_log_probs).clamp(-10, 10))
         
         if len(r_t.shape) == 1:
             sum_r_t = r_t

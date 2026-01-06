@@ -1,6 +1,6 @@
 env_kwargs:
   id: CarRacing-v3
-  num_envs: 24
+  num_envs: 16
   permute_observations: true
   vectorization_mode: async
 experiment_name: CarRacing-PPO
@@ -29,9 +29,9 @@ policy:
     value_loss_coef: 0.5
   type: ppo
 train_kwargs:
-  batch_size: 256
+  batch_size: 1024
   minibatch_size: 128
-  num_steps: 500000
+  num_steps: 1000000
 worker_kwargs:
   device: auto
   record_step: 50000

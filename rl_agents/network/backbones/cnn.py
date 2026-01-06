@@ -9,6 +9,7 @@ class SimpleCNN(nn.Module):
         super().__init__()
         self.input_shape = input_shape
         self.num_features = num_features
+        flattened_dim = 400
         self.activation = ACTIVATION_FUNCTIONS[activation_fn]
 
         self.network = nn.Sequential(
@@ -17,7 +18,8 @@ class SimpleCNN(nn.Module):
             nn.Conv2d(6, 16, 4, 4),
             self.activation(),
             nn.Flatten(),
-            nn.LazyLinear(num_features),
+            nn.LayerNorm(flattened_dim),
+            nn.Linear(flattened_dim, num_features),
         )
 
     def forward(self, input_tensor: T.Tensor) -> T.Tensor:
