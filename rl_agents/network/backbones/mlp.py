@@ -1,6 +1,7 @@
 import torch as T
 import torch.nn as nn
 
+from ..models.models import Features
 from ..torch_registry import ACTIVATION_FUNCTIONS
 
 
@@ -34,6 +35,6 @@ class MLPNetwork(nn.Module):
             modules.append(self.activation_fn())
         self.network = nn.Sequential(*modules)
 
-    def forward(self, input_tensor: T.Tensor) -> T.Tensor:
+    def forward(self, input_tensor: T.Tensor) -> Features:
         features = self.network(input_tensor)
-        return features
+        return Features(features=features)

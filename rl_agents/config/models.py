@@ -50,11 +50,9 @@ class NetworkKwargs(BaseModel):
 
     backbone_name: Literal["mlp", "simple_cnn"] = "mlp"
     backbone_kwargs: dict = {}
-    feature_extractor_name: str = "shared"
 
     head_name: Literal["actor_critic", "actor"] = "actor_critic"
     head_kwargs: dict = {}
-    policy_name: Literal["actor_critic", "actor"] = "actor_critic"
 
     distribution: Literal["normal", "mvn", "categorical"] = "normal"
     initial_log_std: float = 0.0

@@ -1,14 +1,13 @@
 from abc import ABC, abstractmethod
-import random
 import torch as T
 from torch import nn
 from torch.optim import Adam
-from torch.distributions import Distribution, Categorical
 from typing import Tuple, Any, Dict
 
 from utils.utils import step_return_discounting
 from memory.replay_buffer import ReplayBuffer
 from models.models import Observation, ActionOutput, ActionSpaceType
+from network.model import RLModel
 from .factories import get_exploration
 
 
@@ -60,32 +59,32 @@ class PolicyMixin(ABC):
     def action(
         self,
         state: T.Tensor,
-        epsilon_: float = 0.5,
         training: bool = True,
         temperature: float = 1.,
     ) -> ActionOutput:
         net = self.action_network
-        assert isinstance(net, nn.Module), f"Expected nn.Module, got {type(net)}"
+        assert isinstance(net, RLModel), f"Expected RLModel, got {type(net)}"
         with T.no_grad():
             output = net(state, temperature)
 
-        logits = output.logits
-        value = getattr(output, "value", None)
+        logits = output.actor_logits
+        value = output.critic_value
+        dist = output.dist
         
         action = self._exploration_method(
             logits = logits,
-            dist = output.dist,
+            dist = dist,
             training = training,
             temperature = temperature
         )
 
-        logprob = output.dist.log_prob(action)
+        log_prob = dist.log_prob(action)
         action_output = ActionOutput(
             action=action,
             logits=logits,
-            log_probs=logprob,
+            log_probs=log_prob,
             value=value,
-            dist=output.dist
+            dist=dist
         )
         return action_output
 

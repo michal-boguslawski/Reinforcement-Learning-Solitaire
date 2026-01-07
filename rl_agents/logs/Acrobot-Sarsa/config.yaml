@@ -9,12 +9,10 @@ network:
     backbone_kwargs: {}
     backbone_name: mlp
     distribution: categorical
-    feature_extractor_name: shared
     head_kwargs: {}
     head_name: actor
     initial_log_std: 0.0
     num_features: 64
-    policy_name: actor
 policy:
   kwargs:
     advantage_normalize: null

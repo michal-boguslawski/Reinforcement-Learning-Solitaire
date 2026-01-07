@@ -8,6 +8,7 @@ from .base import BasePolicy
 from .mixins import PolicyMixin
 from memory.replay_buffer import ReplayBuffer
 from models.models import Observation, OnPolicyMinibatch, ActionSpaceType
+from network.model import RLModel
 
 
 logger = logging.getLogger(__name__)
@@ -132,7 +133,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
 class SarsaPolicy(OnPolicy):
     def __init__(
         self, 
-        network: nn.Module,
+        network: RLModel,
         action_space_type: ActionSpaceType,
         exploration_method: Dict[str, Any],
         gamma_: float = 0.99,
@@ -155,7 +156,7 @@ class SarsaPolicy(OnPolicy):
         self.value_loss_coef = value_loss_coef
     
     @property
-    def action_network(self) -> nn.Module:
+    def action_network(self) -> RLModel:
         return self.network
         
     def calculate_loss(self, batch: OnPolicyMinibatch) -> Tuple[float, ...]:
@@ -166,7 +167,7 @@ class SarsaPolicy(OnPolicy):
         )
         
         output = self.network(states)
-        logits = output.logits
+        logits = output.actor_logits
         assert isinstance(logits, T.Tensor)
 
         q_values = logits.gather(dim=-1, index=actions).squeeze(-1)
@@ -184,7 +185,7 @@ class SarsaPolicy(OnPolicy):
 class A2CPolicy(OnPolicy):
     def __init__(
         self, 
-        network: nn.Module,
+        network: RLModel,
         action_space_type: ActionSpaceType,
         exploration_method: Dict[str, Any],
         gamma_: float = 0.99,
@@ -211,7 +212,7 @@ class A2CPolicy(OnPolicy):
         self.entropy_coef = entropy_coef
     
     @property
-    def action_network(self) -> nn.Module:
+    def action_network(self) -> RLModel:
         return self.network
 
     def calculate_loss(self, batch: OnPolicyMinibatch) -> Tuple[float, ...]:
@@ -243,7 +244,7 @@ class A2CPolicy(OnPolicy):
             raise ValueError("actions causing problems")
 
         # calculating critic loss
-        value = output.value.squeeze(-1)
+        value = output.critic_value.squeeze(-1)
         assert value.shape == returns.shape, "Wrong shapes of value"
         critic_loss = self.loss_fn(value, returns.detach())
 
@@ -273,7 +274,7 @@ class A2CPolicy(OnPolicy):
 class PPOPolicy(OnPolicy):
     def __init__(
         self, 
-        network: nn.Module,
+        network: RLModel,
         action_space_type: ActionSpaceType,
         exploration_method: Dict[str, Any],
         advantage_normalize: str | None = None,
@@ -308,7 +309,7 @@ class PPOPolicy(OnPolicy):
         self.clip_epsilon = clip_epsilon
     
     @property
-    def action_network(self) -> nn.Module:
+    def action_network(self) -> RLModel:
         return self.network
 
     def step_entropy_decay(self) -> None:
@@ -355,7 +356,7 @@ class PPOPolicy(OnPolicy):
             raise ValueError("actions causing problems")
 
         # calculating critic loss
-        value = output.value.squeeze(-1)
+        value = output.critic_value.squeeze(-1)
         assert value.shape == returns.shape, "Wrong shapes of value"
         critic_loss = self.loss_fn(value, returns.detach())
 
