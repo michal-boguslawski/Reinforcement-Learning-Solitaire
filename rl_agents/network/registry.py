@@ -6,18 +6,12 @@ from .distributions.normal import NormalDistribution, MultivariateNormalDistribu
 from .distributions.transforms import TanhAffineTransform
 
 # Heads
-from .heads.actor_critic import ActorCriticHead, ActorHead
-
-# Policies
-from .policies.a2c import ActorCriticPolicy
-from .policies.actor import ActorPolicy
+from .heads.actor_critic import ActorCriticHead
+from .heads.actor import ActorHead
 
 # Backbones
 from .backbones.mlp import MLPNetwork
 from .backbones.cnn import SimpleCNN
-
-# Feature extractors
-from .feature_extractors.shared import SharedFeatureExtractor
 
 
 DISTRIBUTIONS = {
@@ -39,18 +33,7 @@ HEADS = {
 }
 
 
-POLICIES = {
-    "actor_critic": ActorCriticPolicy,
-    "actor": ActorPolicy,
-}
-
-
 BACKBONES = {
     "mlp": MLPNetwork,
     "simple_cnn": SimpleCNN
-}
-
-
-FEATURE_EXTRACTORS = {
-    "shared": SharedFeatureExtractor
 }

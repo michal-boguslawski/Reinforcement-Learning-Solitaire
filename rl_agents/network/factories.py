@@ -1,9 +1,7 @@
 from torch import nn
 
-from .registry import DISTRIBUTIONS, TRANSFORMS, BACKBONES, FEATURE_EXTRACTORS, HEADS, POLICIES
+from .registry import DISTRIBUTIONS, TRANSFORMS, BACKBONES, HEADS
 from .distributions.base import ActionDistribution
-from .feature_extractors.base import FeatureExtractor
-from .policies.base import Policy
 
 
 def make_action_distribution(
@@ -41,16 +39,6 @@ def make_backbone(
     return backbone
 
 
-def make_feature_extractor(
-    feature_extractor_name: str,
-    backbone: nn.Module
-) -> FeatureExtractor:
-    feature_extractor = FEATURE_EXTRACTORS[feature_extractor_name](
-        backbone=backbone
-    )
-    return feature_extractor
-
-
 def make_head(
     head_name: str,
     num_actions: int,
@@ -64,15 +52,3 @@ def make_head(
         **kwargs
     )
     return head
-
-
-def make_policy(
-    policy_name: str,
-    head: nn.Module,
-    dist: ActionDistribution
-) -> Policy:
-    policy = POLICIES[policy_name](
-        head=head,
-        dist=dist
-    )
-    return policy

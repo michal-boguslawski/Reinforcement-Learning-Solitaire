@@ -9,7 +9,7 @@ from torch.distributions import Distribution
 ActionSpaceType = Literal["discrete", "continuous"]
 
 
-@dataclass
+@dataclass(slots=True)
 class Observation:
     state: T.Tensor
     logits: T.Tensor
@@ -20,7 +20,7 @@ class Observation:
     value: T.Tensor | None = None
 
 
-@dataclass
+@dataclass(slots=True)
 class ActionOutput:
     action: T.Tensor
     logits: T.Tensor
@@ -29,7 +29,7 @@ class ActionOutput:
     dist: Distribution | None = None
 
 
-@dataclass
+@dataclass(slots=True)
 class OnPolicyMinibatch:
     states: T.Tensor
     returns: T.Tensor
@@ -38,7 +38,7 @@ class OnPolicyMinibatch:
     log_probs: T.Tensor
 
 
-@dataclass
+@dataclass(slots=True)
 class EnvDetails:
     action_dim: int
     state_dim: Tuple[int, ...]

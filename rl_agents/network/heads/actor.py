@@ -5,7 +5,7 @@ from ..models.models import HeadOutput
 from ..utils import activation_fns_dict
 
 
-class ActorCriticHead(nn.Module):
+class ActorHead(nn.Module):
     def __init__(
         self,
         num_actions: int,
@@ -27,18 +27,10 @@ class ActorCriticHead(nn.Module):
         
         self.actor = nn.Sequential(
             nn.Linear(self.num_features, self.hidden_dim),
-            nn.LayerNorm(self.hidden_dim),
             self.activation_fn(),
             nn.Linear(self.hidden_dim, self.num_actions),
-        )
-        self.critic = nn.Sequential(
-            nn.Linear(self.num_features, self.hidden_dim),
-            nn.LayerNorm(self.hidden_dim),
-            self.activation_fn(),
-            nn.Linear(self.hidden_dim, 1),
         )
 
     def forward(self, features: T.Tensor) -> HeadOutput:
         actor_logits = self.actor(features)
-        critic_value = self.critic(features)
-        return HeadOutput(actor_logits=actor_logits, critic_value=critic_value)
+        return HeadOutput(actor_logits=actor_logits)

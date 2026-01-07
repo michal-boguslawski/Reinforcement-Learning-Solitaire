@@ -1,6 +1,7 @@
 import torch as T
 import torch.nn as nn
 
+from ..models.models import Features
 from ..torch_registry import ACTIVATION_FUNCTIONS
 
 
@@ -22,6 +23,6 @@ class SimpleCNN(nn.Module):
             nn.Linear(flattened_dim, num_features),
         )
 
-    def forward(self, input_tensor: T.Tensor) -> T.Tensor:
+    def forward(self, input_tensor: T.Tensor) -> Features:
         features = self.network(input_tensor)
-        return features
+        return Features(features=features)
