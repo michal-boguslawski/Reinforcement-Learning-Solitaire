@@ -78,7 +78,7 @@ class EnvConfig:
                     "actions_interactions":
                         {
                             "factors":
-                                {(0, 1): -0.1, (1, 2): -0.1}
+                                {(0, 1): -1., (1, 2): -1.}
                         },
                     "action_reward": {
                             "abs_factors": [0., 0.1, -0.01],
