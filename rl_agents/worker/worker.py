@@ -1,4 +1,5 @@
 from gymnasium.vector import VectorEnv
+import logging
 import numpy as np
 import torch as T
 import torch.nn as nn
@@ -15,6 +16,7 @@ from .utils import get_device
 
 
 np.set_printoptions(linewidth=1000)
+logger = logging.getLogger(__name__)
 
 
 class Worker:
@@ -116,7 +118,7 @@ class Worker:
                 env_action
             )
         except Exception as e:
-            print(f"Error during episode step: {e}")
+            logger.error(f"Error during episode step: {e}")
             raise e
         
         done = T.logical_or(terminated, truncated)
@@ -161,7 +163,7 @@ class Worker:
         *args,
         **kwargs
     ):
-        print(20 * "=", "Start training", 20 * "=")
+        logger.info(f"{20 * '='} Start training {20 * '='}")
         rewards_list = []
         self._reset_training_vars(
             train_step=train_step,
@@ -185,6 +187,7 @@ class Worker:
 
                 temp_reward_mean = np.mean(rewards_list)
                 tq_iter.set_postfix_str(f"temp mean rewards {temp_reward_mean:.2f}")
+                logger.debug(f"Step {num_step}, temp mean rewards {temp_reward_mean:.2f}")
             
             if num_step % 5_000 == 0:
                 self._print_results(num_step, rewards_list)
@@ -196,6 +199,7 @@ class Worker:
         self._eval_record_video(num_step=num_steps)
         
         self.env.close()
+        logger.info(f"{20 * '='} End training {20 * '='}")
 
     def _print_results(self, num_step: int, rewards_list: list[float]) -> None:
         try:
@@ -203,16 +207,15 @@ class Worker:
             recent_rewards = rewards_list if rewards_list else [0,]
             recent_losses = self.losses_list if self.losses_list else [(0,)]
             mean_losses = [np.mean(column).round(8).item() for column in zip(*recent_losses)]
-            print(
-                f"Step {num_step}, Avg Reward {np.mean(recent_rewards):.4f},",
-                f"Max Reward {max(recent_rewards):.4f}, Loss {mean_losses}",
-                # f"Decay {decay:.6f}"
-                )
+            logger.info(
+                f"Step {num_step}, Avg Reward {np.mean(recent_rewards):.4f}, "
+                f"Max Reward {max(recent_rewards):.4f}, Loss {mean_losses}"
+            )
             recent_rewards.clear()
             recent_losses.clear()
 
         except Exception as e:
-            print(f"Error printing results: {e}")
+            logger.error(f"Error printing results: {e}")
             raise e
 
     def _eval_record_video(self, num_step: int) -> None:
@@ -247,16 +250,16 @@ class Worker:
             step_count += 1
         env.close()
         self.agent.train_mode()
-        print(
+        logger.info(
             f"Step {num_step}: {step_count} steps, reward = {total_reward:.2f}, truncated = {truncated}, terminated = {terminated}"
         )
         if state.ndim < 3:
-            print("Evaluation stopped in state", state.round(2))
+            logger.info("Evaluation stopped in state %s", state.round(2))
         if action_output and action_output.dist:
             try:
                 if "covariance_matrix" in dir(action_output.dist.base_dist):  # type: ignore
-                    print("Covariance matrix \n", action_output.dist.base_dist.covariance_matrix[0].cpu().numpy())  # type: ignore
+                    logger.info("Covariance matrix \n", action_output.dist.base_dist.covariance_matrix[0].cpu().numpy())  # type: ignore
                 else:
-                    print("Standard deviation \n", action_output.dist.base_dist.stddev[0].cpu().numpy())  # type: ignore
+                    logger.info("Standard deviation \n", action_output.dist.base_dist.stddev[0].cpu().numpy())  # type: ignore
             except AttributeError:
                 pass

@@ -1,7 +1,7 @@
-experiment_name: CartPole-Sarsa
+experiment_name: Acrobot-Sarsa
 
 env_kwargs:
-  id: CartPole-v1
+  id: Acrobot-v1
   vectorization_mode: async
   num_envs: 8
 
@@ -9,14 +9,14 @@ policy:
   type: sarsa
   kwargs:
     gamma: 0.99
-    lambda_: 0
+    lambda_: 0.9
     value_loss_coef: 0.5
-    lr: 0.001
+    lr: 0.0003
     exploration_method: 
       name: egreedy
       kwargs:
         epsilon_start_: 1.
-        epsilon_decay_: 0.9
+        epsilon_decay_: 0.95
         decay_step_: 1000
         min_epsilon_: 0.02
 

@@ -1,7 +1,12 @@
-from .base import BaseExploration
+import logging
 import random
 import torch as T
 from torch.distributions import Distribution
+
+from .base import BaseExploration
+
+
+logger = logging.getLogger(__name__)
 
 
 class EGreedyExploration(BaseExploration):
@@ -18,6 +23,7 @@ class EGreedyExploration(BaseExploration):
         if self.k % self.decay_step_ == 0:
             self.epsilon_ *= self.epsilon_decay_
             self.epsilon_ = max(self.epsilon_, self.min_epsilon_)
+            logger.debug(f"Current epsilon for egreedy {self.epsilon_}")
 
     def __call__(self, logits: T.Tensor, dist: Distribution, training: bool = True, temperature: float = 1., *args, **kwargs) -> T.Tensor:
         if not training:
@@ -32,7 +38,6 @@ class EGreedyExploration(BaseExploration):
         else:
             action = logits.argmax(-1, keepdim=True)
 
-        if training:
-            self._counter()
+        self._counter()
 
         return action

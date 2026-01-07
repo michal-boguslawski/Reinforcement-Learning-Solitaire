@@ -3,6 +3,7 @@ import shutil
 import torch as T
 
 from config.config import ExperimentConfig
+from config.logging import setup_logger
 from worker.worker import Worker
 
 
@@ -19,6 +20,8 @@ if __name__ == "__main__":
     if os.path.exists(logs_path):
         shutil.rmtree(logs_path)
     os.makedirs(logs_path, exist_ok=True)
+
+    setup_logger(experiment_name)
     
     config_instance.save_config(os.path.join(logs_path, "config.yaml"))
 
