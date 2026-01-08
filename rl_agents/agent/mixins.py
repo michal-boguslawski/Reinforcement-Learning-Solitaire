@@ -59,17 +59,19 @@ class PolicyMixin(ABC):
     def action(
         self,
         state: T.Tensor,
+        core_state: T.Tensor | None = None,
         training: bool = True,
         temperature: float = 1.,
     ) -> ActionOutput:
         net = self.action_network
         assert isinstance(net, RLModel), f"Expected RLModel, got {type(net)}"
         with T.no_grad():
-            output = net(state, temperature)
+            output = net(input_tensor=state, core_state=core_state, temperature=temperature)
 
         logits = output.actor_logits
         value = output.critic_value
         dist = output.dist
+        core_state = output.core_state
         
         action = self._exploration_method(
             logits = logits,
@@ -84,7 +86,8 @@ class PolicyMixin(ABC):
             logits=logits,
             log_probs=log_prob,
             value=value,
-            dist=dist
+            dist=dist,
+            core_state=core_state
         )
         return action_output
 
@@ -116,6 +119,7 @@ class PolicyMixin(ABC):
         done = T.as_tensor(batch.done, dtype=T.float32)
         value = T.as_tensor(batch.value, dtype=T.float32) if batch.value is not None else None
         log_probs = T.as_tensor(batch.log_probs, dtype=T.float32)
+        core_state = T.as_tensor(batch.core_state, dtype=T.float32) if batch.core_state is not None else None
         preprocessed_batch = type(batch)(
             state=state,
             logits=logits,
@@ -124,5 +128,6 @@ class PolicyMixin(ABC):
             done=done,
             value=value,
             log_probs=log_probs,
+            core_state=core_state,
         )
         return preprocessed_batch

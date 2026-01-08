@@ -1,5 +1,6 @@
 import logging
 import numpy as np
+import random
 import torch as T
 import torch.nn as nn
 from typing import Generator, Tuple, Any, Dict
@@ -63,7 +64,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
         logger.debug(f"Mean Losses: {mean_losses}")
         return mean_losses
 
-    def _prepare_batches(self, batch: Observation) -> dict[str, T.Tensor]:
+    def _prepare_batches(self, batch: Observation) -> dict[str, T.Tensor | None]:
         batch = self._preprocess_batch(batch=batch)
         
         try:
@@ -98,7 +99,8 @@ class OnPolicy(PolicyMixin, BasePolicy):
             "advantages": advantages.flatten(0, 1).contiguous(),
             "states": batch.state[:, :-1].flatten(0, 1).contiguous(),
             "actions": batch.action[:, :-1].flatten(0, 1).contiguous(),
-            "log_probs": batch.log_probs[:, :-1].flatten(0, 1).contiguous()
+            "log_probs": batch.log_probs[:, :-1].flatten(0, 1).contiguous(),
+            "core_states": batch.core_state[:, :-1].transpose(1, 2).flatten(1, 2).contiguous() if batch.core_state is not None else None,
         }
 
     def _generate_minibatches(
@@ -108,13 +110,16 @@ class OnPolicy(PolicyMixin, BasePolicy):
         states: T.Tensor,
         actions: T.Tensor,
         log_probs: T.Tensor,
+        core_states: T.Tensor | None = None,
         minibatch_size: int = 64
     ) -> Generator[OnPolicyMinibatch, None, None]:
         batch_size = int(np.prod(returns.shape))
         indices = T.arange(0, batch_size, device=self.device)
         minibatch_size = min(batch_size, minibatch_size)
+        starts = list(range(0, batch_size, minibatch_size))
+        random.shuffle(starts)
 
-        for start in range(0, batch_size, minibatch_size):
+        for start in starts:
             end = min(start + minibatch_size, batch_size - 1)
             mb_idx = indices[start:end]
             batch_advantages = advantages[mb_idx]
@@ -126,7 +131,8 @@ class OnPolicy(PolicyMixin, BasePolicy):
                 returns=returns[mb_idx],
                 actions=actions[mb_idx],
                 advantages=batch_advantages,
-                log_probs=log_probs[mb_idx]
+                log_probs=log_probs[mb_idx],
+                core_states=core_states[:, start] if core_states is not None else None,
             )
 
 
@@ -321,15 +327,16 @@ class PPOPolicy(OnPolicy):
         return output
 
     def calculate_loss(self, batch: OnPolicyMinibatch) -> Tuple[float, ...]:
-        states, returns, actions, advantages, old_log_probs = (
+        states, returns, actions, advantages, old_log_probs, core_states = (
             batch.states,
             batch.returns,
             batch.actions,
             batch.advantages,
             batch.log_probs,
+            batch.core_states
         )
 
-        output = self.network(states)
+        output = self.network(states, core_state=core_states)
 
         # calculation policy loss
         log_probs = output.dist.log_prob(actions)

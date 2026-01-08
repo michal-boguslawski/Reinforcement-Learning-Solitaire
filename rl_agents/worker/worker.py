@@ -2,7 +2,6 @@ from gymnasium.vector import VectorEnv
 import logging
 import numpy as np
 import torch as T
-import torch.nn as nn
 from tqdm import tqdm
 from typing import Any, Literal
 
@@ -98,6 +97,7 @@ class Worker:
         self.batch_size = batch_size
         self.minibatch_size = minibatch_size
         self.timesteps = timesteps
+        self.core_state = None
         
         self.state, _ = self.env.reset()
         self.total_reward = T.zeros(len(self.state), device=self.device)
@@ -105,7 +105,7 @@ class Worker:
     def _step(self):
         try:
             state = self.state.to(self.device)
-            action_output = self.agent.action(state=state)
+            action_output = self.agent.action(state=state, core_state=self.core_state)
             action = action_output.action
             if self.action_space_type == "discrete":
                 # For discrete actions, convert to scalar for single env or keep tensor for multiple envs
@@ -125,6 +125,11 @@ class Worker:
         reward = T.as_tensor(reward, device=self.device)
         done = T.as_tensor(done, dtype=T.bool, device=self.device)
         action = T.as_tensor(action, device=self.device)
+        core_state = (
+            T.zeros_like(action_output.core_state) 
+            if action_output.core_state is not None and self.core_state is None
+            else self.core_state
+        )
         
         record = {
             "state": state,
@@ -133,12 +138,14 @@ class Worker:
             "reward": reward,
             "done": done,
             "value": action_output.value,
-            "log_probs": action_output.log_probs
+            "log_probs": action_output.log_probs,
+            "core_state": core_state,
         }
         
         self.agent.update_buffer(record)
         
         self.state = next_state
+        self.core_state = action_output.core_state
         
         self.total_reward += reward
 
@@ -184,6 +191,9 @@ class Worker:
                 total_rewards = self.total_reward * done
                 rewards_list.append(total_rewards.sum().cpu() / done.sum().cpu())
                 self.total_reward *= T.logical_not(done)
+
+                if self.core_state is not None:
+                    self.core_state *= T.logical_not(done).unsqueeze(-1).expand_as(self.core_state)
 
                 temp_reward_mean = np.mean(rewards_list)
                 tq_iter.set_postfix_str(f"temp mean rewards {temp_reward_mean:.2f}")
@@ -233,12 +243,13 @@ class Worker:
         truncated = False
         terminated = False
         action_output = None
+        core_state = None
 
         # Start env inference
         self.agent.eval_mode()
         while not done:
             state = T.as_tensor(state, dtype=T.float32, device=self.device).unsqueeze(0)
-            action_output = self.agent.action(state=state, training=False, temperature=0.1)
+            action_output = self.agent.action(state=state, core_state=core_state, training=False, temperature=0.1)
             action = action_output.action.squeeze(0)
             action = action.item() if self.action_space_type == "discrete" else action.detach().cpu().numpy()
             next_state, reward, terminated, truncated, _ = env.step(
@@ -247,6 +258,7 @@ class Worker:
             done = terminated or truncated
             total_reward += float(reward)
             state = next_state
+            core_state = action_output.core_state
             step_count += 1
         env.close()
         self.agent.train_mode()
@@ -258,8 +270,9 @@ class Worker:
         if action_output and action_output.dist:
             try:
                 if "covariance_matrix" in dir(action_output.dist.base_dist):  # type: ignore
-                    logger.info("Covariance matrix \n", action_output.dist.base_dist.covariance_matrix[0].cpu().numpy())  # type: ignore
+                    cov = action_output.dist.base_dist.covariance_matrix[0].cpu().numpy()  # type: ignore
                 else:
-                    logger.info("Standard deviation \n", action_output.dist.base_dist.stddev[0].cpu().numpy())  # type: ignore
+                    cov = action_output.dist.base_dist.stddev[0].cpu().numpy()  # type: ignore
+                logger.info(f"Covariance matrix:\n{cov}")
             except AttributeError:
                 pass

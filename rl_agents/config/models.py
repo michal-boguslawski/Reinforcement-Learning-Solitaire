@@ -51,6 +51,9 @@ class NetworkKwargs(BaseModel):
     backbone_name: Literal["mlp", "simple_cnn"] = "mlp"
     backbone_kwargs: dict = {}
 
+    core_name: Literal["identity", "lstm", "gru"] = "identity"
+    core_kwargs: dict = {}
+
     head_name: Literal["actor_critic", "actor"] = "actor_critic"
     head_kwargs: dict = {}
 

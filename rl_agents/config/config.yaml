@@ -1,39 +1,37 @@
-experiment_name: Acrobot-Sarsa
+experiment_name: CarRacing-PPO-LSTM
 
 env_kwargs:
-  id: Acrobot-v1
+  id: CarRacing-v3
   vectorization_mode: async
   num_envs: 8
+  permute_observations: true
 
 policy:
-  type: sarsa
+  type: ppo
   kwargs:
     gamma: 0.99
-    lambda_: 0.9
+    lambda_: 0.95
     value_loss_coef: 0.5
     lr: 0.0003
     exploration_method: 
-      name: egreedy
-      kwargs:
-        epsilon_start_: 1.
-        epsilon_decay_: 0.95
-        decay_step_: 1000
-        min_epsilon_: 0.02
+      name: distribution
 
 worker_kwargs:
   device: auto
-  record_step: 20000
+  record_step: 50000
 
 train_kwargs:
-  num_steps: 100000
-  batch_size: 32
-  minibatch_size: 32
+  num_steps: 500000
+  batch_size: 1024
+  minibatch_size: 128
 
 network:
   kwargs:
-    num_features: 64
-    backbone_name: mlp
-    feature_extractor_name: shared
-    head_name: actor
-    policy_name: actor
-    distribution: categorical
+    backbone_kwargs: {}
+    backbone_name: simple_cnn
+    core_kwargs: {}
+    core_name: gru
+    distribution: mvn
+    head_kwargs: {}
+    head_name: actor_critic
+    num_features: 256

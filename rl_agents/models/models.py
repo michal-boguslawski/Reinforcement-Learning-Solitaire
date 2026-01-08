@@ -18,6 +18,7 @@ class Observation:
     done: T.Tensor
     log_probs: T.Tensor
     value: T.Tensor | None = None
+    core_state: T.Tensor | None = None
 
 
 @dataclass(slots=True)
@@ -27,6 +28,7 @@ class ActionOutput:
     log_probs: T.Tensor
     value: T.Tensor | None = None
     dist: Distribution | None = None
+    core_state: T.Tensor | None = None
 
 
 @dataclass(slots=True)
@@ -36,6 +38,7 @@ class OnPolicyMinibatch:
     actions: T.Tensor
     advantages: T.Tensor
     log_probs: T.Tensor
+    core_states: T.Tensor | None = None
 
 
 @dataclass(slots=True)

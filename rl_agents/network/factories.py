@@ -1,6 +1,6 @@
 from torch import nn
 
-from .registry import DISTRIBUTIONS, TRANSFORMS, BACKBONES, HEADS
+from .registry import DISTRIBUTIONS, TRANSFORMS, BACKBONES, HEADS, CORES
 from .distributions.base import ActionDistribution
 
 
@@ -52,3 +52,16 @@ def make_head(
         **kwargs
     )
     return head
+
+
+def make_core(
+    core_name: str,
+    num_features: int,
+    *args,
+    **kwargs
+) -> nn.Module:
+    core = CORES[core_name](
+        num_features=num_features,
+        **kwargs
+    )
+    return core
