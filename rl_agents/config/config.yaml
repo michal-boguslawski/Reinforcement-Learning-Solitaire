@@ -9,6 +9,7 @@ env_kwargs:
 policy:
   type: ppo
   kwargs:
+    advantage_normalize: batch
     gamma: 0.99
     lambda_: 0.95
     value_loss_coef: 0.5
@@ -22,7 +23,7 @@ worker_kwargs:
 
 train_kwargs:
   num_steps: 500000
-  batch_size: 1024
+  batch_size: 128
   minibatch_size: 128
 
 network:

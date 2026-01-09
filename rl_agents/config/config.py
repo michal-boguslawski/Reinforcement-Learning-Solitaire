@@ -82,6 +82,11 @@ class EnvConfig:
         "CarRacing-v3":
             {
                 "wrappers": {
+                    "rescale_observation":
+                        {
+                            "min_obs": -1.,
+                            "max_obs": 1.
+                        },
                     "actions_interactions":
                         {
                             "factors":

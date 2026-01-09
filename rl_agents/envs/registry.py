@@ -1,5 +1,5 @@
 
-from gymnasium.wrappers import RecordVideo, TransformReward, ClipAction
+from gymnasium.wrappers import RecordVideo, TransformReward, ClipAction, RescaleObservation
 from typing import Callable, Dict
 
 from .wrappers import TerminalBonusWrapper, PowerObsRewardWrapper, ActionPowerRewardWrapper, ActionInteractionWrapper
@@ -13,5 +13,6 @@ WRAPPERS: Dict[str, Callable] = {
     "clip_action": ClipAction,
     "record_video": RecordVideo,
     "action_reward": ActionPowerRewardWrapper,
-    "actions_interactions": ActionInteractionWrapper
+    "actions_interactions": ActionInteractionWrapper,
+    "rescale_observation": RescaleObservation
 }

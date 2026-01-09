@@ -1,5 +1,5 @@
 import gymnasium as gym
-from gymnasium.wrappers import NumpyToTorch, RecordVideo, DtypeObservation
+from gymnasium.wrappers import NumpyToTorch, RecordVideo, DtypeObservation, RescaleObservation
 import gymnasium.wrappers.vector as vec_wrappers
 import numpy as np
 import torch as T
@@ -28,6 +28,14 @@ def make_env(
     if env_config.get("permute_observations"):
         env = TransposeObservationWrapper(env)
 
+    rescale_observation = env_config.get("rescale_observation")
+    if rescale_observation:
+        env = RescaleObservation(
+            env,
+            min_obs=np.float32(rescale_observation["min_obs"]),
+            max_obs=np.float32(rescale_observation["max_obs"])
+        )
+
     env_config = EnvConfig(env_config["id"]).get_config()
 
     if record:
@@ -51,6 +59,7 @@ def make_vec(
 ):
     env_config = EnvConfig(id).get_config()
     wrappers = []
+    wrappers.append(lambda env: DtypeObservation(env, np.float32))
     wrappers_config = env_config.get("wrappers")
     if wrappers_config:
         for wrapper_name, wrapper_kwargs in wrappers_config.items():
@@ -74,7 +83,6 @@ def make_vec(
             *args,
             **kwargs
         )
-        envs = vec_wrappers.DtypeObservation(envs, np.float32)
         envs = vec_wrappers.NumpyToTorch(envs)
         if permute_observations:
             envs = VecTransposeObservationWrapper(envs)
