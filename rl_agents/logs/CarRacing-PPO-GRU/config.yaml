@@ -1,20 +1,20 @@
 env_kwargs:
   id: CarRacing-v3
-  num_envs: 8
+  num_envs: 16
   permute_observations: true
   vectorization_mode: async
-experiment_name: CarRacing-PPO-LSTM
+experiment_name: CarRacing-PPO-GRU
 network:
   kwargs:
     backbone_kwargs: {}
     backbone_name: simple_cnn
     core_kwargs: {}
-    core_name: gru
+    core_name: identity
     distribution: mvn
     head_kwargs: {}
     head_name: actor_critic
     initial_log_std: 0.0
-    num_features: 256
+    num_features: 128
 policy:
   kwargs:
     advantage_normalize: batch
@@ -26,12 +26,12 @@ policy:
       name: distribution
     gamma: 0.99
     lambda_: 0.95
-    lr: 0.0003
+    lr: 0.0001
     num_epochs: 10
     value_loss_coef: 0.5
   type: ppo
 train_kwargs:
-  batch_size: 128
+  batch_size: 1024
   minibatch_size: 128
   num_steps: 500000
 worker_kwargs:
