@@ -335,6 +335,11 @@ class PPOPolicy(OnPolicy):
             batch.log_probs,
             batch.core_states
         )
+        # T.save(states, "/app/rl_agents/tests/unit/network/data/states.pt")
+        # T.save(returns, "/app/rl_agents/tests/unit/network/data/returns.pt")
+        # T.save(actions, "/app/rl_agents/tests/unit/network/data/actions.pt")
+        # T.save(advantages, "/app/rl_agents/tests/unit/network/data/advantages.pt")
+        # T.save(old_log_probs, "/app/rl_agents/tests/unit/network/data/old_log_probs.pt")
 
         output = self.network(states, core_state=core_states)
 
@@ -378,6 +383,10 @@ class PPOPolicy(OnPolicy):
             raise ValueError("Empty entropy tensor")
         entropy = entropy.mean()
 
+        # print("actor_loss:", actor_loss.cpu().item())
+        # print("critic_loss:", critic_loss.cpu().item())
+        # print("entropy:", entropy.cpu().item())
+        # raise "dupa"
         loss = actor_loss + self.value_loss_coef * critic_loss - self.entropy_coef * entropy
 
         # backpropagation of the error

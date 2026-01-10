@@ -71,6 +71,14 @@ class Worker:
             device=device,
             **network_kwargs
         )
+        T.save(
+            self.network.feature_extractor.backbone.state_dict(),
+            "/app/rl_agents/tests/unit/network/data/backbone_state_dict.pth"
+        )
+        T.save(
+            self.network.policy.head.state_dict(),
+            "/app/rl_agents/tests/unit/network/data/head_state_dict.pth"
+        )
 
     def _setup_policy(self, policy_config: dict[str, Any], device: T.device = T.device("cpu")) -> None:
         policy_type = policy_config.get("type", "a2c")
@@ -202,11 +210,11 @@ class Worker:
             if num_step % 5_000 == 0:
                 self._print_results(num_step, rewards_list)
             # Record video
-            if num_step % self.record_step == 0:
-                self._eval_record_video(num_step=num_step)
+            # if num_step % self.record_step == 0:
+            #     self._eval_record_video(num_step=num_step)
 
         self._print_results(num_steps, rewards_list)
-        self._eval_record_video(num_step=num_steps)
+        # self._eval_record_video(num_step=num_steps)
         
         self.env.close()
         logger.info(f"{20 * '='} End training {20 * '='}")
