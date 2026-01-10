@@ -20,6 +20,6 @@ def load_model() -> RLModel:
         low=T.tensor([-1., 0., 0.]),
         high=T.tensor([1., 1., 1.]),
     )
-    model.feature_extractor.backbone.load_state_dict(backbone_state_dict)
-    model.policy.head.load_state_dict(head_state_dict)
+    model.backbone.load_state_dict(backbone_state_dict)
+    model.head.load_state_dict(head_state_dict)
     return model

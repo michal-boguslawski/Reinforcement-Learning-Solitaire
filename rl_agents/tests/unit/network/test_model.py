@@ -12,13 +12,13 @@ print(states.shape)
 model = load_model()
 
 output = model(states)
-features = model.feature_extractor(states)
+features = model.backbone(states)
 
 expected_logits = T.load(os.path.join(folder_path, "data", "expected_output_logits.pt"))
 expected_values = T.load(os.path.join(folder_path, "data", "expected_output_values.pt"))
 expected_features = T.load(os.path.join(folder_path, "data", "expected_features.pth"))
 
-assert T.allclose(output.logits, expected_logits, atol=1e-3)
-assert T.allclose(output.value, expected_values, atol=1e-3)
-assert T.allclose(features, expected_features, atol=1e-3)
+assert T.allclose(output.actor_logits, expected_logits, atol=1e-3)
+assert T.allclose(output.critic_value, expected_values, atol=1e-3)
+assert T.allclose(features.features, expected_features, atol=1e-3)
 print("Test passed")
