@@ -9,10 +9,10 @@ class NormalDistribution(ActionBaseDistribution):
     def __init__(self, log_std: T.Tensor, *args, **kwargs):
         self.log_std = log_std
 
-    def __call__(self, logits: T.Tensor) -> Distribution:
+    def __call__(self, logits: T.Tensor, temperature: float = 1.) -> Distribution:
         log_std = self.log_std.clamp(-5, 2)
         std = T.exp(log_std).expand_as(logits)
-        return Independent(Normal(logits, std), 1)
+        return Independent(Normal(logits, std * (temperature ** (1/2))), 1)
 
 
 class MultivariateNormalDistribution(ActionBaseDistribution):
@@ -26,8 +26,8 @@ class MultivariateNormalDistribution(ActionBaseDistribution):
         L[range(len(diag)), range(len(diag))] = diag
         return L
 
-    def __call__(self, logits: T.Tensor) -> Distribution:
+    def __call__(self, logits: T.Tensor, temperature: float = 1.) -> Distribution:
         return MultivariateNormal(
             loc=logits,
-            scale_tril=self._build_scale_tril()
+            scale_tril=self._build_scale_tril() * (temperature ** (1/2))
         )

@@ -14,28 +14,29 @@ policy:
     lambda_: 0.95
     value_loss_coef: 0.5
     entropy_coef: 0.01
-    lr: 0.0003
-    num_epochs: 10
+    lr: 3e-5
+    num_epochs: 3
     clip_epsilon: 0.2
     exploration_method: 
       name: distribution
 
 worker_kwargs:
   device: auto
-  record_step: 50000
+  record_step: 100000
 
 train_kwargs:
-  num_steps: 500000
-  batch_size: 1024
-  minibatch_size: 128
+  num_steps: 1000000
+  batch_size: 128
+  minibatch_size: 64
 
 network:
   kwargs:
     backbone_kwargs: {}
     backbone_name: simple_cnn
-    # core_kwargs: {}
-    # core_name: gru
-    distribution: mvn
+    core_kwargs: {}
+    core_name: gru
+    distribution: normal
     head_kwargs: {}
     head_name: actor_critic
+    initial_deviation: 0.5
     num_features: 256

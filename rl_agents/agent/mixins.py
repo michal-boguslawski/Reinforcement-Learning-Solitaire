@@ -77,7 +77,6 @@ class PolicyMixin(ABC):
             logits = logits,
             dist = dist,
             training = training,
-            temperature = temperature
         )
 
         log_prob = dist.log_prob(action)

@@ -1,3 +1,4 @@
+import numpy as np
 import torch as T
 from torch import nn
 
@@ -24,7 +25,7 @@ class RLModel(nn.Module):
         distribution: str = "categorical",
         low: T.Tensor | None = None,            # automatically derived
         high: T.Tensor | None = None,           # automatically derived
-        initial_log_std: float = 0.0,
+        initial_deviation: float = 1.0,
         device: T.device = T.device("cpu"),
         *args,
         **kwargs
@@ -44,7 +45,7 @@ class RLModel(nn.Module):
         self.head_kwargs = head_kwargs
         
         self.distribution = distribution
-        self.initial_log_std = initial_log_std
+        self.initial_deviation = initial_deviation
         self.high = T.as_tensor(high, device=device) if high is not None else high
         self.low = T.as_tensor(low, device=device) if low is not None else low
 
@@ -81,8 +82,8 @@ class RLModel(nn.Module):
         )
 
     def _setup_dist(self):
-        self.log_std = nn.Parameter(T.full((self.num_actions, ), self.initial_log_std))
-        self.raw_scale_tril = nn.Parameter(T.eye(self.num_actions))
+        self.log_std = nn.Parameter(T.ones((self.num_actions, )) * np.log(self.initial_deviation))
+        self.raw_scale_tril = nn.Parameter(T.eye(self.num_actions) * (self.initial_deviation ** (1/2)))
         self.dist = make_action_distribution(
             dist_name=self.distribution,
             log_std=self.log_std,
@@ -95,7 +96,7 @@ class RLModel(nn.Module):
         features = self.backbone(input_tensor=input_tensor)
         core = self.core(features=features.features, core_state=core_state)
         head_output = self.head(features=core.core_out)
-        dist = self.dist(logits = head_output.actor_logits / temperature)
+        dist = self.dist(logits = head_output.actor_logits, temperature=temperature)
         return ModelOutput(
             actor_logits=head_output.actor_logits,
             critic_value=head_output.critic_value,

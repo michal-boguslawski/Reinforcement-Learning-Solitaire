@@ -9,12 +9,12 @@ network:
     backbone_kwargs: {}
     backbone_name: simple_cnn
     core_kwargs: {}
-    core_name: identity
-    distribution: mvn
+    core_name: gru
+    distribution: normal
     head_kwargs: {}
     head_name: actor_critic
-    initial_log_std: 0.0
-    num_features: 128
+    initial_deviation: 0.5
+    num_features: 256
 policy:
   kwargs:
     advantage_normalize: batch
@@ -26,14 +26,14 @@ policy:
       name: distribution
     gamma: 0.99
     lambda_: 0.95
-    lr: 0.0001
-    num_epochs: 10
+    lr: 3.0e-05
+    num_epochs: 3
     value_loss_coef: 0.5
   type: ppo
 train_kwargs:
-  batch_size: 1024
-  minibatch_size: 128
-  num_steps: 500000
+  batch_size: 128
+  minibatch_size: 64
+  num_steps: 1000000
 worker_kwargs:
   device: auto
-  record_step: 50000
+  record_step: 100000

@@ -58,7 +58,7 @@ class NetworkKwargs(BaseModel):
     head_kwargs: dict = {}
 
     distribution: Literal["normal", "mvn", "categorical"] = "normal"
-    initial_log_std: float = 0.0
+    initial_deviation: float = 1.0
 
 
 class NetworkConfig(BaseModel):

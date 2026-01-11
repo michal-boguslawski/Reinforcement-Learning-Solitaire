@@ -132,7 +132,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
                 actions=actions[mb_idx],
                 advantages=batch_advantages,
                 log_probs=log_probs[mb_idx],
-                core_states=core_states[:, start] if core_states is not None else None,
+                core_states=core_states[:, mb_idx] if core_states is not None else None,
             )
 
 

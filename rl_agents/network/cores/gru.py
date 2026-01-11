@@ -19,6 +19,7 @@ class GRUCore(nn.Module):
     def _build_network(self):
         
         self.core = nn.GRU(self.num_features, self.num_features, batch_first=False)
+        self.ln = nn.LayerNorm(self.num_features)
 
     def forward(self, features: T.Tensor, core_state: T.Tensor | None = None) -> CoreOutput:
         to_squeeze = False
@@ -27,6 +28,7 @@ class GRUCore(nn.Module):
             to_squeeze = True
 
         core_out, hx = self.core(input=features, hx=core_state)
+        core_out = self.ln(core_out)
 
         if to_squeeze:
             core_out = core_out.squeeze(0)

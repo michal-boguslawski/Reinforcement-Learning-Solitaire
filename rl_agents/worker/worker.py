@@ -195,9 +195,12 @@ class Worker:
             if (num_step % self.train_step == 0 and num_step > 0):
                 self._train_agent()
 
-            if sum(done):
+            no_of_finished_envs = done.sum().cpu()
+            if no_of_finished_envs:
                 total_rewards = self.total_reward * done
-                rewards_list.append(total_rewards.sum().cpu() / done.sum().cpu())
+                
+                finished_rewards = total_rewards.sum().cpu() / no_of_finished_envs
+                rewards_list.append(finished_rewards)
                 self.total_reward *= T.logical_not(done)
 
                 if self.core_state is not None:
@@ -205,11 +208,11 @@ class Worker:
 
                 temp_reward_mean = np.mean(rewards_list)
                 tq_iter.set_postfix_str(f"temp mean rewards {temp_reward_mean:.2f}")
-                logger.debug(f"Step {num_step}, temp mean rewards {temp_reward_mean:.2f}")
+                logger.debug(f"Step {num_step}, finished rewards {finished_rewards:.2f}, envs finished {no_of_finished_envs}")
             
             if num_step % 5_000 == 0:
                 self._print_results(num_step, rewards_list)
-            Record video
+            # Record video
             if num_step % self.record_step == 0:
                 self._eval_record_video(num_step=num_step)
 
@@ -257,7 +260,7 @@ class Worker:
         self.agent.eval_mode()
         while not done:
             state = T.as_tensor(state, dtype=T.float32, device=self.device).unsqueeze(0)
-            action_output = self.agent.action(state=state, core_state=core_state, training=False, temperature=0.1)
+            action_output = self.agent.action(state=state, core_state=core_state, training=False, temperature=1.)
             action = action_output.action.squeeze(0)
             action = action.item() if self.action_space_type == "discrete" else action.detach().cpu().numpy()
             next_state, reward, terminated, truncated, _ = env.step(
