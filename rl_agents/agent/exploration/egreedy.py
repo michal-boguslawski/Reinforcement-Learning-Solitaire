@@ -25,7 +25,7 @@ class EGreedyExploration(BaseExploration):
             self.epsilon_ = max(self.epsilon_, self.min_epsilon_)
             logger.debug(f"Current epsilon for egreedy {self.epsilon_}")
 
-    def __call__(self, logits: T.Tensor, dist: Distribution, training: bool = True, temperature: float = 1., *args, **kwargs) -> T.Tensor:
+    def __call__(self, logits: T.Tensor, dist: Distribution, training: bool = True, *args, **kwargs) -> T.Tensor:
         if not training:
             return dist.sample()
         

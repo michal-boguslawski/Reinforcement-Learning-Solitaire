@@ -13,6 +13,11 @@ from .heads.actor import ActorHead
 from .backbones.mlp import MLPNetwork
 from .backbones.cnn import SimpleCNN
 
+# Cores
+from .cores.identity import IdentityCore
+from .cores.lstm import LSTMCore
+from .cores.gru import GRUCore
+
 
 DISTRIBUTIONS = {
     "normal": NormalDistribution,
@@ -36,4 +41,11 @@ HEADS = {
 BACKBONES = {
     "mlp": MLPNetwork,
     "simple_cnn": SimpleCNN
+}
+
+
+CORES = {
+    "identity": IdentityCore,
+    "lstm": LSTMCore,
+    "gru": GRUCore,
 }

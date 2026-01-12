@@ -3,8 +3,10 @@ from gymnasium.core import ObsType
 import numpy as np
 import torch as T
 
+from .utils import image_border, border_color_check
 
-class TerminalBonusWrapper(gym.RewardWrapper):
+
+class TerminalBonusWrapper(gym.Wrapper):
     def __init__(self, env, terminated_bonus: float | None = 0., truncated_bonus: float | None = 0.):
         super().__init__(env)
         self.terminated_bonus = terminated_bonus or 0
@@ -24,7 +26,7 @@ class TerminalBonusWrapper(gym.RewardWrapper):
         return obs, reward, terminated, truncated, info
 
 
-class PowerObsRewardWrapper(gym.RewardWrapper):
+class PowerObsRewardWrapper(gym.Wrapper):
     def __init__(
         self,
         env,
@@ -52,7 +54,7 @@ class PowerObsRewardWrapper(gym.RewardWrapper):
         return obs, reward, terminated, truncated, info
 
 
-class NoMovementInvPunishmentRewardWrapper(gym.RewardWrapper):
+class NoMovementInvPunishmentRewardWrapper(gym.Wrapper):
     def __init__(self, env, punishment: T.Tensor):
         super().__init__(env)
         self.punishment = punishment
@@ -76,7 +78,7 @@ class TransposeObservationWrapper(gym.ObservationWrapper):
         return observation.transpose(2, 0, 1)
 
 
-class ActionPowerRewardWrapper(gym.RewardWrapper):
+class ActionPowerRewardWrapper(gym.Wrapper):
     def __init__(
         self,
         env,
@@ -104,7 +106,7 @@ class ActionPowerRewardWrapper(gym.RewardWrapper):
         return obs, reward, terminated, truncated, info
 
 
-class ActionInteractionWrapper(gym.RewardWrapper):
+class ActionInteractionWrapper(gym.Wrapper):
     def __init__(
         self,
         env: gym.Env,
@@ -130,5 +132,71 @@ class ActionInteractionWrapper(gym.RewardWrapper):
         if self.factors is not None:
             abs_action = np.abs(action)
             reward += float((abs_action @ self.factors.T) @ abs_action.T)
+        
+        return obs, reward, terminated, truncated, info
+
+
+class OutOfTrackPenaltyAndTerminationWrapper(gym.Wrapper):
+    def __init__(
+        self,
+        env,
+        y_range=(64, 78),
+        x_range=(43, 53),
+        rgb_max_lim=np.array([120, 255, 120]),
+        rgb_min_lim=np.array([0, 180, 0]),
+        out_of_track_penalty=1,
+        termination_penalty=100,
+        terminate_after=10,
+        start_at_step=20,
+        *args,
+        **kwargs
+    ):
+        super().__init__(env)
+        self.y_range = y_range
+        self.x_range = x_range
+        self.rgb_max_lim = rgb_max_lim
+        self.rgb_min_lim = rgb_min_lim
+        self.out_of_track_penalty = out_of_track_penalty
+        self.termination_penalty = termination_penalty
+        self.terminate_after = terminate_after
+        self.start_at_step = start_at_step
+        self.step_counter = 0
+        self.counter = 0
+        self.current_penalty = 0
+        print(f"OutOfTrackPenaltyAndTerminationWrapper attached with penalty {self.out_of_track_penalty}")
+
+    def reset(self, **kwargs):
+        obs, info = self.env.reset(**kwargs)
+        self.step_counter = 0
+        self.counter = 0
+        self.current_penalty = 0
+        return obs, info
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        self.step_counter += 1
+
+        if self.step_counter < self.start_at_step:
+            return obs, reward, terminated, truncated, info
+
+        self.counter += 1
+
+        out_of_track_check_result = border_color_check(
+            obs, self.y_range, self.x_range, self.rgb_min_lim, self.rgb_max_lim
+        )
+        
+        if not out_of_track_check_result:
+            self.counter = 0
+            self.current_penalty = 0
+            return obs, reward, terminated, truncated, info
+
+        self.current_penalty += self.out_of_track_penalty
+        reward = float(reward)
+        reward -= self.current_penalty
+
+        if self.counter > self.terminate_after:
+            terminated = True
+            reward -= self.termination_penalty
+            
         
         return obs, reward, terminated, truncated, info

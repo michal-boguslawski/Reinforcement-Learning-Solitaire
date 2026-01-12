@@ -1,4 +1,5 @@
 import inspect
+import numpy as np
 
 from gymnasium.spaces import Discrete, MultiDiscrete
 from gymnasium.vector import VectorEnv
@@ -45,3 +46,31 @@ def clean_kwargs(func, kwargs: dict):
     valid = set(sig.parameters.keys())
 
     return {k: v for k, v in kwargs.items() if k in valid}
+
+
+def image_border(
+    obs: np.ndarray,
+    y_range=(64, 78),
+    x_range=(43, 53),
+) -> np.ndarray:
+    y0, y1 = y_range
+    x0, x1 = x_range
+    
+    top = obs[y0, x0:x1, :]
+    bottom = obs[y1, x0:x1, :]
+    left = obs[(y0+1):(y1-1), x0]
+    right = obs[(y0+1):(y1-1), x1]
+    return np.concatenate([top, bottom, left, right], axis=0)
+
+
+def border_color_check(
+    obs: np.ndarray,
+    y_range: tuple[int, int],
+    x_range: tuple[int, int],
+    rgb_min_lim: np.ndarray,
+    rgb_max_lim: np.ndarray
+) -> bool:
+    border = image_border(obs, y_range=y_range, x_range=x_range)
+    within_min = np.all(border >= rgb_min_lim, axis=1)
+    within_max = np.all(border <= rgb_max_lim, axis=1)
+    return bool(np.all(within_min & within_max))

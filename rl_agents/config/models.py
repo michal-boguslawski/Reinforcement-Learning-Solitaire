@@ -51,11 +51,14 @@ class NetworkKwargs(BaseModel):
     backbone_name: Literal["mlp", "simple_cnn"] = "mlp"
     backbone_kwargs: dict = {}
 
+    core_name: Literal["identity", "lstm", "gru"] = "identity"
+    core_kwargs: dict = {}
+
     head_name: Literal["actor_critic", "actor"] = "actor_critic"
     head_kwargs: dict = {}
 
     distribution: Literal["normal", "mvn", "categorical"] = "normal"
-    initial_log_std: float = 0.0
+    initial_deviation: float = 1.0
 
 
 class NetworkConfig(BaseModel):
