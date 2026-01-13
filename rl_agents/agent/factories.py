@@ -9,8 +9,8 @@ def get_policy(
     policy_type: str,
     network: nn.Module,
     action_space_type: str,
-    device: T.device,
-    policy_kwargs: dict
+    policy_kwargs: dict,
+    device: T.device = T.device("cpu"),
 ) -> BasePolicy:
     agent = POLICIES.get(policy_type)
     if agent is None:

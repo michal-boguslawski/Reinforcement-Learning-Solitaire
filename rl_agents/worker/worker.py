@@ -104,9 +104,7 @@ class Worker:
 
             env_action = prepare_action_for_env(action, self.action_space_type)
 
-            next_state, reward, terminated, truncated, _ = self.env.step(
-                env_action
-            )
+            next_state, reward, terminated, truncated, _ = self.env.step(env_action)
         except Exception as e:
             logger.error(f"Error during episode step: {e}")
             raise e

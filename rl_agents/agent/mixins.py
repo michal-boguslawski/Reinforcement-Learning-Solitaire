@@ -161,7 +161,7 @@ class PolicyMixin(ABC):
         return preprocessed_batch
 
     def save_weights(self, folder_path: str):
-        self.action_network.save_weights(folder_path=folder_path)
+        self.action_network.save_weights(folder_path)
 
     def load_weights(self, file_path: str, param_groups: list[str] | None = None):
-        pass
+        self.action_network.load_weights(file_path, param_groups)

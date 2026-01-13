@@ -30,6 +30,7 @@ def make_vec(
             name_prefix=name_prefix,
             episode_trigger=lambda x: True
         )
+        kwargs["render_mode"] = "rgb_array"
         wrappers.append(record_wrapper)
 
     if training:
