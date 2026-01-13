@@ -1,8 +1,23 @@
-from typing import Dict, Any
+import torch as T
+from torch import nn
 
-from .registry import EXPLORATIONS
-from .exploration.base import BaseExploration
+from .base import BasePolicy
+from .registry import POLICIES
 
 
-def get_exploration(exploration_method_name: str, exploration_kwargs: Dict[str, Any]) -> BaseExploration:
-    return EXPLORATIONS[exploration_method_name](**exploration_kwargs)
+def get_policy(
+    policy_type: str,
+    network: nn.Module,
+    action_space_type: str,
+    device: T.device,
+    policy_kwargs: dict
+) -> BasePolicy:
+    agent = POLICIES.get(policy_type)
+    if agent is None:
+        raise ValueError(f"Agent {policy_type} does not exist")
+    return agent(
+        network=network,
+        action_space_type=action_space_type,
+        device=device,
+        **policy_kwargs
+    )

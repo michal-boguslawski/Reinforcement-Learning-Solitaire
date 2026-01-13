@@ -1,3 +1,4 @@
+import numpy as np
 import torch as T
 from typing import Literal
 
@@ -8,3 +9,15 @@ def get_device(device: Literal["auto", "cpu", "cuda"] | T.device = T.device("cpu
     elif isinstance(device, str):
         device = T.device(device)
     return device
+
+
+def prepare_action_for_env(action: T.Tensor, action_space_type: str) -> np.ndarray | float | int:
+    if action_space_type == "discrete":
+        # For discrete actions, convert to scalar for single env or keep tensor for multiple envs
+        env_action = action.item() if action.numel() == 1 else action.detach().squeeze(-1).cpu().numpy()
+        
+    else:
+        # For continuous actions, always convert to numpy array
+        env_action = action.detach().cpu().numpy()
+
+    return env_action

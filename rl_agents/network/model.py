@@ -1,9 +1,14 @@
+import logging
 import numpy as np
+import os
 import torch as T
 from torch import nn
 
 from .factories import make_action_distribution, make_backbone, make_head, make_core
 from .models.models import ModelOutput
+
+
+logger = logging.getLogger(__name__)
 
 
 class RLModel(nn.Module):
@@ -50,7 +55,8 @@ class RLModel(nn.Module):
         self.low = T.as_tensor(low, device=device) if low is not None else low
 
         self._setup()
-        
+
+        self.device = device
         self.to(device)
 
     def _setup(self):
@@ -91,6 +97,59 @@ class RLModel(nn.Module):
             high=self.high,
             low=self.low,
         )
+
+    def save_weights(self, folder_path: str):
+        file_path = os.path.join(folder_path, "model.pt")
+        T.save(self.state_dict(), file_path)
+        logger.info(f"Saved model to {file_path}")
+
+    def load_weights(
+        self,
+        file_path: str,
+        param_groups: list[str] | None = None,
+        strict: bool = True
+    ):
+        """
+        Load full or partial model weights from a single state_dict file.
+
+        Args:
+            file_path: path to the saved full model .pt file.
+            param_groups: list of submodules to load. Options: "backbone", "core", "head", "dist", "full".
+                        If None, defaults to ["full"].
+            strict: whether to enforce strict key matching when loading submodules.
+            map_location: device mapping, e.g., 'cpu' or 'cuda'.
+        """
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"{file_path} does not exist")
+
+        if param_groups is None:
+            param_groups = ["full"]
+
+        state_dict = T.load(file_path, map_location=self.device)
+
+        for group in param_groups:
+            if group == "full":
+                self.load_state_dict(state_dict, strict=strict)
+
+            elif group in ["backbone", "core", "head"]:
+                # Filter keys belonging to the module
+                filtered_dict = {k.replace(f"{group}.", ""): v
+                                for k, v in state_dict.items()
+                                if k.startswith(f"{group}.")}
+                submodule = getattr(self, group)
+                submodule.load_state_dict(filtered_dict, strict=strict)
+
+            elif group == "dist":
+                # Distribution parameters are nn.Parameters at the top level
+                with T.no_grad():
+                    if "log_std" in state_dict:
+                        self.log_std.copy_(state_dict["log_std"])
+                    if "raw_scale_tril" in state_dict:
+                        self.raw_scale_tril.copy_(state_dict["raw_scale_tril"])
+            else:
+                raise ValueError(f"Unknown param group '{group}'")
+
+        logger.info(f"Loaded param_groups={param_groups} from {file_path}")
 
     def forward(self, input_tensor: T.Tensor, core_state: T.Tensor | None = None, temperature: float = 1.) -> ModelOutput:
         features = self.backbone(input_tensor=input_tensor)

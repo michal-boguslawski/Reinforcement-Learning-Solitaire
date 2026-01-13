@@ -1,7 +1,6 @@
 env_kwargs:
   id: CarRacing-v3
   num_envs: 16
-  permute_observations: true
   vectorization_mode: async
 experiment_name: CarRacing-PPO-GRU
 network:
@@ -14,7 +13,7 @@ network:
     head_kwargs: {}
     head_name: actor_critic
     initial_deviation: 0.5
-    num_features: 256
+    num_features: 128
 policy:
   kwargs:
     advantage_normalize: batch
@@ -26,8 +25,11 @@ policy:
       name: distribution
     gamma: 0.99
     lambda_: 0.95
-    lr: 3.0e-05
     num_epochs: 3
+    optimizer_kwargs:
+      actor_lr: 3.0e-05
+      critic_lr: 0.0001
+      lr: null
     value_loss_coef: 0.5
   type: ppo
 train_kwargs:

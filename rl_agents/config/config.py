@@ -11,7 +11,7 @@ class EnvConfig:
     env_config = {
         "CartPole-v1":
             {
-                "wrappers": {
+                "training_wrappers": {
                     "terminal_bonus": {
                         "terminated_bonus": -100
                     },
@@ -23,7 +23,7 @@ class EnvConfig:
             },
         "MountainCarContinuous-v0":
             {
-                "wrappers":
+                "training_wrappers":
                     {
                         "power_obs_reward": {
                             "pow_factors": [0, 50],
@@ -38,7 +38,7 @@ class EnvConfig:
             },
         "Acrobot-v1":
             {
-                "wrappers":
+                "training_wrappers":
                     {
                         "terminal_bonus": {
                             "terminated_bonus": 100
@@ -59,7 +59,7 @@ class EnvConfig:
             },
         "BipedalWalker-v3":
             {
-                "wrappers":
+                "training_wrappers":
                     {
                         "scale_reward":
                             {
@@ -70,7 +70,7 @@ class EnvConfig:
             },
         "HalfCheetah-v5":
             {
-                "wrappers":
+                "training_wrappers":
                     {
                         "scale_reward":
                             {
@@ -81,14 +81,17 @@ class EnvConfig:
             },
         "CarRacing-v3":
             {
-                "wrappers": {
-                    "out_of_track":
-                        {},
+                "general_wrappers": {
                     "rescale_observation":
                         {
                             "min_obs": -1.,
                             "max_obs": 1.
                         },
+                    "permute_observations": {},
+                },
+                "training_wrappers": {
+                    "out_of_track":
+                        {},
                     "actions_interactions":
                         {
                             "factors":
@@ -103,9 +106,6 @@ class EnvConfig:
                             "scale_factor": 0.1,
                             "loc_factor": 0
                         }
-                    # "terminal_bonus": {
-                    #     "truncated_bonus": -100
-                    # },
                 }
             }
     }

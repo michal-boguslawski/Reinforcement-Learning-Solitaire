@@ -1,18 +1,20 @@
 from abc import ABC, abstractmethod
 import torch as T
 from torch import nn
-from torch.optim import Adam
+from torch.optim import Adam, Optimizer
 from typing import Tuple, Any, Dict
 
 from utils.utils import step_return_discounting
 from memory.replay_buffer import ReplayBuffer
 from models.models import Observation, ActionOutput, ActionSpaceType
 from network.model import RLModel
-from .factories import get_exploration
+from network.heads.actor_critic import ActorCriticHead
+from agent.exploration.factory import get_exploration
 
 
 class PolicyMixin(ABC):
     buffer: ReplayBuffer
+    optimizer: Optimizer
 
     def __init__(
         self,
@@ -20,7 +22,7 @@ class PolicyMixin(ABC):
         exploration_method: Dict[str, Any],
         gamma_: float = 0.99,
         lambda_: float = 1.,
-        lr: float = 1e-3,
+        optimizer_kwargs: dict = {"lr": 3e-4},
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         *args,
         **kwargs
@@ -33,19 +35,46 @@ class PolicyMixin(ABC):
         )
         self.gamma_ = gamma_
         self.lambda_ = lambda_
-        self.optimizer = Adam(self.action_network.parameters(), lr=lr)
         self.loss_fn = loss_fn
 
-        if self.action_network is None:
-            raise ValueError("action_network must be implemented")
+        self.optimizer_kwargs = optimizer_kwargs
+        self.optimizer = Adam(self._setup_parameter_groups(optimizer_kwargs, self.action_network))
+
+    @staticmethod
+    def _setup_parameter_groups(optimizer_kwargs: dict[str, float], network: RLModel) -> list[dict]:
+        lr = optimizer_kwargs.get("lr")
+        actor_lr = optimizer_kwargs.get("actor_lr")
+        critic_lr = optimizer_kwargs.get("critic_lr")
+
+        if lr is not None:
+            return [{"params": network.parameters(), "lr": lr}]
+
+        if not (
+            isinstance(network.head, ActorCriticHead)
+            and isinstance(actor_lr, float)
+            and isinstance(critic_lr, float)
+        ):
+            raise ValueError(
+                f"Missing or invalid lr parameters: "
+                f"actor_lr={actor_lr}, critic_lr={critic_lr}"
+            )
+
+        return [
+            {"params": network.head.actor.parameters(), "lr": actor_lr},
+            {"params": network.head.critic.parameters(), "lr": critic_lr},
+            {"params": network.backbone.parameters(), "lr": critic_lr},
+            {"params": network.core.parameters(), "lr": critic_lr},
+            {"params": [network.log_std], "lr": actor_lr},
+            {"params": [network.raw_scale_tril], "lr": actor_lr},
+        ]
     
     def update_buffer(self, item: dict[str, Any], *args, **kwargs) -> None:
         self.buffer.push(item)
 
     @property
     @abstractmethod
-    def action_network(self) -> nn.Module:
-        """Return the torch.nn.Module used to generate actions."""
+    def action_network(self) -> RLModel:
+        """Return the RLModel used to generate actions."""
         pass
 
     def eval_mode(self) -> None:
@@ -130,3 +159,9 @@ class PolicyMixin(ABC):
             core_state=core_state,
         )
         return preprocessed_batch
+
+    def save_weights(self, folder_path: str):
+        self.action_network.save_weights(folder_path=folder_path)
+
+    def load_weights(self, file_path: str, param_groups: list[str] | None = None):
+        pass

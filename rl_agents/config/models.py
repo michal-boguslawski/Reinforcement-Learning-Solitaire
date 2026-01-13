@@ -8,12 +8,17 @@ class EnvConfig(BaseModel):
     id: str
     vectorization_mode: Literal["sync", "async"]
     num_envs: int
-    permute_observations: bool = False
 
 
 class ExplorationMethod(BaseModel):
     name: Literal["distribution", "egreedy"]
     kwargs: dict = {}
+
+
+class OptimizerConfig(BaseModel):
+    lr: float | None = None
+    actor_lr: float | None = None
+    critic_lr: float | None = None
 
 
 class PolicyKwargs(BaseModel):
@@ -22,11 +27,11 @@ class PolicyKwargs(BaseModel):
     value_loss_coef: float = Field(0.5)
     entropy_coef: float = Field(0.01)
     entropy_decay: float = Field(1, ge=0, le=1)
-    lr: float = Field(0.001)
     num_epochs: int = Field(10, ge=1)
     clip_epsilon: float = Field(0.2)
     advantage_normalize: Literal["batch", "global"] | None = None
     exploration_method: ExplorationMethod
+    optimizer_kwargs: OptimizerConfig
 
 
 class PolicyConfig(BaseModel):

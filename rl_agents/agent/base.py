@@ -40,3 +40,11 @@ class BasePolicy(ABC):
     def train_mode(self) -> None:
         """Changing action network to train mode"""
         pass
+
+    @abstractmethod
+    def load_weights(self, file_path: str, param_groups: list[str] | None = None) -> None:
+        pass
+
+    @abstractmethod
+    def save_weights(self, folder_path: str) -> None:
+        pass
