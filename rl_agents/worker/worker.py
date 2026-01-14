@@ -13,6 +13,7 @@ from envs.utils import get_env_vec_details
 from models.models import ActionSpaceType, EnvDetails
 from network.model import RLModel
 from .utils import get_device, prepare_action_for_env
+from .evaluate import record_episode
 
 
 np.set_printoptions(linewidth=1000)
@@ -194,16 +195,17 @@ class Worker:
                 self._print_results(num_step, rewards_list)
 
             if num_step % self.record_step == 0:
-                self._print_on_record_step()
+                self._print_on_record_step(num_step)
 
         self._print_results(num_steps, rewards_list)
         
         self.env.close()
         logger.info(f"{20 * '='} End training {20 * '='}")
 
-    def _print_on_record_step(self):
+    def _print_on_record_step(self, num_step: int):
         folder_path = f"logs/{self.experiment_name}"
         self.agent.save_weights(folder_path=folder_path)
+        record_episode(num_step)
 
     def _print_results(self, num_step: int, rewards_list: list[float]) -> None:
         try:
