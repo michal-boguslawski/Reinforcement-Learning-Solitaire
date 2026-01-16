@@ -198,6 +198,7 @@ class Worker:
                 self._print_on_record_step(num_step)
 
         self._print_results(num_steps, rewards_list)
+        record_episode(num_steps)
         
         self.env.close()
         logger.info(f"{20 * '='} End training {20 * '='}")

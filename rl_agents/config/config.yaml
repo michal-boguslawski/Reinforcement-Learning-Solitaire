@@ -3,7 +3,7 @@ experiment_name: CarRacing-PPO-GRU
 env_kwargs:
   id: CarRacing-v3
   vectorization_mode: async
-  num_envs: 16
+  num_envs: 32
 
 policy:
   type: ppo
@@ -13,11 +13,11 @@ policy:
     lambda_: 0.95
     value_loss_coef: 0.5
     entropy_coef: 0.01
-    num_epochs: 3
+    num_epochs: 5
     clip_epsilon: 0.2
     optimizer_kwargs:
       actor_lr: 3e-5
-      critic_lr: 1e-4
+      critic_lr: 5e-5
     exploration_method: 
       name: distribution
 
@@ -26,9 +26,9 @@ worker_kwargs:
   record_step: 100000
 
 train_kwargs:
-  num_steps: 1000000
-  batch_size: 128
-  minibatch_size: 64
+  num_steps: 2000000
+  batch_size: 512
+  minibatch_size: 256
 
 network:
   kwargs:

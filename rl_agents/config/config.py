@@ -91,14 +91,15 @@ class EnvConfig:
                 },
                 "training_wrappers": {
                     "out_of_track":
-                        {},
+                        {
+                            "terminate_after": 20},
                     "actions_interactions":
                         {
                             "factors":
                                 {(0, 1): -1., (1, 2): -1.}
                         },
                     "action_reward": {
-                            "abs_factors": [-0.1, 0.1, -0.01],
+                            "abs_factors": [-0.02, 0.1, -0.01],
                             "decay_factor": 1.,
                         },
                     "scale_reward":
