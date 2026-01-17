@@ -10,10 +10,11 @@ from agent.factories import get_policy
 from agent.on_policy import OnPolicy
 from envs.factories import make_vec
 from envs.utils import get_env_vec_details
+from evaluate.evaluate import Evaluator
 from models.models import ActionSpaceType, EnvDetails
 from network.model import RLModel
 from .utils import get_device, prepare_action_for_env
-from .evaluate import record_episode
+# from .evaluate import record_episode
 
 
 np.set_printoptions(linewidth=1000)
@@ -56,6 +57,9 @@ class Worker:
         self.env = make_vec(**env_config)
         self.env_details = get_env_vec_details(self.env)
         self.action_space_type = self.env_details.action_space_type
+        self.evaluator = Evaluator(
+            **{**env_config, "num_envs": 1, "video_folder": f"logs/{self.experiment_name}/videos"}
+        )
 
     def _setup_network(self, network_config: dict[str, Any], device: T.device = T.device("cpu")) -> None:
         network_kwargs = network_config.get("kwargs", {})
@@ -198,7 +202,6 @@ class Worker:
                 self._print_on_record_step(num_step)
 
         self._print_results(num_steps, rewards_list)
-        record_episode(num_steps)
         
         self.env.close()
         logger.info(f"{20 * '='} End training {20 * '='}")
@@ -206,7 +209,7 @@ class Worker:
     def _print_on_record_step(self, num_step: int):
         folder_path = f"logs/{self.experiment_name}"
         self.agent.save_weights(folder_path=folder_path)
-        record_episode(num_step)
+        self.evaluator.evaluate(self.agent, min_episodes=1, action_space_type=self.action_space_type)
 
     def _print_results(self, num_step: int, rewards_list: list[float]) -> None:
         try:

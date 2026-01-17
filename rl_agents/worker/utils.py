@@ -12,9 +12,9 @@ def get_device(device: Literal["auto", "cpu", "cuda"] | T.device = T.device("cpu
 
 
 def prepare_action_for_env(action: T.Tensor, action_space_type: str) -> np.ndarray | float | int:
-    if action_space_type == "discrete":
+    if action_space_type == "discrete" and action.numel() > 1:
         # For discrete actions, convert to scalar for single env or keep tensor for multiple envs
-        env_action = action.item() if action.numel() == 1 else action.detach().squeeze(-1).cpu().numpy()
+        env_action = action.detach().squeeze(-1).cpu().numpy()
         
     else:
         # For continuous actions, always convert to numpy array

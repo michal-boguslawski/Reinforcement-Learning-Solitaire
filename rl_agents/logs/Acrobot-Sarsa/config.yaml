@@ -1,24 +1,37 @@
 env_kwargs:
+  general_wrappers: {}
   id: Acrobot-v1
   num_envs: 8
-  permute_observations: false
+  training_wrappers:
+    power_obs_reward:
+      pow_factors:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0.01
+      - 0.01
+    terminal_bonus:
+      terminated_bonus: 100
   vectorization_mode: async
 experiment_name: Acrobot-Sarsa
 network:
   kwargs:
     backbone_kwargs: {}
     backbone_name: mlp
+    core_kwargs: {}
+    core_name: identity
     distribution: categorical
     head_kwargs: {}
     head_name: actor
-    initial_log_std: 0.0
+    initial_deviation: 1.0
     num_features: 64
 policy:
   kwargs:
     advantage_normalize: null
-    clip_epsilon: 0.2
-    entropy_coef: 0.01
-    entropy_decay: 1
+    clip_epsilon: null
+    entropy_coef: null
+    entropy_decay: null
     exploration_method:
       kwargs:
         decay_step_: 1000
@@ -28,9 +41,12 @@ policy:
       name: egreedy
     gamma: 0.99
     lambda_: 0.9
-    lr: 0.0003
-    num_epochs: 10
-    value_loss_coef: 0.5
+    num_epochs: null
+    optimizer_kwargs:
+      actor_lr: null
+      critic_lr: null
+      lr: 0.0003
+    value_loss_coef: null
   type: sarsa
 train_kwargs:
   batch_size: 32

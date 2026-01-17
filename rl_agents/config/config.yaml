@@ -1,43 +1,44 @@
-experiment_name: CarRacing-PPO-GRU
+experiment_name: Acrobot-Sarsa
 
 env_kwargs:
-  id: CarRacing-v3
+  id: Acrobot-v1
   vectorization_mode: async
-  num_envs: 32
+  num_envs: 8
+  training_wrappers:
+    terminal_bonus:
+      terminated_bonus: 100
+    power_obs_reward:
+      pow_factors: [0, 0, 0, 0, 0.01, 0.01]
 
 policy:
-  type: ppo
+  type: sarsa
   kwargs:
-    advantage_normalize: batch
     gamma: 0.99
-    lambda_: 0.95
-    value_loss_coef: 0.5
-    entropy_coef: 0.01
-    num_epochs: 5
-    clip_epsilon: 0.2
+    lambda_: 0.9
     optimizer_kwargs:
-      actor_lr: 3e-5
-      critic_lr: 5e-5
-    exploration_method: 
-      name: distribution
+      lr: 3e-4
+    exploration_method:
+      kwargs:
+        decay_step_: 1000
+        epsilon_decay_: 0.95
+        epsilon_start_: 1.0
+        min_epsilon_: 0.02
+      name: egreedy
 
 worker_kwargs:
   device: auto
-  record_step: 100000
+  record_step: 20000
 
 train_kwargs:
-  num_steps: 2000000
-  batch_size: 512
-  minibatch_size: 256
+  num_steps: 100000
+  batch_size: 32
+  minibatch_size: 32
 
 network:
   kwargs:
     backbone_kwargs: {}
-    backbone_name: simple_cnn
-    core_kwargs: {}
-    core_name: gru
-    distribution: normal
+    backbone_name: mlp
+    distribution: categorical
     head_kwargs: {}
-    head_name: actor_critic
-    initial_deviation: 0.5
-    num_features: 128
+    head_name: actor
+    num_features: 64

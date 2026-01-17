@@ -1,5 +1,5 @@
 import gymnasium as gym
-from gymnasium.wrappers import NumpyToTorch, RecordVideo, DtypeObservation
+from gymnasium.wrappers import NumpyToTorch, RecordVideo, DtypeObservation, RecordEpisodeStatistics
 import gymnasium.wrappers.vector as vec_wrappers
 import numpy as np
 
@@ -13,17 +13,17 @@ def make_vec(
     num_envs: int,
     training: bool = True,
     record: bool = False,
-    video_folder: str = "logs/videos",
-    name_prefix: str = "eval",
+    video_folder: str | None = None,
+    name_prefix: str | None = None,
+    training_wrappers: dict | None = None,
+    general_wrappers: dict | None = None,
     *args,
     **kwargs
 ):
-    env_config = EnvConfig(id).get_config()
-
     wrappers = []
     wrappers.append(lambda env: DtypeObservation(env, np.float32))
 
-    if record:
+    if record and video_folder is not None and name_prefix is not None:
         record_wrapper = lambda env: RecordVideo(
             env,
             video_folder=video_folder,
@@ -34,11 +34,11 @@ def make_vec(
         wrappers.append(record_wrapper)
 
     if training:
-        training_wrappers_config = env_config.get("training_wrappers")
-        wrappers.extend(prepare_wrappers(training_wrappers_config))
+        wrappers.extend(prepare_wrappers(training_wrappers))
+    else:
+        wrappers.append(lambda env: RecordEpisodeStatistics(env))
 
-    general_wrappers_config = env_config.get("general_wrappers")
-    wrappers.extend(prepare_wrappers(general_wrappers_config))
+    wrappers.extend(prepare_wrappers(general_wrappers))
 
     if num_envs <= 0:
         raise ValueError(f"num_envs must be positive, got {num_envs}")

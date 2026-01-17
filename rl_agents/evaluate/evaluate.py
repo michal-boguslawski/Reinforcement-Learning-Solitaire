@@ -1,16 +1,89 @@
+from gymnasium.vector import VectorEnv
 import logging
 import os
 import torch as T
 
+from agent.base import BasePolicy
 from agent.factories import get_policy
 from envs.factories import make_vec
 from envs.utils import get_env_vec_details
 from config.config import ExperimentConfig
 from network.model import RLModel
-from .utils import prepare_action_for_env, get_device
+from worker.utils import prepare_action_for_env, get_device
 
 
 logger = logging.getLogger(__name__)
+
+
+class Evaluator:
+    envs: VectorEnv
+
+    def __init__(
+        self,
+        id: str,
+        vectorization_mode: str = "sync",
+        num_envs: int = 1,
+        record: bool = True,
+        video_folder: str | None = None,
+        training_wrappers: dict | None = None,
+        general_wrappers: dict | None = None,
+        *args,
+        **kwargs
+    ):
+        self.id = id
+        self.vectorization_mode = vectorization_mode
+        self.num_envs = num_envs
+        self.record = record
+        self.video_folder = video_folder
+        self.training_wrappers = training_wrappers
+        self.general_wrappers = general_wrappers
+
+        self._setup_envs()
+
+    def _setup_envs(self):
+        self.envs = make_vec(
+            id=self.id,
+            num_envs=self.num_envs,
+            training=False,
+            record=self.record,
+            video_folder=self.video_folder,
+            name_prefix="eval",
+            training_wrappers=self.training_wrappers,
+            general_wrappers=self.general_wrappers,
+            vectorization_mode=self.vectorization_mode,
+        )
+
+    def _print_evaluation_results(self, info):
+        print(info)
+
+    def change_env_config(self, num_envs: int | None = None, record: bool = True):
+        if num_envs:
+            self.num_envs = num_envs
+        if record:
+            self.record = record
+
+        self._setup_envs()
+        
+
+    def evaluate(self, agent: BasePolicy, min_episodes: int = 1, action_space_type: str = "discrete"):
+        device = agent.action_network.device
+        state, info = self.envs.reset()
+        finished_envs = 0
+        
+        while finished_envs < min_episodes:
+            state = state.to(device)
+            with T.no_grad():
+                action_output = agent.action(state=state, training=False)
+
+            action = action_output.action
+            env_action = prepare_action_for_env(action, action_space_type)
+            state, _, terminated, truncated, info = self.envs.step(env_action)
+            done = T.logical_or(terminated, truncated)
+            finished_envs += done.sum().cpu().item()
+
+        self.envs.close()
+        self._print_evaluation_results(info)
+        
 
 
 def record_episode(num_step: int):
