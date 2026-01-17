@@ -6,9 +6,13 @@ from typing import Tuple, Any
 
 from memory.replay_buffer import ReplayBuffer
 from models.models import ActionOutput, OnPolicyMinibatch
+from network.model import RLModel
 
 
 class BasePolicy(ABC):
+    network: RLModel
+    optimizer: T.optim.Optimizer
+
     @abstractmethod
     def action(self, state: T.Tensor, training: bool = True, *args, **kwargs) -> ActionOutput:
         pass
@@ -48,3 +52,9 @@ class BasePolicy(ABC):
     @abstractmethod
     def save_weights(self, folder_path: str) -> None:
         pass
+
+    def _backward(self, loss):
+        self.optimizer.zero_grad()
+        loss.backward()
+        nn.utils.clip_grad_norm_(self.network.parameters(), 0.5)
+        self.optimizer.step()

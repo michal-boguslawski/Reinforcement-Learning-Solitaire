@@ -26,7 +26,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
         lambda_: float = 1.,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         device: T.device = T.device('cpu'),
-        optimizer_kwargs: dict = {"lr": 3e-4},
+        optimizer_kwargs: dict | None = None,
         *args,
         **kwargs
     ):
@@ -36,7 +36,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
                 exploration_method=exploration_method,
                 gamma_=gamma_,
                 lambda_=lambda_,
-                optimizer_kwargs=optimizer_kwargs,
+                optimizer_kwargs=optimizer_kwargs or {"lr": 3e-4},
                 loss_fn=loss_fn,
                 *args,
                 **kwargs
@@ -196,13 +196,14 @@ class A2CPolicy(OnPolicy):
         network: RLModel,
         action_space_type: ActionSpaceType,
         exploration_method: Dict[str, Any],
+        advantage_normalize: str | None = None,
         gamma_: float = 0.99,
         lambda_: float = 1,
         value_loss_coef: float = 0.5,
         entropy_coef: float = 0.01,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         device: T.device = T.device('cpu'),
-        optimizer_kwargs: dict = {"lr": 3e-4},
+        optimizer_kwargs: dict | None = None,
         *args,
         **kwargs
     ):
@@ -213,8 +214,9 @@ class A2CPolicy(OnPolicy):
             lambda_=lambda_,
             exploration_method=exploration_method,
             action_space_type=action_space_type,
+            advantage_normalize=advantage_normalize,
             loss_fn=loss_fn,
-            optimizer_kwargs=optimizer_kwargs,
+            optimizer_kwargs=optimizer_kwargs or {"lr": 3e-4},
         )
         self.value_loss_coef = value_loss_coef
         self.entropy_coef = entropy_coef
@@ -234,7 +236,7 @@ class A2CPolicy(OnPolicy):
         output = self.network(states)
 
         # calculation policy loss
-        log_probs = output.dist.log_prob(actions)
+        log_probs = output.dist.log_prob(actions.squeeze(-1) if self.action_space_type == "discrete" else actions)
         if len(log_probs.shape) == 1:
             sum_log_probs = log_probs
         else:
@@ -242,14 +244,6 @@ class A2CPolicy(OnPolicy):
 
         assert sum_log_probs.shape == returns.shape, "Wrong shapes of value"
         actor_loss = -(sum_log_probs * advantages.detach()).mean()
-        
-        if T.isnan(log_probs.cpu()).any():
-            print("actor_loss:", actor_loss.cpu().item())
-            print("Actions:", actions.cpu().mean())
-            print("log_probs:", log_probs.cpu())
-            print("advantages:", advantages.cpu())
-            print("results:", returns.cpu())
-            raise ValueError("actions causing problems")
 
         # calculating critic loss
         value = output.critic_value.squeeze(-1)
@@ -295,7 +289,7 @@ class PPOPolicy(OnPolicy):
         clip_epsilon: float = 0.2,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         device: T.device = T.device('cpu'),
-        optimizer_kwargs: dict = {"lr": 3e-4},
+        optimizer_kwargs: dict | None = None,
         *args,
         **kwargs
     ):
@@ -308,7 +302,7 @@ class PPOPolicy(OnPolicy):
             action_space_type=action_space_type,
             advantage_normalize=advantage_normalize,
             loss_fn=loss_fn,
-            optimizer_kwargs=optimizer_kwargs,
+            optimizer_kwargs=optimizer_kwargs or {"lr": 3e-4},
             num_epochs=num_epochs,
         )
         self.value_loss_coef = value_loss_coef
@@ -322,10 +316,11 @@ class PPOPolicy(OnPolicy):
 
     def step_entropy_decay(self) -> None:
         self.entropy_coef *= self.entropy_decay
+        logger.debug(f"Current entropy coef {self.entropy_coef}")
 
     def train(self, minibatch_size: int = 64, **kwargs) -> list[float] | None:
         output = super().train(minibatch_size, **kwargs)
-        # self.step_entropy_decay()
+        self.step_entropy_decay()
         return output
 
     def calculate_loss(self, batch: OnPolicyMinibatch) -> Tuple[float, ...]:
@@ -337,16 +332,11 @@ class PPOPolicy(OnPolicy):
             batch.log_probs,
             batch.core_states
         )
-        # T.save(states, "/app/rl_agents/tests/unit/network/data/states.pt")
-        # T.save(returns, "/app/rl_agents/tests/unit/network/data/returns.pt")
-        # T.save(actions, "/app/rl_agents/tests/unit/network/data/actions.pt")
-        # T.save(advantages, "/app/rl_agents/tests/unit/network/data/advantages.pt")
-        # T.save(old_log_probs, "/app/rl_agents/tests/unit/network/data/old_log_probs.pt")
 
         output = self.network(states, core_state=core_states)
 
         # calculation policy loss
-        log_probs = output.dist.log_prob(actions)
+        log_probs = output.dist.log_prob(actions.squeeze(-1) if self.action_space_type == "discrete" else actions)
         log_probs = log_probs.nan_to_num(0)
         
         r_t = T.exp((log_probs - old_log_probs).clamp(-10, 10))
@@ -361,13 +351,6 @@ class PPOPolicy(OnPolicy):
             sum_r_t * advantages.detach(),
             T.clamp(sum_r_t, 1 - self.clip_epsilon, 1 + self.clip_epsilon) * advantages.detach()
         )).mean()
-        
-        if T.isnan(log_probs.cpu()).any():
-            print("Actions:", actions.cpu().mean(0))
-            print("log_probs:", log_probs.cpu())
-            print("advantages:", advantages.cpu())
-            print("results:", returns.cpu())
-            raise ValueError("actions causing problems")
 
         # calculating critic loss
         value = output.critic_value.squeeze(-1)
@@ -385,10 +368,6 @@ class PPOPolicy(OnPolicy):
             raise ValueError("Empty entropy tensor")
         entropy = entropy.mean()
 
-        # print("actor_loss:", actor_loss.cpu().item())
-        # print("critic_loss:", critic_loss.cpu().item())
-        # print("entropy:", entropy.cpu().item())
-        # raise "dupa"
         loss = actor_loss + self.value_loss_coef * critic_loss - self.entropy_coef * entropy
 
         # backpropagation of the error

@@ -106,6 +106,8 @@ class PolicyMixin(ABC):
             logits = logits,
             dist = dist,
             training = training,
+            low = net.low,
+            high = net.high,
         )
 
         log_prob = dist.log_prob(action)
@@ -143,6 +145,8 @@ class PolicyMixin(ABC):
             batch.action,
             dtype=T.int64 if self.action_space_type == "discrete" else T.float32
         )
+        if self.action_space_type == "discrete":
+            action = action.unsqueeze(-1)
         reward = T.as_tensor(batch.reward, dtype=T.float32)
         done = T.as_tensor(batch.done, dtype=T.float32)
         value = T.as_tensor(batch.value, dtype=T.float32) if batch.value is not None else None

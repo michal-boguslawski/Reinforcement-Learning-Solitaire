@@ -37,7 +37,7 @@ class PolicyKwargs(BaseModel):
 
 
 class PolicyConfig(BaseModel):
-    type: Literal["ppo", "sarsa"]
+    type: Literal["ppo", "sarsa", "a2c"]
     kwargs: PolicyKwargs
 
 

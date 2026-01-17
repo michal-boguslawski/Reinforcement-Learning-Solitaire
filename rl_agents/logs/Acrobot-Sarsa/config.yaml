@@ -25,7 +25,7 @@ network:
     head_kwargs: {}
     head_name: actor
     initial_deviation: 1.0
-    num_features: 64
+    num_features: 32
 policy:
   kwargs:
     advantage_normalize: null
@@ -51,7 +51,7 @@ policy:
 train_kwargs:
   batch_size: 32
   minibatch_size: 32
-  num_steps: 100000
+  num_steps: 200000
 worker_kwargs:
   device: auto
-  record_step: 20000
+  record_step: 50000

@@ -1,29 +1,31 @@
-experiment_name: Acrobot-Sarsa
+experiment_name: MountainCarContinuous-PPO
 
 env_kwargs:
-  id: Acrobot-v1
+  id: MountainCarContinuous-v0
   vectorization_mode: async
   num_envs: 8
   training_wrappers:
-    terminal_bonus:
-      terminated_bonus: 100
     power_obs_reward:
-      pow_factors: [0, 0, 0, 0, 0.01, 0.01]
+      pow_factors: [0, 10]
+      abs_factors: [0, 0.1]
+      decay_factor: 0.5
 
 policy:
-  type: sarsa
+  type: ppo
   kwargs:
-    gamma: 0.99
-    lambda_: 0.9
+    advantage_normalize: batch
+    gamma: 0.995
+    lambda_: 0.975
+    value_loss_coef: 0.5
+    entropy_coef: 0.001
+    entropy_decay: 0.99
+    clip_epsilon: 0.2
+    num_epochs: 5
     optimizer_kwargs:
-      lr: 3e-4
+      actor_lr: 3e-4
+      critic_lr: 1e-3
     exploration_method:
-      kwargs:
-        decay_step_: 1000
-        epsilon_decay_: 0.95
-        epsilon_start_: 1.0
-        min_epsilon_: 0.02
-      name: egreedy
+      name: distribution
 
 worker_kwargs:
   device: auto
@@ -31,14 +33,15 @@ worker_kwargs:
 
 train_kwargs:
   num_steps: 100000
-  batch_size: 32
-  minibatch_size: 32
+  batch_size: 1024
+  minibatch_size: 128
 
 network:
   kwargs:
     backbone_kwargs: {}
     backbone_name: mlp
-    distribution: categorical
+    distribution: normal
     head_kwargs: {}
-    head_name: actor
-    num_features: 64
+    head_name: actor_critic
+    num_features: 16
+    initial_deviation: 3.
