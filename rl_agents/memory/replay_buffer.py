@@ -75,3 +75,6 @@ class ReplayBuffer:
 
         self.buffer.clear()
         return sample
+
+    def get_trajectory(self):
+        pass

@@ -78,7 +78,7 @@ class Evaluator:
                     pass
 
     def evaluate(self, agent: BasePolicy, min_episodes: int = 1, action_space_type: str = "discrete"):
-        device = agent.action_network.device
+        device = agent.network.device
         state, info = self.envs.reset()
         finished_envs = 0
         rewards = []

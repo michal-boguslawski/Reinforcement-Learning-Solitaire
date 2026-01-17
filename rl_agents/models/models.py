@@ -38,6 +38,7 @@ class OnPolicyMinibatch:
     actions: T.Tensor
     advantages: T.Tensor
     log_probs: T.Tensor
+    state_values: T.Tensor
     core_states: T.Tensor | None = None
 
 
