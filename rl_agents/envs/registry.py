@@ -3,7 +3,7 @@ from gymnasium.wrappers import RecordVideo, TransformReward, ClipAction, Rescale
 from typing import Callable, Dict
 
 from .wrappers import TerminalBonusWrapper, PowerObsRewardWrapper, ActionPowerRewardWrapper, ActionInteractionWrapper, \
-    OutOfTrackPenaltyAndTerminationWrapper
+    OutOfTrackPenaltyAndTerminationWrapper, TransposeObservationWrapper
 
 
 WRAPPERS: Dict[str, Callable] = {
@@ -17,4 +17,5 @@ WRAPPERS: Dict[str, Callable] = {
     "actions_interactions": ActionInteractionWrapper,
     "rescale_observation": RescaleObservation,
     "out_of_track": OutOfTrackPenaltyAndTerminationWrapper,
+    "permute_observations": TransposeObservationWrapper,
 }

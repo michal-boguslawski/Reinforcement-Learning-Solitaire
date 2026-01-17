@@ -1,9 +1,9 @@
-# Exploration methods
-from .exploration.egreedy import EGreedyExploration
-from .exploration.distribution import DistributionExploration
+# Policies
+from .on_policy import A2CPolicy, PPOPolicy, SarsaPolicy
 
 
-EXPLORATIONS = {
-    "egreedy": EGreedyExploration,
-    "distribution": DistributionExploration,
+POLICIES = {
+    "a2c": A2CPolicy,
+    "ppo": PPOPolicy,
+    "sarsa": SarsaPolicy,
 }

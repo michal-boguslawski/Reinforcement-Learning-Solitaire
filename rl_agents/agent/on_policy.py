@@ -26,7 +26,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
         lambda_: float = 1.,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         device: T.device = T.device('cpu'),
-        lr: float = 1e-3,
+        optimizer_kwargs: dict = {"lr": 3e-4},
         *args,
         **kwargs
     ):
@@ -36,7 +36,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
                 exploration_method=exploration_method,
                 gamma_=gamma_,
                 lambda_=lambda_,
-                lr=lr,
+                optimizer_kwargs=optimizer_kwargs,
                 loss_fn=loss_fn,
                 *args,
                 **kwargs
@@ -55,7 +55,7 @@ class OnPolicy(PolicyMixin, BasePolicy):
         losses = []
         batches = self._prepare_batches(batch)
         for _ in range(self.num_epochs):
-            minibatches = self._generate_minibatches(minibatch_size=minibatch_size, **batches)
+            minibatches = self._generate_minibatches(minibatch_size=minibatch_size, **batches) # type: ignore
             for minibatch in minibatches:
                 loss = self.calculate_loss(minibatch)
                 losses.append(loss)
@@ -147,6 +147,7 @@ class SarsaPolicy(OnPolicy):
         value_loss_coef: float = 0.5,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         device: T.device = T.device('cpu'),
+        optimizer_kwargs: dict = {"lr": 3e-4},
         *args,
         **kwargs
     ):
@@ -156,6 +157,7 @@ class SarsaPolicy(OnPolicy):
             gamma_=gamma_,
             lambda_=lambda_,
             exploration_method=exploration_method,
+            optimizer_kwargs=optimizer_kwargs,
             action_space_type=action_space_type,
             loss_fn=loss_fn
         )
@@ -200,7 +202,7 @@ class A2CPolicy(OnPolicy):
         entropy_coef: float = 0.01,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         device: T.device = T.device('cpu'),
-        lr: float = 1e-3,
+        optimizer_kwargs: dict = {"lr": 3e-4},
         *args,
         **kwargs
     ):
@@ -212,7 +214,7 @@ class A2CPolicy(OnPolicy):
             exploration_method=exploration_method,
             action_space_type=action_space_type,
             loss_fn=loss_fn,
-            lr=lr,
+            optimizer_kwargs=optimizer_kwargs,
         )
         self.value_loss_coef = value_loss_coef
         self.entropy_coef = entropy_coef
@@ -293,7 +295,7 @@ class PPOPolicy(OnPolicy):
         clip_epsilon: float = 0.2,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         device: T.device = T.device('cpu'),
-        lr: float = 1e-3,
+        optimizer_kwargs: dict = {"lr": 3e-4},
         *args,
         **kwargs
     ):
@@ -306,7 +308,7 @@ class PPOPolicy(OnPolicy):
             action_space_type=action_space_type,
             advantage_normalize=advantage_normalize,
             loss_fn=loss_fn,
-            lr=lr,
+            optimizer_kwargs=optimizer_kwargs,
             num_epochs=num_epochs,
         )
         self.value_loss_coef = value_loss_coef

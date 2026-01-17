@@ -1,9 +1,8 @@
 import gymnasium as gym
-from gymnasium.core import ObsType
 import numpy as np
 import torch as T
 
-from .utils import image_border, border_color_check
+from .utils import border_color_check
 
 
 class TerminalBonusWrapper(gym.Wrapper):
@@ -69,11 +68,37 @@ class NoMovementInvPunishmentRewardWrapper(gym.Wrapper):
 
 
 class VecTransposeObservationWrapper(gym.vector.VectorObservationWrapper):
+    def __init__(self, env: gym.vector.VectorEnv):
+        super().__init__(env)
+        obs_space = env.observation_space
+        assert isinstance(obs_space, gym.spaces.Box)
+
+        b, h, w, c = obs_space.shape
+        self.observation_space = gym.spaces.Box(
+            low=obs_space.low.transpose(0, 3, 1, 2),
+            high=obs_space.high.transpose(0, 3, 1, 2),
+            shape=(b, c, h, w),
+            dtype=obs_space.dtype, # type: ignore
+        )
+
     def observations(self, observations):
         return observations.permute(0, 3, 1, 2).contiguous()
 
 
 class TransposeObservationWrapper(gym.ObservationWrapper):
+    def __init__(self, env: gym.Env):
+        super().__init__(env)
+        obs_space = env.observation_space
+        assert isinstance(obs_space, gym.spaces.Box)
+
+        h, w, c = obs_space.shape
+        self.observation_space = gym.spaces.Box(
+            low=obs_space.low.transpose(2, 0, 1),
+            high=obs_space.high.transpose(2, 0, 1),
+            shape=(c, h, w),
+            dtype=obs_space.dtype, # type: ignore
+        )
+
     def observation(self, observation):
         return observation.transpose(2, 0, 1)
 

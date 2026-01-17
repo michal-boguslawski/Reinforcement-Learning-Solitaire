@@ -6,12 +6,14 @@ from tqdm import tqdm
 from typing import Any, Literal
 
 from agent.base import BasePolicy
-from agent.on_policy import OnPolicy, A2CPolicy, PPOPolicy, SarsaPolicy
-from envs.factories import make_env, make_vec
+from agent.factories import get_policy
+from agent.on_policy import OnPolicy
+from envs.factories import make_vec
 from envs.utils import get_env_vec_details
 from models.models import ActionSpaceType, EnvDetails
 from network.model import RLModel
-from .utils import get_device
+from .utils import get_device, prepare_action_for_env
+from .evaluate import record_episode
 
 
 np.set_printoptions(linewidth=1000)
@@ -29,12 +31,6 @@ class Worker:
     batch_size: int
     minibatch_size: int
     epsilon: float
-
-    policy_dict = {
-        "a2c": A2CPolicy,
-        "ppo": PPOPolicy,
-        "sarsa": SarsaPolicy,
-    }
 
     def __init__(
         self,
@@ -71,26 +67,17 @@ class Worker:
             device=device,
             **network_kwargs
         )
-        # T.save(
-        #     self.network.feature_extractor.backbone.state_dict(),
-        #     "/app/rl_agents/tests/unit/network/data/backbone_state_dict.pth"
-        # )
-        # T.save(
-        #     self.network.policy.head.state_dict(),
-        #     "/app/rl_agents/tests/unit/network/data/head_state_dict.pth"
-        # )
 
     def _setup_policy(self, policy_config: dict[str, Any], device: T.device = T.device("cpu")) -> None:
         policy_type = policy_config.get("type", "a2c")
-        if policy_type is None or policy_type not in self.policy_dict:
-            raise ValueError(f"Policy {policy_type} not supported")
-
         policy_kwargs = policy_config.get("kwargs", {})
-        self.agent = self.policy_dict[policy_type](
+
+        self.agent = get_policy(
+            policy_type=policy_type,
             network=self.network,
             action_space_type=self.action_space_type,
             device=device,
-            **policy_kwargs
+            policy_kwargs=policy_kwargs
         )
 
     def _reset_training_vars(
@@ -115,16 +102,10 @@ class Worker:
             state = self.state.to(self.device)
             action_output = self.agent.action(state=state, core_state=self.core_state)
             action = action_output.action
-            if self.action_space_type == "discrete":
-                # For discrete actions, convert to scalar for single env or keep tensor for multiple envs
-                env_action = action.item() if action.numel() == 1 else action.detach().squeeze(-1).cpu().numpy()
-                
-            else:
-                # For continuous actions, always convert to numpy array
-                env_action = action.detach().cpu().numpy()
-            next_state, reward, terminated, truncated, _ = self.env.step(
-                env_action
-            )
+
+            env_action = prepare_action_for_env(action, self.action_space_type)
+
+            next_state, reward, terminated, truncated, _ = self.env.step(env_action)
         except Exception as e:
             logger.error(f"Error during episode step: {e}")
             raise e
@@ -212,15 +193,20 @@ class Worker:
             
             if num_step % 5_000 == 0:
                 self._print_results(num_step, rewards_list)
-            # Record video
+
             if num_step % self.record_step == 0:
-                self._eval_record_video(num_step=num_step)
+                self._print_on_record_step(num_step)
 
         self._print_results(num_steps, rewards_list)
-        self._eval_record_video(num_step=num_steps)
+        record_episode(num_steps)
         
         self.env.close()
         logger.info(f"{20 * '='} End training {20 * '='}")
+
+    def _print_on_record_step(self, num_step: int):
+        folder_path = f"logs/{self.experiment_name}"
+        self.agent.save_weights(folder_path=folder_path)
+        record_episode(num_step)
 
     def _print_results(self, num_step: int, rewards_list: list[float]) -> None:
         try:
@@ -238,52 +224,3 @@ class Worker:
         except Exception as e:
             logger.error(f"Error printing results: {e}")
             raise e
-
-    def _eval_record_video(self, num_step: int) -> None:
-        env = make_env(
-            env_config=self.env_config,
-            record=True,
-            video_folder = f"logs/{self.experiment_name}/videos/num_step_{num_step}",
-        )
-        
-        # Initialize evaluation metrics
-        total_reward = 0.
-        step_count = 0
-        state, _ = env.reset()
-        done = False
-        truncated = False
-        terminated = False
-        action_output = None
-        core_state = None
-
-        # Start env inference
-        self.agent.eval_mode()
-        while not done:
-            state = T.as_tensor(state, dtype=T.float32, device=self.device).unsqueeze(0)
-            action_output = self.agent.action(state=state, core_state=core_state, training=False, temperature=1.)
-            action = action_output.action.squeeze(0)
-            action = action.item() if self.action_space_type == "discrete" else action.detach().cpu().numpy()
-            next_state, reward, terminated, truncated, _ = env.step(
-                    action
-                )
-            done = terminated or truncated
-            total_reward += float(reward)
-            state = next_state
-            core_state = action_output.core_state
-            step_count += 1
-        env.close()
-        self.agent.train_mode()
-        logger.info(
-            f"Step {num_step}: {step_count} steps, reward = {total_reward:.2f}, truncated = {truncated}, terminated = {terminated}"
-        )
-        if state.ndim < 3:
-            logger.info("Evaluation stopped in state %s", state.round(2))
-        if action_output and action_output.dist:
-            try:
-                if "covariance_matrix" in dir(action_output.dist.base_dist):  # type: ignore
-                    cov = action_output.dist.base_dist.covariance_matrix[0].cpu().numpy()  # type: ignore
-                else:
-                    cov = action_output.dist.base_dist.stddev[0].cpu().numpy()  # type: ignore
-                logger.info(f"Covariance matrix:\n{cov}")
-            except AttributeError:
-                pass
