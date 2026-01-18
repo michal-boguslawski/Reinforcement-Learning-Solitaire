@@ -32,10 +32,13 @@ class A2CPolicy(OnPolicy, EntropyMixin):
         log_probs = log_probs.sum(-1) if log_probs.ndim > 1 else log_probs
 
         policy_loss = -(log_probs * advantages.detach()).mean()
+        self._emit_loss(policy_loss, "policy_loss")
         return policy_loss
 
     def _compute_critic_loss(self, input: T.Tensor, target: T.Tensor):
-        return self.loss_fn(input.squeeze(-1), target.detach())
+        critic_loss = self.loss_fn(input.squeeze(-1), target.detach())
+        self._emit_loss(critic_loss, "critic_loss")
+        return critic_loss
 
     def _compute_loss(self, batch: OnPolicyMinibatch) -> T.Tensor:
         states, returns, actions, advantages = (
@@ -50,6 +53,7 @@ class A2CPolicy(OnPolicy, EntropyMixin):
         policy_loss = self._compute_policy_loss(output.dist, actions, advantages)
         critic_loss = self._compute_critic_loss(output.critic_value, returns)
         entropy = self.compute_entropy(output.dist)
+        self._emit_loss(entropy, "entropy")
 
         return policy_loss + self.value_loss_coef * critic_loss - self.entropy_coef * entropy
 

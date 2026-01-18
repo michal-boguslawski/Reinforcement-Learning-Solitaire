@@ -25,7 +25,7 @@ network:
     head_kwargs: {}
     head_name: actor
     initial_deviation: 1.0
-    num_features: 32
+    num_features: 16
 policy:
   kwargs:
     advantage_normalize: null
@@ -40,7 +40,7 @@ policy:
         min_epsilon_: 0.02
       name: egreedy
     gamma: 0.99
-    lambda_: 0.9
+    lambda_: 1.0
     num_epochs: null
     optimizer_kwargs:
       actor_lr: null
@@ -49,9 +49,9 @@ policy:
     value_loss_coef: null
   type: sarsa
 train_kwargs:
-  batch_size: 32
-  minibatch_size: 32
-  num_steps: 200000
+  batch_size: 8
+  minibatch_size: 16
+  num_steps: 50000
 worker_kwargs:
   device: auto
-  record_step: 50000
+  record_step: 10000

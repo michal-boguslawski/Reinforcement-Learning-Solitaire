@@ -29,7 +29,7 @@ class OnPolicy(BasePolicy):
         next_state_values = state_values[:, 1:]
         return state_values[:, :-1], next_state_values
 
-    def _get_batch_for_training(self) -> Dict[str, T.Tensor | None]:
+    def _get_batch_for_training(self, *args, **kwargs) -> Dict[str, T.Tensor | None]:
         raw_batch = self.buffer.get_all()
         preprocessed_batch = preprocess_batch(raw_batch, self.action_space_type)
         state_values, next_state_values = self._extract_state_values(preprocessed_batch)

@@ -43,7 +43,7 @@ class PolicyConfig(BaseModel):
 
 class WorkerConfig(BaseModel):
     device: Literal["auto", "cpu", "cuda"]
-    record_step: int = Field(100_000, ge=10_000)
+    record_step: int = Field(100_000, ge=5_000)
 
 
 class TrainConfig(BaseModel):

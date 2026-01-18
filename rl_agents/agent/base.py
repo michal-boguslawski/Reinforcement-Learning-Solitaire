@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-import numpy as np
 import torch as T
 from torch import nn
 from typing import Any, Generator, Dict
 
-from agent.exploration.factory import get_exploration
+from .exploration.factory import get_exploration
+from .callbacks.base import PolicyCallback
 from memory.replay_buffer import ReplayBuffer
 from models.models import ActionOutput, ActionSpaceType, OnPolicyMinibatch
 from network.model import RLModel
@@ -34,7 +34,7 @@ class BasePolicy(ABC):
         self.buffer = ReplayBuffer(buffer_size=buffer_size, device=device)
         self.action_space_type = action_space_type
         self.device = device
-        self.optimizer = T.optim.Adam(self._build_param_groups(optimizer_kwargs), lr=lr)
+        self.optimizer = T.optim.Adam(self._build_param_groups(optimizer_kwargs))
         self.max_grad_norm = 0.5
         self.loss_fn = loss_fn
 
@@ -42,6 +42,8 @@ class BasePolicy(ABC):
             exploration_method_name=exploration_method["name"],
             exploration_kwargs=exploration_method.get("kwargs", {})
         )
+
+        self._callbacks: list[PolicyCallback] = []
 
     @abstractmethod
     def _calculate_loss(self, batch: OnPolicyMinibatch) -> T.Tensor:
@@ -55,10 +57,10 @@ class BasePolicy(ABC):
     def _generate_minibatches(self, minibatch_size: int, *args, **kwargs) -> Generator[OnPolicyMinibatch, None, None]:
         pass
 
-    @abstractmethod
     def train(self, minibatch_size: int, *args, **kwargs) -> None:
         batch = self._get_batch_for_training(*args, **kwargs)
         self._train_step(minibatch_size=minibatch_size, batch=batch, *args, **kwargs)
+        self._emit_train_end()
 
     @property
     def has_critic(self) -> bool:
@@ -97,9 +99,10 @@ class BasePolicy(ABC):
         return action_output
 
     def _train_step(self, minibatch_size: int, batch: Dict[str, T.Tensor | None], *args, **kwargs) -> None:
-        minibatch_generator = self._generate_minibatches(minibatch_size, **batch)
+        minibatch_generator = self._generate_minibatches(minibatch_size=minibatch_size, **batch)
         for minibatch in minibatch_generator:
             loss = self._calculate_loss(minibatch)
+            self._emit_loss(loss, "loss")
             self._backward(loss)
 
     def eval_mode(self) -> None:
@@ -128,3 +131,14 @@ class BasePolicy(ABC):
     def _build_param_groups(self, optimizer_kwargs: dict | None = None) -> list[dict]:
         optimizer_kwargs = optimizer_kwargs or {"lr": 3e-4}
         return [{"params": self.network.parameters(), "lr": optimizer_kwargs.get("lr", 3e-4)}]
+
+    def add_callback(self, callback: PolicyCallback):
+        self._callbacks.append(callback)
+
+    def _emit_loss(self, loss: T.Tensor, name: str):
+        for cb in self._callbacks:
+            cb.on_loss(loss, name)
+
+    def _emit_train_end(self):
+        for cb in self._callbacks:
+            cb.on_train_end()

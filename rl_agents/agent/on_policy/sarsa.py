@@ -14,6 +14,6 @@ class SarsaPolicy(OnPolicy):
         
         output = self.network(states)
         
-        q_values = output.logits.gather(dim=-1, index=actions).squeeze(-1)
+        q_values = output.actor_logits.gather(dim=-1, index=actions).squeeze(-1)
         loss = self.loss_fn(q_values, results)
         return loss
