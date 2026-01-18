@@ -40,7 +40,7 @@ class A2CPolicy(OnPolicy, EntropyMixin):
         self._emit_loss(critic_loss, "critic_loss")
         return critic_loss
 
-    def _compute_loss(self, batch: OnPolicyMinibatch) -> T.Tensor:
+    def _calculate_loss(self, batch: OnPolicyMinibatch) -> T.Tensor:
         states, returns, actions, advantages = (
             batch.states,
             batch.returns,
@@ -60,8 +60,8 @@ class A2CPolicy(OnPolicy, EntropyMixin):
     def _build_param_groups(self, optimizer_kwargs: dict | None = None) -> list[dict]:
         optimizer_kwargs = optimizer_kwargs or {"lr": 3e-4}
         lr = optimizer_kwargs.get("lr")
-        actor_lr = optimizer_kwargs.get("actor_lr", lr)
-        critic_lr = optimizer_kwargs.get("critic_lr", lr)
+        actor_lr = optimizer_kwargs.get("actor_lr") or lr
+        critic_lr = optimizer_kwargs.get("critic_lr") or lr
 
         if not (
             isinstance(self.network.head, ActorCriticHead)

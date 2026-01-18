@@ -2,6 +2,7 @@ from gymnasium.vector import VectorEnv
 import logging
 import numpy as np
 import torch as T
+import tqdm
 
 from agent.base import BasePolicy
 from agent.factories import get_policy
@@ -84,6 +85,8 @@ class Evaluator:
         rewards = []
         action_output = None
         
+        tq = tqdm.tqdm(total=min_episodes, desc="Evaluating", unit="episodes")
+        
         while finished_envs < min_episodes:
             state = state.to(device)
             with T.no_grad():
@@ -97,6 +100,7 @@ class Evaluator:
             finished_envs += tmp_finished_envs
 
             if tmp_finished_envs:
+                tq.update(tmp_finished_envs)
                 tmp_rewards = info.get("episode", {}).get("r")
                 rewards.extend(tmp_rewards[done].cpu().numpy().tolist())
 

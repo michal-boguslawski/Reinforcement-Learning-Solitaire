@@ -1,44 +1,49 @@
-experiment_name: Acrobot-Sarsa
+experiment_name: CartPole-A2C
 
 env_kwargs:
   general_wrappers: {}
-  id: Acrobot-v1
+  id: CartPole-v1
   num_envs: 8
   training_wrappers:
     power_obs_reward:
+      abs_factors:
+      - -1
+      - 0
+      - -10
+      - 0
       pow_factors:
+      - -0.01
       - 0
+      - -10
       - 0
-      - 0
-      - 0
-      - 0.01
-      - 0.01
     terminal_bonus:
-      terminated_bonus: 100
+      terminated_bonus: -100
+    scale_reward:
+      loc_factor: 0.0
+      scale_factor: 0.1
   vectorization_mode: async
 
 policy:
-  type: sarsa
+  type: a2c
   kwargs:
+    advantage_normalize: batch
     gamma: 0.99
-    lambda_: 1.
+    lambda_: 0.95
+    entropy_coef: 0.01
+    value_loss_coef: 0.5
     optimizer_kwargs:
-      lr: 3e-4
+      actor_lr: 3e-4
+      critic_lr: 1e-3
     exploration_method:
-      kwargs:
-        decay_step_: 1000
-        epsilon_decay_: 0.95
-        epsilon_start_: 1.0
-        min_epsilon_: 0.02
-      name: egreedy
+      name: distribution
 
 worker_kwargs:
   device: auto
   record_step: 10000
 
 train_kwargs:
-  batch_size: 8
-  minibatch_size: 16
+  batch_size: 128
+  minibatch_size: 128
   num_steps: 50000
 
 network:
@@ -47,5 +52,5 @@ network:
     backbone_name: mlp
     distribution: categorical
     head_kwargs: {}
-    head_name: actor
+    head_name: actor_critic
     num_features: 16

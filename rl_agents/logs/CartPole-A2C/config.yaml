@@ -1,23 +1,26 @@
 env_kwargs:
   general_wrappers: {}
-  id: Acrobot-v1
+  id: CartPole-v1
   num_envs: 8
   training_wrappers:
     power_obs_reward:
+      abs_factors:
+      - -1
+      - 0
+      - -10
+      - 0
       pow_factors:
+      - -0.01
       - 0
+      - -10
       - 0
-      - 0
-      - 0
-      - 0.01
-      - 0.01
     scale_reward:
       loc_factor: 0.0
       scale_factor: 0.1
     terminal_bonus:
-      terminated_bonus: 100
+      terminated_bonus: -100
   vectorization_mode: async
-experiment_name: Acrobot-A2C
+experiment_name: CartPole-A2C
 network:
   kwargs:
     backbone_kwargs: {}
@@ -31,7 +34,7 @@ network:
     num_features: 16
 policy:
   kwargs:
-    advantage_normalize: null
+    advantage_normalize: batch
     clip_epsilon: null
     entropy_coef: 0.01
     entropy_decay: null
