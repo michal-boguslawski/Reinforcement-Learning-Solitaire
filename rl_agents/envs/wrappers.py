@@ -1,3 +1,4 @@
+import ast
 import gymnasium as gym
 import numpy as np
 import torch as T
@@ -67,6 +68,30 @@ class NoMovementInvPunishmentRewardWrapper(gym.Wrapper):
         return obs, reward, terminated, truncated, info
 
 
+class NoMovementTruncateWrapper(gym.Wrapper):
+    def __init__(self, env, index: int, steps: int = 50, eps: float = 1e-3):
+        super().__init__(env)
+        self.index = index
+        self.steps = steps
+        self.eps = eps
+        self._counter = 0
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+
+        index_observation = obs[self.index]
+        if abs(index_observation) < self.eps:
+            self._counter += 1
+        else:
+            self._counter = 0
+        if self._counter > self.steps:
+            truncated = True
+            self._counter = 0
+            print("Env truncated due to lack of movement")
+
+        return obs, reward, terminated, truncated, info
+
+
 class VecTransposeObservationWrapper(gym.vector.VectorObservationWrapper):
     def __init__(self, env: gym.vector.VectorEnv):
         super().__init__(env)
@@ -116,7 +141,7 @@ class ActionPowerRewardWrapper(gym.Wrapper):
         self.abs_factors = abs_factors
         self.decay = 1
         self.decay_factor = decay_factor or 1
-        print(f"PowerObsRewardWrapper attached with params {pow_factors} {abs_factors} {decay_factor}")
+        print(f"ActionPowerRewardWrapper attached with params {pow_factors} {abs_factors} {decay_factor}")
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
@@ -139,7 +164,7 @@ class ActionInteractionWrapper(gym.Wrapper):
     ):
         super().__init__(env)
         self.factors = self._parse_factors(factors)
-        print(f"PowerObsRewardWrapper attached with params {self.factors}")
+        print(f"ActionInteractionWrapper attached with params {self.factors}")
 
     def _parse_factors(self, factors: dict) -> np.ndarray:
         env_shape = self.env.action_space.shape
@@ -148,6 +173,8 @@ class ActionInteractionWrapper(gym.Wrapper):
         n = env_shape[-1]
         squared_tensor = np.zeros((n, n))
         for key, value in factors.items():
+            if isinstance(key, str):
+                key = ast.literal_eval(key)
             squared_tensor[key[0], key[1]] = value
         return squared_tensor
 
@@ -223,5 +250,36 @@ class OutOfTrackPenaltyAndTerminationWrapper(gym.Wrapper):
             terminated = True
             reward -= self.termination_penalty
             
+        
+        return obs, reward, terminated, truncated, info
+
+
+class ObservationsInteractionWrapper(gym.Wrapper):
+    def __init__(
+        self,
+        env: gym.Env,
+        factors: dict,
+    ):
+        super().__init__(env)
+        self.factors = self._parse_factors(factors)
+        print(f"PowerObsRewardWrapper attached with params {self.factors}")
+
+    def _parse_factors(self, factors: dict) -> np.ndarray:
+        env_shape = self.env.observation_space.shape
+        if env_shape is None:
+            raise ValueError("No valid shape for environment")
+        n = env_shape[-1]
+        squared_tensor = np.zeros((n, n))
+        for key, value in factors.items():
+            if isinstance(key, str):
+                key = ast.literal_eval(key)
+            squared_tensor[key[0], key[1]] = value
+        return squared_tensor
+
+    def step(self, action: np.ndarray):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        reward = float(reward)
+        if self.factors is not None:
+            reward += float((obs @ self.factors.T) @ obs.T)
         
         return obs, reward, terminated, truncated, info

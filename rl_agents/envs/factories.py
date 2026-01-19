@@ -4,8 +4,6 @@ import gymnasium.wrappers.vector as vec_wrappers
 import numpy as np
 
 from .env_utils import prepare_wrappers
-from config.config import EnvConfig
-from .wrappers import VecTransposeObservationWrapper
 
 
 def make_vec(

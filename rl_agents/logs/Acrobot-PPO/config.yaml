@@ -11,6 +11,9 @@ env_kwargs:
       - 0
       - 0.01
       - 0.01
+    scale_reward:
+      loc_factor: 0.0
+      scale_factor: 0.1
     terminal_bonus:
       terminated_bonus: 100
   vectorization_mode: async
@@ -45,9 +48,9 @@ policy:
     value_loss_coef: 0.5
   type: ppo
 train_kwargs:
-  batch_size: 256
-  minibatch_size: 64
-  num_steps: 100000
+  batch_size: 128
+  minibatch_size: 128
+  num_steps: 50000
 worker_kwargs:
   device: auto
-  record_step: 20000
+  record_step: 10000

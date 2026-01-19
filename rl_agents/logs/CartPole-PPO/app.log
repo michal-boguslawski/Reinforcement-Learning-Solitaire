@@ -1,815 +1,412 @@
-2026-01-17 15:08:41,196 : worker.worker : INFO : ==================== Start training ====================
-2026-01-17 15:08:41,216 : worker.worker : INFO : Step 0, Avg Reward 0.0000, Max Reward 0.0000, Loss [0.0]
-2026-01-17 15:08:41,222 : network.model : INFO : Saved model to logs/CartPole-PPO/model.pt
-2026-01-17 15:08:42,352 : evaluate.evaluate : INFO : Evaluation results: mean = 19.00, std = 0.00, min = 19.00, max = 19.00, count = 1
-2026-01-17 15:08:42,816 : worker.worker : DEBUG : Step 8, finished rewards -102.28, envs finished 2
-2026-01-17 15:08:42,826 : worker.worker : DEBUG : Step 10, finished rewards -103.66, envs finished 1
-2026-01-17 15:08:42,830 : worker.worker : DEBUG : Step 11, finished rewards -103.20, envs finished 1
-2026-01-17 15:08:42,843 : worker.worker : DEBUG : Step 13, finished rewards -99.22, envs finished 1
-2026-01-17 15:08:42,852 : worker.worker : DEBUG : Step 15, finished rewards -97.15, envs finished 1
-2026-01-17 15:08:42,858 : worker.worker : DEBUG : Step 16, finished rewards -94.86, envs finished 1
-2026-01-17 15:08:42,866 : worker.worker : DEBUG : Step 17, finished rewards -102.61, envs finished 1
-2026-01-17 15:08:42,885 : worker.worker : DEBUG : Step 20, finished rewards -97.37, envs finished 2
-2026-01-17 15:08:42,909 : worker.worker : DEBUG : Step 24, finished rewards -98.76, envs finished 1
-2026-01-17 15:08:42,919 : worker.worker : DEBUG : Step 25, finished rewards -102.73, envs finished 1
-2026-01-17 15:08:42,944 : worker.worker : DEBUG : Step 29, finished rewards -98.32, envs finished 1
-2026-01-17 15:08:42,949 : worker.worker : DEBUG : Step 30, finished rewards -102.64, envs finished 1
-2026-01-17 15:08:42,954 : worker.worker : DEBUG : Step 31, finished rewards -103.99, envs finished 1
-2026-01-17 15:08:42,968 : worker.worker : DEBUG : Step 33, finished rewards -98.76, envs finished 1
-2026-01-17 15:08:42,973 : worker.worker : DEBUG : Step 34, finished rewards -99.63, envs finished 1
-2026-01-17 15:08:43,007 : worker.worker : DEBUG : Step 40, finished rewards -94.05, envs finished 1
-2026-01-17 15:08:43,016 : worker.worker : DEBUG : Step 42, finished rewards -97.23, envs finished 1
-2026-01-17 15:08:43,032 : worker.worker : DEBUG : Step 45, finished rewards -102.86, envs finished 1
-2026-01-17 15:08:43,047 : worker.worker : DEBUG : Step 48, finished rewards -100.69, envs finished 2
-2026-01-17 15:08:43,052 : worker.worker : DEBUG : Step 49, finished rewards -95.66, envs finished 2
-2026-01-17 15:08:43,074 : worker.worker : DEBUG : Step 53, finished rewards -101.34, envs finished 1
-2026-01-17 15:08:43,084 : worker.worker : DEBUG : Step 55, finished rewards -93.34, envs finished 1
-2026-01-17 15:08:43,110 : worker.worker : DEBUG : Step 60, finished rewards -96.90, envs finished 1
-2026-01-17 15:08:43,116 : worker.worker : DEBUG : Step 61, finished rewards -101.28, envs finished 1
-2026-01-17 15:08:43,123 : worker.worker : DEBUG : Step 62, finished rewards -103.20, envs finished 2
-2026-01-17 15:08:43,136 : worker.worker : DEBUG : Step 64, finished rewards -98.11, envs finished 1
-2026-01-17 15:08:43,154 : worker.worker : DEBUG : Step 67, finished rewards -101.34, envs finished 2
-2026-01-17 15:08:43,185 : worker.worker : DEBUG : Step 74, finished rewards -97.72, envs finished 1
-2026-01-17 15:08:43,195 : worker.worker : DEBUG : Step 76, finished rewards -102.07, envs finished 3
-2026-01-17 15:08:43,204 : worker.worker : DEBUG : Step 78, finished rewards -102.53, envs finished 2
-2026-01-17 15:08:43,233 : worker.worker : DEBUG : Step 83, finished rewards -96.86, envs finished 1
-2026-01-17 15:08:43,238 : worker.worker : DEBUG : Step 84, finished rewards -103.97, envs finished 1
-2026-01-17 15:08:43,253 : worker.worker : DEBUG : Step 87, finished rewards -100.43, envs finished 1
-2026-01-17 15:08:43,264 : worker.worker : DEBUG : Step 89, finished rewards -104.26, envs finished 1
-2026-01-17 15:08:43,282 : worker.worker : DEBUG : Step 92, finished rewards -102.11, envs finished 1
-2026-01-17 15:08:43,289 : worker.worker : DEBUG : Step 93, finished rewards -100.75, envs finished 1
-2026-01-17 15:08:43,302 : worker.worker : DEBUG : Step 95, finished rewards -99.27, envs finished 3
-2026-01-17 15:08:43,342 : worker.worker : DEBUG : Step 102, finished rewards -98.59, envs finished 1
-2026-01-17 15:08:43,352 : worker.worker : DEBUG : Step 104, finished rewards -101.42, envs finished 2
-2026-01-17 15:08:43,362 : worker.worker : DEBUG : Step 106, finished rewards -100.87, envs finished 1
-2026-01-17 15:08:43,381 : worker.worker : DEBUG : Step 108, finished rewards -100.59, envs finished 1
-2026-01-17 15:08:43,387 : worker.worker : DEBUG : Step 109, finished rewards -102.79, envs finished 1
-2026-01-17 15:08:43,419 : worker.worker : DEBUG : Step 114, finished rewards -102.48, envs finished 1
-2026-01-17 15:08:43,429 : worker.worker : DEBUG : Step 116, finished rewards -103.81, envs finished 2
-2026-01-17 15:08:43,443 : worker.worker : DEBUG : Step 118, finished rewards -99.28, envs finished 1
-2026-01-17 15:08:43,448 : worker.worker : DEBUG : Step 119, finished rewards -104.67, envs finished 1
-2026-01-17 15:08:43,457 : worker.worker : DEBUG : Step 120, finished rewards -100.28, envs finished 2
-2026-01-17 15:08:43,502 : worker.worker : DEBUG : Step 131, finished rewards -100.29, envs finished 3
-2026-01-17 15:08:43,506 : worker.worker : DEBUG : Step 132, finished rewards -99.92, envs finished 1
-2026-01-17 15:08:43,522 : worker.worker : DEBUG : Step 135, finished rewards -102.98, envs finished 1
-2026-01-17 15:08:43,529 : worker.worker : DEBUG : Step 136, finished rewards -102.25, envs finished 1
-2026-01-17 15:08:43,561 : worker.worker : DEBUG : Step 142, finished rewards -103.17, envs finished 2
-2026-01-17 15:08:43,565 : worker.worker : DEBUG : Step 143, finished rewards -103.52, envs finished 1
-2026-01-17 15:08:43,575 : worker.worker : DEBUG : Step 145, finished rewards -101.69, envs finished 1
-2026-01-17 15:08:43,597 : worker.worker : DEBUG : Step 148, finished rewards -104.30, envs finished 1
-2026-01-17 15:08:43,622 : worker.worker : DEBUG : Step 151, finished rewards -104.18, envs finished 1
-2026-01-17 15:08:43,628 : worker.worker : DEBUG : Step 152, finished rewards -98.76, envs finished 2
-2026-01-17 15:08:43,661 : worker.worker : DEBUG : Step 156, finished rewards -100.14, envs finished 1
-2026-01-17 15:08:43,669 : worker.worker : DEBUG : Step 158, finished rewards -98.20, envs finished 2
-2026-01-17 15:08:43,682 : worker.worker : DEBUG : Step 160, finished rewards -100.70, envs finished 1
-2026-01-17 15:08:43,708 : worker.worker : DEBUG : Step 165, finished rewards -99.32, envs finished 1
-2026-01-17 15:08:43,721 : worker.worker : DEBUG : Step 168, finished rewards -105.14, envs finished 1
-2026-01-17 15:08:43,726 : worker.worker : DEBUG : Step 169, finished rewards -96.76, envs finished 1
-2026-01-17 15:08:43,733 : worker.worker : DEBUG : Step 170, finished rewards -102.60, envs finished 2
-2026-01-17 15:08:43,739 : worker.worker : DEBUG : Step 171, finished rewards -102.08, envs finished 1
-2026-01-17 15:08:43,761 : worker.worker : DEBUG : Step 175, finished rewards -95.18, envs finished 1
-2026-01-17 15:08:43,775 : worker.worker : DEBUG : Step 178, finished rewards -95.59, envs finished 1
-2026-01-17 15:08:43,800 : worker.worker : DEBUG : Step 183, finished rewards -102.58, envs finished 2
-2026-01-17 15:08:43,825 : worker.worker : DEBUG : Step 188, finished rewards -98.54, envs finished 1
-2026-01-17 15:08:43,851 : worker.worker : DEBUG : Step 194, finished rewards -91.71, envs finished 1
-2026-01-17 15:08:43,859 : worker.worker : DEBUG : Step 196, finished rewards -89.52, envs finished 1
-2026-01-17 15:08:43,869 : worker.worker : DEBUG : Step 198, finished rewards -90.05, envs finished 1
-2026-01-17 15:08:43,876 : worker.worker : DEBUG : Step 199, finished rewards -97.59, envs finished 1
-2026-01-17 15:08:43,891 : worker.worker : DEBUG : Step 201, finished rewards -90.69, envs finished 2
-2026-01-17 15:08:43,916 : worker.worker : DEBUG : Step 206, finished rewards -99.61, envs finished 1
-2026-01-17 15:08:43,929 : worker.worker : DEBUG : Step 208, finished rewards -96.55, envs finished 1
-2026-01-17 15:08:43,941 : worker.worker : DEBUG : Step 210, finished rewards -100.12, envs finished 1
-2026-01-17 15:08:43,947 : worker.worker : DEBUG : Step 211, finished rewards -102.20, envs finished 2
-2026-01-17 15:08:43,953 : worker.worker : DEBUG : Step 212, finished rewards -98.72, envs finished 1
-2026-01-17 15:08:43,961 : worker.worker : DEBUG : Step 213, finished rewards -101.66, envs finished 1
-2026-01-17 15:08:43,980 : worker.worker : DEBUG : Step 216, finished rewards -105.77, envs finished 1
-2026-01-17 15:08:43,998 : worker.worker : DEBUG : Step 220, finished rewards -102.95, envs finished 1
-2026-01-17 15:08:44,025 : worker.worker : DEBUG : Step 225, finished rewards -98.00, envs finished 1
-2026-01-17 15:08:44,035 : worker.worker : DEBUG : Step 227, finished rewards -102.64, envs finished 1
-2026-01-17 15:08:44,041 : worker.worker : DEBUG : Step 228, finished rewards -100.20, envs finished 1
-2026-01-17 15:08:44,050 : worker.worker : DEBUG : Step 229, finished rewards -94.93, envs finished 1
-2026-01-17 15:08:44,065 : worker.worker : DEBUG : Step 232, finished rewards -100.35, envs finished 1
-2026-01-17 15:08:44,095 : worker.worker : DEBUG : Step 235, finished rewards -89.78, envs finished 1
-2026-01-17 15:08:44,106 : worker.worker : DEBUG : Step 236, finished rewards -96.90, envs finished 1
-2026-01-17 15:08:44,133 : worker.worker : DEBUG : Step 239, finished rewards -98.40, envs finished 2
-2026-01-17 15:08:44,156 : worker.worker : DEBUG : Step 242, finished rewards -103.31, envs finished 1
-2026-01-17 15:08:44,184 : worker.worker : DEBUG : Step 246, finished rewards -104.32, envs finished 1
-2026-01-17 15:08:44,206 : worker.worker : DEBUG : Step 248, finished rewards -99.10, envs finished 1
-2026-01-17 15:08:44,249 : worker.worker : DEBUG : Step 250, finished rewards -103.10, envs finished 1
-2026-01-17 15:08:44,263 : worker.worker : DEBUG : Step 251, finished rewards -102.97, envs finished 2
-2026-01-17 15:08:44,287 : worker.worker : DEBUG : Step 254, finished rewards -100.66, envs finished 1
-2026-01-17 15:08:45,633 : agent.on_policy : DEBUG : Mean Losses: [27.759356451034545, -0.015645005489932372, 55.56320035457611, 0.6598737865686417]
-2026-01-17 15:08:45,638 : worker.worker : DEBUG : Step 257, finished rewards -101.30, envs finished 1
-2026-01-17 15:08:45,643 : worker.worker : DEBUG : Step 258, finished rewards -110.55, envs finished 1
-2026-01-17 15:08:45,652 : worker.worker : DEBUG : Step 260, finished rewards -100.66, envs finished 1
-2026-01-17 15:08:45,659 : worker.worker : DEBUG : Step 261, finished rewards -97.67, envs finished 1
-2026-01-17 15:08:45,675 : worker.worker : DEBUG : Step 264, finished rewards -100.11, envs finished 1
-2026-01-17 15:08:45,694 : worker.worker : DEBUG : Step 267, finished rewards -101.82, envs finished 1
-2026-01-17 15:08:45,708 : worker.worker : DEBUG : Step 269, finished rewards -97.31, envs finished 1
-2026-01-17 15:08:45,713 : worker.worker : DEBUG : Step 270, finished rewards -104.47, envs finished 1
-2026-01-17 15:08:45,730 : worker.worker : DEBUG : Step 272, finished rewards -100.92, envs finished 1
-2026-01-17 15:08:45,749 : worker.worker : DEBUG : Step 275, finished rewards -102.47, envs finished 1
-2026-01-17 15:08:45,776 : worker.worker : DEBUG : Step 279, finished rewards -102.29, envs finished 1
-2026-01-17 15:08:45,809 : worker.worker : DEBUG : Step 284, finished rewards -93.26, envs finished 2
-2026-01-17 15:08:45,817 : worker.worker : DEBUG : Step 286, finished rewards -97.31, envs finished 1
-2026-01-17 15:08:45,824 : worker.worker : DEBUG : Step 287, finished rewards -100.15, envs finished 1
-2026-01-17 15:08:45,845 : worker.worker : DEBUG : Step 290, finished rewards -87.89, envs finished 1
-2026-01-17 15:08:45,878 : worker.worker : DEBUG : Step 297, finished rewards -97.70, envs finished 1
-2026-01-17 15:08:45,889 : worker.worker : DEBUG : Step 299, finished rewards -101.15, envs finished 1
-2026-01-17 15:08:45,918 : worker.worker : DEBUG : Step 304, finished rewards -85.15, envs finished 1
-2026-01-17 15:08:45,925 : worker.worker : DEBUG : Step 305, finished rewards -107.27, envs finished 1
-2026-01-17 15:08:45,935 : worker.worker : DEBUG : Step 306, finished rewards -91.60, envs finished 2
-2026-01-17 15:08:45,954 : worker.worker : DEBUG : Step 309, finished rewards -99.90, envs finished 1
-2026-01-17 15:08:45,964 : worker.worker : DEBUG : Step 310, finished rewards -99.47, envs finished 1
-2026-01-17 15:08:46,020 : worker.worker : DEBUG : Step 318, finished rewards -105.22, envs finished 1
-2026-01-17 15:08:46,062 : worker.worker : DEBUG : Step 328, finished rewards -98.02, envs finished 1
-2026-01-17 15:08:46,067 : worker.worker : DEBUG : Step 329, finished rewards -98.75, envs finished 1
-2026-01-17 15:08:46,074 : worker.worker : DEBUG : Step 330, finished rewards -92.43, envs finished 1
-2026-01-17 15:08:46,086 : worker.worker : DEBUG : Step 332, finished rewards -89.98, envs finished 1
-2026-01-17 15:08:46,101 : worker.worker : DEBUG : Step 334, finished rewards -92.64, envs finished 1
-2026-01-17 15:08:46,123 : worker.worker : DEBUG : Step 337, finished rewards -100.49, envs finished 1
-2026-01-17 15:08:46,141 : worker.worker : DEBUG : Step 340, finished rewards -98.11, envs finished 1
-2026-01-17 15:08:46,148 : worker.worker : DEBUG : Step 341, finished rewards -101.38, envs finished 1
-2026-01-17 15:08:46,185 : worker.worker : DEBUG : Step 345, finished rewards -93.43, envs finished 2
-2026-01-17 15:08:46,202 : worker.worker : DEBUG : Step 348, finished rewards -100.50, envs finished 1
-2026-01-17 15:08:46,221 : worker.worker : DEBUG : Step 351, finished rewards -98.25, envs finished 1
-2026-01-17 15:08:46,238 : worker.worker : DEBUG : Step 354, finished rewards -80.48, envs finished 1
-2026-01-17 15:08:46,260 : worker.worker : DEBUG : Step 356, finished rewards -105.11, envs finished 1
-2026-01-17 15:08:46,282 : worker.worker : DEBUG : Step 360, finished rewards -97.33, envs finished 2
-2026-01-17 15:08:46,289 : worker.worker : DEBUG : Step 361, finished rewards -102.25, envs finished 1
-2026-01-17 15:08:46,297 : worker.worker : DEBUG : Step 362, finished rewards -95.31, envs finished 1
-2026-01-17 15:08:46,323 : worker.worker : DEBUG : Step 366, finished rewards -100.19, envs finished 1
-2026-01-17 15:08:46,341 : worker.worker : DEBUG : Step 369, finished rewards -90.42, envs finished 1
-2026-01-17 15:08:46,369 : worker.worker : DEBUG : Step 375, finished rewards -101.69, envs finished 1
-2026-01-17 15:08:46,375 : worker.worker : DEBUG : Step 376, finished rewards -88.84, envs finished 1
-2026-01-17 15:08:46,387 : worker.worker : DEBUG : Step 378, finished rewards -97.08, envs finished 1
-2026-01-17 15:08:46,395 : worker.worker : DEBUG : Step 379, finished rewards -97.37, envs finished 1
-2026-01-17 15:08:46,435 : worker.worker : DEBUG : Step 383, finished rewards -96.17, envs finished 2
-2026-01-17 15:08:46,444 : worker.worker : DEBUG : Step 384, finished rewards -102.16, envs finished 1
-2026-01-17 15:08:46,464 : worker.worker : DEBUG : Step 387, finished rewards -104.05, envs finished 1
-2026-01-17 15:08:46,505 : worker.worker : DEBUG : Step 395, finished rewards -100.11, envs finished 1
-2026-01-17 15:08:46,525 : worker.worker : DEBUG : Step 399, finished rewards -101.03, envs finished 1
-2026-01-17 15:08:46,531 : worker.worker : DEBUG : Step 400, finished rewards -97.93, envs finished 1
-2026-01-17 15:08:46,542 : worker.worker : DEBUG : Step 402, finished rewards -103.46, envs finished 1
-2026-01-17 15:08:46,551 : worker.worker : DEBUG : Step 403, finished rewards -93.56, envs finished 1
-2026-01-17 15:08:46,559 : worker.worker : DEBUG : Step 404, finished rewards -96.37, envs finished 1
-2026-01-17 15:08:46,573 : worker.worker : DEBUG : Step 406, finished rewards -92.53, envs finished 1
-2026-01-17 15:08:46,589 : worker.worker : DEBUG : Step 408, finished rewards -89.29, envs finished 1
-2026-01-17 15:08:46,633 : worker.worker : DEBUG : Step 416, finished rewards -108.20, envs finished 2
-2026-01-17 15:08:46,644 : worker.worker : DEBUG : Step 417, finished rewards -98.42, envs finished 1
-2026-01-17 15:08:46,670 : worker.worker : DEBUG : Step 421, finished rewards -101.36, envs finished 1
-2026-01-17 15:08:46,690 : worker.worker : DEBUG : Step 424, finished rewards -94.06, envs finished 1
-2026-01-17 15:08:46,700 : worker.worker : DEBUG : Step 425, finished rewards -97.77, envs finished 1
-2026-01-17 15:08:46,717 : worker.worker : DEBUG : Step 427, finished rewards -114.72, envs finished 1
-2026-01-17 15:08:46,734 : worker.worker : DEBUG : Step 430, finished rewards -102.33, envs finished 2
-2026-01-17 15:08:46,766 : worker.worker : DEBUG : Step 436, finished rewards -101.58, envs finished 1
-2026-01-17 15:08:46,787 : worker.worker : DEBUG : Step 438, finished rewards -99.83, envs finished 2
-2026-01-17 15:08:46,817 : worker.worker : DEBUG : Step 441, finished rewards -97.92, envs finished 1
-2026-01-17 15:08:46,822 : worker.worker : DEBUG : Step 442, finished rewards -101.44, envs finished 1
-2026-01-17 15:08:46,842 : worker.worker : DEBUG : Step 445, finished rewards -102.07, envs finished 1
-2026-01-17 15:08:46,849 : worker.worker : DEBUG : Step 446, finished rewards -104.37, envs finished 1
-2026-01-17 15:08:46,887 : worker.worker : DEBUG : Step 451, finished rewards -102.04, envs finished 1
-2026-01-17 15:08:46,919 : worker.worker : DEBUG : Step 455, finished rewards -102.47, envs finished 1
-2026-01-17 15:08:46,929 : worker.worker : DEBUG : Step 456, finished rewards -103.64, envs finished 1
-2026-01-17 15:08:46,966 : worker.worker : DEBUG : Step 460, finished rewards -104.48, envs finished 1
-2026-01-17 15:08:46,977 : worker.worker : DEBUG : Step 461, finished rewards -119.68, envs finished 1
-2026-01-17 15:08:46,987 : worker.worker : DEBUG : Step 462, finished rewards -96.53, envs finished 1
-2026-01-17 15:08:47,011 : worker.worker : DEBUG : Step 464, finished rewards -102.26, envs finished 1
-2026-01-17 15:08:47,048 : worker.worker : DEBUG : Step 469, finished rewards -103.43, envs finished 1
-2026-01-17 15:08:47,058 : worker.worker : DEBUG : Step 470, finished rewards -94.44, envs finished 1
-2026-01-17 15:08:47,116 : worker.worker : DEBUG : Step 477, finished rewards -94.19, envs finished 1
-2026-01-17 15:08:47,126 : worker.worker : DEBUG : Step 478, finished rewards -95.68, envs finished 2
-2026-01-17 15:08:47,173 : worker.worker : DEBUG : Step 485, finished rewards -95.26, envs finished 2
-2026-01-17 15:08:47,188 : worker.worker : DEBUG : Step 487, finished rewards -93.73, envs finished 1
-2026-01-17 15:08:47,221 : worker.worker : DEBUG : Step 491, finished rewards -99.20, envs finished 1
-2026-01-17 15:08:47,269 : worker.worker : DEBUG : Step 498, finished rewards -101.03, envs finished 1
-2026-01-17 15:08:47,276 : worker.worker : DEBUG : Step 499, finished rewards -99.36, envs finished 1
-2026-01-17 15:08:47,302 : worker.worker : DEBUG : Step 503, finished rewards -98.62, envs finished 2
-2026-01-17 15:08:47,311 : worker.worker : DEBUG : Step 505, finished rewards -85.04, envs finished 1
-2026-01-17 15:08:47,320 : worker.worker : DEBUG : Step 506, finished rewards -88.89, envs finished 1
-2026-01-17 15:08:47,349 : worker.worker : DEBUG : Step 511, finished rewards -99.68, envs finished 1
-2026-01-17 15:08:48,410 : agent.on_policy : DEBUG : Mean Losses: [21.298344832658767, -0.015153822817819674, 42.64065135717392, 0.6826991710811854]
-2026-01-17 15:08:48,417 : worker.worker : DEBUG : Step 514, finished rewards -107.42, envs finished 1
-2026-01-17 15:08:48,422 : worker.worker : DEBUG : Step 515, finished rewards -98.23, envs finished 1
-2026-01-17 15:08:48,428 : worker.worker : DEBUG : Step 516, finished rewards -97.35, envs finished 1
-2026-01-17 15:08:48,443 : worker.worker : DEBUG : Step 519, finished rewards -104.50, envs finished 1
-2026-01-17 15:08:48,474 : worker.worker : DEBUG : Step 524, finished rewards -107.66, envs finished 3
-2026-01-17 15:08:48,483 : worker.worker : DEBUG : Step 526, finished rewards -101.15, envs finished 1
-2026-01-17 15:08:48,492 : worker.worker : DEBUG : Step 527, finished rewards -103.94, envs finished 1
-2026-01-17 15:08:48,509 : worker.worker : DEBUG : Step 529, finished rewards -101.60, envs finished 1
-2026-01-17 15:08:48,537 : worker.worker : DEBUG : Step 535, finished rewards -98.21, envs finished 1
-2026-01-17 15:08:48,547 : worker.worker : DEBUG : Step 537, finished rewards -103.30, envs finished 1
-2026-01-17 15:08:48,569 : worker.worker : DEBUG : Step 541, finished rewards -105.99, envs finished 1
-2026-01-17 15:08:48,588 : worker.worker : DEBUG : Step 545, finished rewards -103.58, envs finished 1
-2026-01-17 15:08:48,608 : worker.worker : DEBUG : Step 549, finished rewards -98.74, envs finished 2
-2026-01-17 15:08:48,614 : worker.worker : DEBUG : Step 550, finished rewards -97.76, envs finished 1
-2026-01-17 15:08:48,622 : worker.worker : DEBUG : Step 551, finished rewards -92.86, envs finished 1
-2026-01-17 15:08:48,674 : worker.worker : DEBUG : Step 562, finished rewards -102.27, envs finished 1
-2026-01-17 15:08:48,684 : worker.worker : DEBUG : Step 564, finished rewards -115.15, envs finished 1
-2026-01-17 15:08:48,690 : worker.worker : DEBUG : Step 565, finished rewards -105.71, envs finished 1
-2026-01-17 15:08:48,697 : worker.worker : DEBUG : Step 566, finished rewards -99.64, envs finished 1
-2026-01-17 15:08:48,736 : worker.worker : DEBUG : Step 574, finished rewards -84.85, envs finished 1
-2026-01-17 15:08:48,742 : worker.worker : DEBUG : Step 575, finished rewards -99.81, envs finished 2
-2026-01-17 15:08:48,769 : worker.worker : DEBUG : Step 579, finished rewards -99.53, envs finished 1
-2026-01-17 15:08:48,776 : worker.worker : DEBUG : Step 580, finished rewards -101.34, envs finished 1
-2026-01-17 15:08:48,810 : worker.worker : DEBUG : Step 588, finished rewards -91.03, envs finished 1
-2026-01-17 15:08:48,841 : worker.worker : DEBUG : Step 595, finished rewards -100.36, envs finished 1
-2026-01-17 15:08:48,862 : worker.worker : DEBUG : Step 599, finished rewards -99.62, envs finished 1
-2026-01-17 15:08:48,874 : worker.worker : DEBUG : Step 601, finished rewards -94.04, envs finished 1
-2026-01-17 15:08:48,883 : worker.worker : DEBUG : Step 602, finished rewards -127.08, envs finished 1
-2026-01-17 15:08:48,900 : worker.worker : DEBUG : Step 605, finished rewards -91.80, envs finished 1
-2026-01-17 15:08:48,928 : worker.worker : DEBUG : Step 611, finished rewards -92.58, envs finished 1
-2026-01-17 15:08:48,942 : worker.worker : DEBUG : Step 614, finished rewards -90.97, envs finished 1
-2026-01-17 15:08:48,953 : worker.worker : DEBUG : Step 616, finished rewards -101.78, envs finished 1
-2026-01-17 15:08:48,975 : worker.worker : DEBUG : Step 620, finished rewards -100.00, envs finished 1
-2026-01-17 15:08:48,983 : worker.worker : DEBUG : Step 621, finished rewards -109.37, envs finished 1
-2026-01-17 15:08:48,989 : worker.worker : DEBUG : Step 622, finished rewards -110.42, envs finished 1
-2026-01-17 15:08:49,005 : worker.worker : DEBUG : Step 624, finished rewards -94.31, envs finished 1
-2026-01-17 15:08:49,024 : worker.worker : DEBUG : Step 627, finished rewards -102.70, envs finished 1
-2026-01-17 15:08:49,045 : worker.worker : DEBUG : Step 631, finished rewards -97.76, envs finished 1
-2026-01-17 15:08:49,065 : worker.worker : DEBUG : Step 635, finished rewards -101.14, envs finished 1
-2026-01-17 15:08:49,099 : worker.worker : DEBUG : Step 642, finished rewards -107.73, envs finished 1
-2026-01-17 15:08:49,121 : worker.worker : DEBUG : Step 647, finished rewards -101.60, envs finished 1
-2026-01-17 15:08:49,136 : worker.worker : DEBUG : Step 650, finished rewards -105.92, envs finished 1
-2026-01-17 15:08:49,153 : worker.worker : DEBUG : Step 653, finished rewards -91.52, envs finished 2
-2026-01-17 15:08:49,171 : worker.worker : DEBUG : Step 656, finished rewards -100.20, envs finished 1
-2026-01-17 15:08:49,202 : worker.worker : DEBUG : Step 662, finished rewards -97.54, envs finished 1
-2026-01-17 15:08:49,230 : worker.worker : DEBUG : Step 668, finished rewards -99.37, envs finished 1
-2026-01-17 15:08:49,251 : worker.worker : DEBUG : Step 672, finished rewards -99.17, envs finished 1
-2026-01-17 15:08:49,262 : worker.worker : DEBUG : Step 674, finished rewards -82.23, envs finished 1
-2026-01-17 15:08:49,292 : worker.worker : DEBUG : Step 679, finished rewards -92.03, envs finished 1
-2026-01-17 15:08:49,339 : worker.worker : DEBUG : Step 689, finished rewards -97.68, envs finished 2
-2026-01-17 15:08:49,366 : worker.worker : DEBUG : Step 693, finished rewards -123.43, envs finished 1
-2026-01-17 15:08:49,380 : worker.worker : DEBUG : Step 695, finished rewards -98.66, envs finished 1
-2026-01-17 15:08:49,435 : worker.worker : DEBUG : Step 705, finished rewards -108.21, envs finished 1
-2026-01-17 15:08:49,455 : worker.worker : DEBUG : Step 709, finished rewards -100.45, envs finished 1
-2026-01-17 15:08:49,469 : worker.worker : DEBUG : Step 710, finished rewards -98.09, envs finished 1
-2026-01-17 15:08:49,476 : worker.worker : DEBUG : Step 711, finished rewards -92.28, envs finished 2
-2026-01-17 15:08:49,511 : worker.worker : DEBUG : Step 716, finished rewards -94.43, envs finished 1
-2026-01-17 15:08:49,544 : worker.worker : DEBUG : Step 722, finished rewards -102.93, envs finished 1
-2026-01-17 15:08:49,550 : worker.worker : DEBUG : Step 723, finished rewards -94.78, envs finished 1
-2026-01-17 15:08:49,563 : worker.worker : DEBUG : Step 725, finished rewards -99.61, envs finished 1
-2026-01-17 15:08:49,621 : worker.worker : DEBUG : Step 735, finished rewards -105.39, envs finished 2
-2026-01-17 15:08:49,641 : worker.worker : DEBUG : Step 738, finished rewards -106.38, envs finished 2
-2026-01-17 15:08:49,652 : worker.worker : DEBUG : Step 739, finished rewards -100.73, envs finished 1
-2026-01-17 15:08:49,698 : worker.worker : DEBUG : Step 746, finished rewards -99.81, envs finished 1
-2026-01-17 15:08:49,708 : worker.worker : DEBUG : Step 747, finished rewards -89.21, envs finished 1
-2026-01-17 15:08:49,725 : worker.worker : DEBUG : Step 749, finished rewards -109.22, envs finished 1
-2026-01-17 15:08:49,741 : worker.worker : DEBUG : Step 751, finished rewards -101.06, envs finished 1
-2026-01-17 15:08:49,749 : worker.worker : DEBUG : Step 752, finished rewards -100.64, envs finished 1
-2026-01-17 15:08:49,764 : worker.worker : DEBUG : Step 753, finished rewards -97.38, envs finished 1
-2026-01-17 15:08:49,772 : worker.worker : DEBUG : Step 754, finished rewards -96.68, envs finished 1
-2026-01-17 15:08:49,806 : worker.worker : DEBUG : Step 760, finished rewards -95.29, envs finished 1
-2026-01-17 15:08:49,811 : worker.worker : DEBUG : Step 761, finished rewards -99.39, envs finished 1
-2026-01-17 15:08:49,836 : worker.worker : DEBUG : Step 765, finished rewards -100.20, envs finished 1
-2026-01-17 15:08:51,130 : agent.on_policy : DEBUG : Mean Losses: [16.370169833302498, -0.018912713836471085, 32.79184920191765, 0.6842069432139397]
-2026-01-17 15:08:51,155 : worker.worker : DEBUG : Step 772, finished rewards -99.18, envs finished 1
-2026-01-17 15:08:51,190 : worker.worker : DEBUG : Step 778, finished rewards -95.73, envs finished 1
-2026-01-17 15:08:51,211 : worker.worker : DEBUG : Step 781, finished rewards -103.62, envs finished 1
-2026-01-17 15:08:51,224 : worker.worker : DEBUG : Step 782, finished rewards -116.51, envs finished 1
-2026-01-17 15:08:51,238 : worker.worker : DEBUG : Step 784, finished rewards -104.09, envs finished 1
-2026-01-17 15:08:51,246 : worker.worker : DEBUG : Step 785, finished rewards -102.74, envs finished 1
-2026-01-17 15:08:51,263 : worker.worker : DEBUG : Step 788, finished rewards -85.51, envs finished 1
-2026-01-17 15:08:51,294 : worker.worker : DEBUG : Step 794, finished rewards -98.34, envs finished 1
-2026-01-17 15:08:51,318 : worker.worker : DEBUG : Step 799, finished rewards -104.20, envs finished 1
-2026-01-17 15:08:51,366 : worker.worker : DEBUG : Step 808, finished rewards -97.81, envs finished 1
-2026-01-17 15:08:51,388 : worker.worker : DEBUG : Step 813, finished rewards -104.33, envs finished 1
-2026-01-17 15:08:51,418 : worker.worker : DEBUG : Step 819, finished rewards -78.74, envs finished 1
-2026-01-17 15:08:51,428 : worker.worker : DEBUG : Step 821, finished rewards -100.29, envs finished 1
-2026-01-17 15:08:51,449 : worker.worker : DEBUG : Step 824, finished rewards -91.16, envs finished 1
-2026-01-17 15:08:51,483 : worker.worker : DEBUG : Step 830, finished rewards -100.80, envs finished 1
-2026-01-17 15:08:51,498 : worker.worker : DEBUG : Step 833, finished rewards -84.12, envs finished 1
-2026-01-17 15:08:51,512 : worker.worker : DEBUG : Step 835, finished rewards -100.57, envs finished 2
-2026-01-17 15:08:51,533 : worker.worker : DEBUG : Step 839, finished rewards -99.33, envs finished 1
-2026-01-17 15:08:51,572 : worker.worker : DEBUG : Step 846, finished rewards -99.05, envs finished 1
-2026-01-17 15:08:51,584 : worker.worker : DEBUG : Step 848, finished rewards -79.22, envs finished 1
-2026-01-17 15:08:51,597 : worker.worker : DEBUG : Step 850, finished rewards -96.54, envs finished 1
-2026-01-17 15:08:51,631 : worker.worker : DEBUG : Step 857, finished rewards -104.56, envs finished 1
-2026-01-17 15:08:51,652 : worker.worker : DEBUG : Step 861, finished rewards -127.38, envs finished 2
-2026-01-17 15:08:51,672 : worker.worker : DEBUG : Step 864, finished rewards -100.93, envs finished 1
-2026-01-17 15:08:51,691 : worker.worker : DEBUG : Step 867, finished rewards -99.30, envs finished 2
-2026-01-17 15:08:51,732 : worker.worker : DEBUG : Step 875, finished rewards -103.72, envs finished 2
-2026-01-17 15:08:51,764 : worker.worker : DEBUG : Step 881, finished rewards -101.30, envs finished 1
-2026-01-17 15:08:51,800 : worker.worker : DEBUG : Step 887, finished rewards -100.11, envs finished 2
-2026-01-17 15:08:51,824 : worker.worker : DEBUG : Step 891, finished rewards -99.86, envs finished 1
-2026-01-17 15:08:51,840 : worker.worker : DEBUG : Step 893, finished rewards -96.07, envs finished 1
-2026-01-17 15:08:51,908 : worker.worker : DEBUG : Step 905, finished rewards -104.73, envs finished 1
-2026-01-17 15:08:51,948 : worker.worker : DEBUG : Step 912, finished rewards -100.86, envs finished 1
-2026-01-17 15:08:51,980 : worker.worker : DEBUG : Step 917, finished rewards -96.99, envs finished 1
-2026-01-17 15:08:51,996 : worker.worker : DEBUG : Step 920, finished rewards -107.43, envs finished 1
-2026-01-17 15:08:52,018 : worker.worker : DEBUG : Step 923, finished rewards -86.84, envs finished 1
-2026-01-17 15:08:52,028 : worker.worker : DEBUG : Step 924, finished rewards -99.14, envs finished 1
-2026-01-17 15:08:52,057 : worker.worker : DEBUG : Step 929, finished rewards -96.68, envs finished 1
-2026-01-17 15:08:52,070 : worker.worker : DEBUG : Step 931, finished rewards -97.10, envs finished 1
-2026-01-17 15:08:52,095 : worker.worker : DEBUG : Step 935, finished rewards -102.05, envs finished 1
-2026-01-17 15:08:52,112 : worker.worker : DEBUG : Step 939, finished rewards -93.68, envs finished 2
-2026-01-17 15:08:52,129 : worker.worker : DEBUG : Step 941, finished rewards -104.78, envs finished 1
-2026-01-17 15:08:52,176 : worker.worker : DEBUG : Step 951, finished rewards -139.98, envs finished 1
-2026-01-17 15:08:52,182 : worker.worker : DEBUG : Step 952, finished rewards -98.88, envs finished 1
-2026-01-17 15:08:52,191 : worker.worker : DEBUG : Step 953, finished rewards -104.85, envs finished 1
-2026-01-17 15:08:52,201 : worker.worker : DEBUG : Step 954, finished rewards -106.72, envs finished 1
-2026-01-17 15:08:52,227 : worker.worker : DEBUG : Step 958, finished rewards -100.47, envs finished 1
-2026-01-17 15:08:52,235 : worker.worker : DEBUG : Step 959, finished rewards -86.50, envs finished 1
-2026-01-17 15:08:52,266 : worker.worker : DEBUG : Step 965, finished rewards -114.02, envs finished 1
-2026-01-17 15:08:52,282 : worker.worker : DEBUG : Step 968, finished rewards -100.15, envs finished 1
-2026-01-17 15:08:52,307 : worker.worker : DEBUG : Step 972, finished rewards -96.80, envs finished 1
-2026-01-17 15:08:52,334 : worker.worker : DEBUG : Step 976, finished rewards -97.63, envs finished 1
-2026-01-17 15:08:52,386 : worker.worker : DEBUG : Step 986, finished rewards -109.55, envs finished 2
-2026-01-17 15:08:52,394 : worker.worker : DEBUG : Step 987, finished rewards -104.56, envs finished 1
-2026-01-17 15:08:52,403 : worker.worker : DEBUG : Step 988, finished rewards -97.14, envs finished 1
-2026-01-17 15:08:52,459 : worker.worker : DEBUG : Step 1000, finished rewards -102.03, envs finished 1
-2026-01-17 15:08:52,469 : worker.worker : DEBUG : Step 1001, finished rewards -106.68, envs finished 1
-2026-01-17 15:08:52,477 : worker.worker : DEBUG : Step 1002, finished rewards -102.39, envs finished 2
-2026-01-17 15:08:52,501 : worker.worker : DEBUG : Step 1006, finished rewards -86.27, envs finished 1
-2026-01-17 15:08:52,537 : worker.worker : DEBUG : Step 1012, finished rewards -98.02, envs finished 1
-2026-01-17 15:08:52,559 : worker.worker : DEBUG : Step 1016, finished rewards -102.68, envs finished 1
-2026-01-17 15:08:52,579 : worker.worker : DEBUG : Step 1019, finished rewards -102.46, envs finished 1
-2026-01-17 15:08:53,810 : agent.on_policy : DEBUG : Mean Losses: [13.356045582890511, -0.014633606920463293, 26.754576790332795, 0.6609230980277061]
-2026-01-17 15:08:53,833 : worker.worker : DEBUG : Step 1028, finished rewards -92.55, envs finished 1
-2026-01-17 15:08:53,851 : worker.worker : DEBUG : Step 1030, finished rewards -79.76, envs finished 1
-2026-01-17 15:08:54,081 : worker.worker : DEBUG : Step 1051, finished rewards -117.03, envs finished 1
-2026-01-17 15:08:54,208 : worker.worker : DEBUG : Step 1062, finished rewards -98.79, envs finished 1
-2026-01-17 15:08:54,256 : worker.worker : DEBUG : Step 1067, finished rewards -106.41, envs finished 1
-2026-01-17 15:08:54,278 : worker.worker : DEBUG : Step 1070, finished rewards -123.18, envs finished 2
-2026-01-17 15:08:54,358 : worker.worker : DEBUG : Step 1085, finished rewards -106.59, envs finished 1
-2026-01-17 15:08:54,429 : worker.worker : DEBUG : Step 1099, finished rewards -101.73, envs finished 1
-2026-01-17 15:08:54,442 : worker.worker : DEBUG : Step 1101, finished rewards -105.90, envs finished 1
-2026-01-17 15:08:54,490 : worker.worker : DEBUG : Step 1108, finished rewards -146.34, envs finished 1
-2026-01-17 15:08:54,526 : worker.worker : DEBUG : Step 1114, finished rewards -96.96, envs finished 1
-2026-01-17 15:08:54,595 : worker.worker : DEBUG : Step 1129, finished rewards -106.10, envs finished 1
-2026-01-17 15:08:54,625 : worker.worker : DEBUG : Step 1135, finished rewards -131.72, envs finished 1
-2026-01-17 15:08:54,634 : worker.worker : DEBUG : Step 1136, finished rewards -62.26, envs finished 1
-2026-01-17 15:08:54,674 : worker.worker : DEBUG : Step 1143, finished rewards -73.01, envs finished 1
-2026-01-17 15:08:54,690 : worker.worker : DEBUG : Step 1145, finished rewards -101.59, envs finished 1
-2026-01-17 15:08:54,727 : worker.worker : DEBUG : Step 1152, finished rewards -104.92, envs finished 1
-2026-01-17 15:08:54,758 : worker.worker : DEBUG : Step 1158, finished rewards -118.09, envs finished 1
-2026-01-17 15:08:54,838 : worker.worker : DEBUG : Step 1165, finished rewards -82.58, envs finished 1
-2026-01-17 15:08:54,871 : worker.worker : DEBUG : Step 1169, finished rewards -105.18, envs finished 1
-2026-01-17 15:08:54,894 : worker.worker : DEBUG : Step 1173, finished rewards -84.54, envs finished 1
-2026-01-17 15:08:54,957 : worker.worker : DEBUG : Step 1185, finished rewards -104.92, envs finished 1
-2026-01-17 15:08:54,974 : worker.worker : DEBUG : Step 1188, finished rewards -84.40, envs finished 1
-2026-01-17 15:08:54,985 : worker.worker : DEBUG : Step 1189, finished rewards -98.92, envs finished 1
-2026-01-17 15:08:55,021 : worker.worker : DEBUG : Step 1196, finished rewards -111.30, envs finished 1
-2026-01-17 15:08:55,042 : worker.worker : DEBUG : Step 1199, finished rewards -71.34, envs finished 1
-2026-01-17 15:08:55,051 : worker.worker : DEBUG : Step 1200, finished rewards -104.53, envs finished 1
-2026-01-17 15:08:55,114 : worker.worker : DEBUG : Step 1214, finished rewards -100.27, envs finished 1
-2026-01-17 15:08:55,212 : worker.worker : DEBUG : Step 1234, finished rewards -104.13, envs finished 1
-2026-01-17 15:08:55,236 : worker.worker : DEBUG : Step 1238, finished rewards -107.18, envs finished 1
-2026-01-17 15:08:55,262 : worker.worker : DEBUG : Step 1242, finished rewards -88.74, envs finished 1
-2026-01-17 15:08:55,413 : worker.worker : DEBUG : Step 1275, finished rewards -113.43, envs finished 1
-2026-01-17 15:08:55,427 : worker.worker : DEBUG : Step 1278, finished rewards -126.44, envs finished 1
-2026-01-17 15:08:56,922 : agent.on_policy : DEBUG : Mean Losses: [8.71463974788785, -0.007733801307767863, 17.457287481427194, 0.6270173516124486]
-2026-01-17 15:08:56,955 : worker.worker : DEBUG : Step 1287, finished rewards -153.51, envs finished 1
-2026-01-17 15:08:56,965 : worker.worker : DEBUG : Step 1288, finished rewards -82.99, envs finished 1
-2026-01-17 15:08:57,071 : worker.worker : DEBUG : Step 1308, finished rewards -101.74, envs finished 1
-2026-01-17 15:08:57,119 : worker.worker : DEBUG : Step 1318, finished rewards -158.99, envs finished 1
-2026-01-17 15:08:57,173 : worker.worker : DEBUG : Step 1329, finished rewards -100.48, envs finished 1
-2026-01-17 15:08:57,437 : worker.worker : DEBUG : Step 1363, finished rewards -99.46, envs finished 1
-2026-01-17 15:08:57,631 : worker.worker : DEBUG : Step 1375, finished rewards -72.87, envs finished 1
-2026-01-17 15:08:57,699 : worker.worker : DEBUG : Step 1380, finished rewards -103.49, envs finished 1
-2026-01-17 15:08:57,746 : worker.worker : DEBUG : Step 1385, finished rewards -107.73, envs finished 2
-2026-01-17 15:08:57,836 : worker.worker : DEBUG : Step 1397, finished rewards -104.95, envs finished 1
-2026-01-17 15:08:57,918 : worker.worker : DEBUG : Step 1413, finished rewards -130.63, envs finished 1
-2026-01-17 15:08:58,025 : worker.worker : DEBUG : Step 1436, finished rewards -79.18, envs finished 1
-2026-01-17 15:08:58,075 : worker.worker : DEBUG : Step 1445, finished rewards -192.02, envs finished 1
-2026-01-17 15:08:58,099 : worker.worker : DEBUG : Step 1450, finished rewards -105.16, envs finished 1
-2026-01-17 15:08:58,135 : worker.worker : DEBUG : Step 1457, finished rewards -112.19, envs finished 1
-2026-01-17 15:08:58,158 : worker.worker : DEBUG : Step 1461, finished rewards -120.93, envs finished 1
-2026-01-17 15:08:58,198 : worker.worker : DEBUG : Step 1467, finished rewards -148.95, envs finished 1
-2026-01-17 15:08:58,241 : worker.worker : DEBUG : Step 1475, finished rewards -104.70, envs finished 1
-2026-01-17 15:08:58,254 : worker.worker : DEBUG : Step 1477, finished rewards -104.79, envs finished 1
-2026-01-17 15:08:58,471 : worker.worker : DEBUG : Step 1518, finished rewards -66.56, envs finished 1
-2026-01-17 15:09:00,321 : agent.on_policy : DEBUG : Mean Losses: [7.293187338113785, -0.006578557450848166, 14.611396388709545, 0.593227156624198]
-2026-01-17 15:09:00,328 : worker.worker : DEBUG : Step 1537, finished rewards -81.55, envs finished 1
-2026-01-17 15:09:00,452 : worker.worker : DEBUG : Step 1563, finished rewards -75.24, envs finished 1
-2026-01-17 15:09:00,508 : worker.worker : DEBUG : Step 1574, finished rewards -124.67, envs finished 1
-2026-01-17 15:09:00,570 : worker.worker : DEBUG : Step 1586, finished rewards -134.34, envs finished 1
-2026-01-17 15:09:00,589 : worker.worker : DEBUG : Step 1589, finished rewards -122.93, envs finished 1
-2026-01-17 15:09:00,678 : worker.worker : DEBUG : Step 1605, finished rewards -175.11, envs finished 1
-2026-01-17 15:09:00,705 : worker.worker : DEBUG : Step 1608, finished rewards -101.87, envs finished 1
-2026-01-17 15:09:00,792 : worker.worker : DEBUG : Step 1621, finished rewards -94.74, envs finished 1
-2026-01-17 15:09:01,005 : worker.worker : DEBUG : Step 1655, finished rewards -82.36, envs finished 1
-2026-01-17 15:09:01,014 : worker.worker : DEBUG : Step 1656, finished rewards -131.74, envs finished 1
-2026-01-17 15:09:01,114 : worker.worker : DEBUG : Step 1672, finished rewards -85.88, envs finished 1
-2026-01-17 15:09:01,251 : worker.worker : DEBUG : Step 1692, finished rewards -77.80, envs finished 1
-2026-01-17 15:09:01,288 : worker.worker : DEBUG : Step 1697, finished rewards -107.65, envs finished 1
-2026-01-17 15:09:01,429 : worker.worker : DEBUG : Step 1725, finished rewards -115.53, envs finished 1
-2026-01-17 15:09:01,471 : worker.worker : DEBUG : Step 1735, finished rewards -84.44, envs finished 1
-2026-01-17 15:09:01,483 : worker.worker : DEBUG : Step 1737, finished rewards -160.48, envs finished 1
-2026-01-17 15:09:01,615 : worker.worker : DEBUG : Step 1763, finished rewards -80.58, envs finished 1
-2026-01-17 15:09:01,690 : worker.worker : DEBUG : Step 1781, finished rewards -142.15, envs finished 1
-2026-01-17 15:09:03,251 : agent.on_policy : DEBUG : Mean Losses: [7.549550268426538, 0.0008480024975142441, 15.109362098574639, 0.5978785932064057]
-2026-01-17 15:09:03,293 : worker.worker : DEBUG : Step 1804, finished rewards -80.87, envs finished 1
-2026-01-17 15:09:03,455 : worker.worker : DEBUG : Step 1840, finished rewards -95.37, envs finished 1
-2026-01-17 15:09:03,556 : worker.worker : DEBUG : Step 1861, finished rewards -36.03, envs finished 1
-2026-01-17 15:09:03,615 : worker.worker : DEBUG : Step 1872, finished rewards -144.52, envs finished 1
-2026-01-17 15:09:03,654 : worker.worker : DEBUG : Step 1881, finished rewards -58.90, envs finished 1
-2026-01-17 15:09:03,680 : worker.worker : DEBUG : Step 1886, finished rewards -101.18, envs finished 1
-2026-01-17 15:09:03,745 : worker.worker : DEBUG : Step 1899, finished rewards -139.18, envs finished 1
-2026-01-17 15:09:03,787 : worker.worker : DEBUG : Step 1907, finished rewards -126.81, envs finished 1
-2026-01-17 15:09:03,827 : worker.worker : DEBUG : Step 1914, finished rewards -94.76, envs finished 1
-2026-01-17 15:09:03,982 : worker.worker : DEBUG : Step 1942, finished rewards -58.09, envs finished 1
-2026-01-17 15:09:04,431 : worker.worker : DEBUG : Step 2017, finished rewards -67.66, envs finished 1
-2026-01-17 15:09:04,471 : worker.worker : DEBUG : Step 2026, finished rewards -195.27, envs finished 1
-2026-01-17 15:09:04,511 : worker.worker : DEBUG : Step 2034, finished rewards -127.09, envs finished 1
-2026-01-17 15:09:04,542 : worker.worker : DEBUG : Step 2039, finished rewards -200.42, envs finished 1
-2026-01-17 15:09:04,574 : worker.worker : DEBUG : Step 2043, finished rewards -157.92, envs finished 1
-2026-01-17 15:09:06,058 : agent.on_policy : DEBUG : Mean Losses: [7.189877577871084, 0.0017718243383569644, 14.3883568033576, 0.6072671547532081]
-2026-01-17 15:09:06,310 : worker.worker : DEBUG : Step 2116, finished rewards -99.49, envs finished 1
-2026-01-17 15:09:06,379 : worker.worker : DEBUG : Step 2132, finished rewards -92.88, envs finished 1
-2026-01-17 15:09:06,483 : worker.worker : DEBUG : Step 2152, finished rewards -92.19, envs finished 1
-2026-01-17 15:09:06,529 : worker.worker : DEBUG : Step 2162, finished rewards -65.45, envs finished 1
-2026-01-17 15:09:06,557 : worker.worker : DEBUG : Step 2167, finished rewards -95.29, envs finished 1
-2026-01-17 15:09:06,671 : worker.worker : DEBUG : Step 2185, finished rewards -101.81, envs finished 1
-2026-01-17 15:09:06,858 : worker.worker : DEBUG : Step 2221, finished rewards 9.17, envs finished 1
-2026-01-17 15:09:07,063 : worker.worker : DEBUG : Step 2259, finished rewards -84.84, envs finished 1
-2026-01-17 15:09:07,161 : worker.worker : DEBUG : Step 2284, finished rewards -108.01, envs finished 1
-2026-01-17 15:09:07,222 : worker.worker : DEBUG : Step 2297, finished rewards 79.88, envs finished 1
-2026-01-17 15:09:08,718 : agent.on_policy : DEBUG : Mean Losses: [5.03865940887481, -0.0006062270709662698, 10.090583258122205, 0.6025993935763836]
-2026-01-17 15:09:08,745 : worker.worker : DEBUG : Step 2311, finished rewards -123.03, envs finished 1
-2026-01-17 15:09:08,778 : worker.worker : DEBUG : Step 2317, finished rewards -125.51, envs finished 1
-2026-01-17 15:09:08,849 : worker.worker : DEBUG : Step 2331, finished rewards -88.20, envs finished 1
-2026-01-17 15:09:08,873 : worker.worker : DEBUG : Step 2335, finished rewards -55.68, envs finished 1
-2026-01-17 15:09:08,966 : worker.worker : DEBUG : Step 2354, finished rewards -95.95, envs finished 1
-2026-01-17 15:09:08,978 : worker.worker : DEBUG : Step 2356, finished rewards -83.20, envs finished 1
-2026-01-17 15:09:09,421 : worker.worker : DEBUG : Step 2435, finished rewards -68.71, envs finished 1
-2026-01-17 15:09:09,462 : worker.worker : DEBUG : Step 2442, finished rewards -80.10, envs finished 1
-2026-01-17 15:09:09,574 : worker.worker : DEBUG : Step 2461, finished rewards -78.34, envs finished 1
-2026-01-17 15:09:09,583 : worker.worker : DEBUG : Step 2462, finished rewards -91.62, envs finished 1
-2026-01-17 15:09:09,692 : worker.worker : DEBUG : Step 2482, finished rewards -91.35, envs finished 2
-2026-01-17 15:09:09,711 : worker.worker : DEBUG : Step 2484, finished rewards -84.95, envs finished 1
-2026-01-17 15:09:09,990 : worker.worker : DEBUG : Step 2531, finished rewards -88.59, envs finished 1
-2026-01-17 15:09:10,074 : worker.worker : DEBUG : Step 2547, finished rewards -106.09, envs finished 1
-2026-01-17 15:09:11,705 : agent.on_policy : DEBUG : Mean Losses: [5.633942446485162, -0.0013990642910357565, 11.28279576599598, 0.6056385096162558]
-2026-01-17 15:09:11,964 : worker.worker : DEBUG : Step 2586, finished rewards -88.97, envs finished 1
-2026-01-17 15:09:12,038 : worker.worker : DEBUG : Step 2597, finished rewards -44.02, envs finished 1
-2026-01-17 15:09:12,155 : worker.worker : DEBUG : Step 2618, finished rewards -80.58, envs finished 1
-2026-01-17 15:09:12,284 : worker.worker : DEBUG : Step 2643, finished rewards -124.33, envs finished 1
-2026-01-17 15:09:12,350 : worker.worker : DEBUG : Step 2657, finished rewards -50.57, envs finished 1
-2026-01-17 15:09:12,501 : worker.worker : DEBUG : Step 2692, finished rewards -91.81, envs finished 1
-2026-01-17 15:09:12,526 : worker.worker : DEBUG : Step 2696, finished rewards -110.08, envs finished 1
-2026-01-17 15:09:12,574 : worker.worker : DEBUG : Step 2703, finished rewards -61.26, envs finished 1
-2026-01-17 15:09:12,599 : worker.worker : DEBUG : Step 2706, finished rewards -155.70, envs finished 1
-2026-01-17 15:09:12,762 : worker.worker : DEBUG : Step 2745, finished rewards -76.24, envs finished 1
-2026-01-17 15:09:12,880 : worker.worker : DEBUG : Step 2776, finished rewards -13.85, envs finished 1
-2026-01-17 15:09:14,454 : agent.on_policy : DEBUG : Mean Losses: [4.984505477175117, -0.00014068629752728157, 9.981481354683638, 0.6094544060528279]
-2026-01-17 15:09:14,559 : worker.worker : DEBUG : Step 2839, finished rewards -83.09, envs finished 1
-2026-01-17 15:09:14,668 : worker.worker : DEBUG : Step 2861, finished rewards -96.92, envs finished 1
-2026-01-17 15:09:14,732 : worker.worker : DEBUG : Step 2875, finished rewards -85.27, envs finished 1
-2026-01-17 15:09:14,777 : worker.worker : DEBUG : Step 2884, finished rewards -105.17, envs finished 1
-2026-01-17 15:09:14,940 : worker.worker : DEBUG : Step 2916, finished rewards -27.28, envs finished 1
-2026-01-17 15:09:15,138 : worker.worker : DEBUG : Step 2961, finished rewards -39.10, envs finished 1
-2026-01-17 15:09:15,193 : worker.worker : DEBUG : Step 2974, finished rewards -45.03, envs finished 1
-2026-01-17 15:09:15,384 : worker.worker : DEBUG : Step 3018, finished rewards -101.59, envs finished 1
-2026-01-17 15:09:15,577 : worker.worker : DEBUG : Step 3066, finished rewards -4.20, envs finished 1
-2026-01-17 15:09:17,164 : agent.on_policy : DEBUG : Mean Losses: [4.890843054652214, -0.01115640766802244, 9.815976616740226, 0.5988831263035536]
-2026-01-17 15:09:17,178 : worker.worker : DEBUG : Step 3074, finished rewards -62.84, envs finished 2
-2026-01-17 15:09:17,190 : worker.worker : DEBUG : Step 3075, finished rewards -50.26, envs finished 1
-2026-01-17 15:09:17,271 : worker.worker : DEBUG : Step 3085, finished rewards -119.71, envs finished 1
-2026-01-17 15:09:17,459 : worker.worker : DEBUG : Step 3120, finished rewards -109.27, envs finished 1
-2026-01-17 15:09:17,365 : worker.worker : DEBUG : Step 3159, finished rewards -6.31, envs finished 1
-2026-01-17 15:09:17,859 : worker.worker : DEBUG : Step 3244, finished rewards -68.12, envs finished 1
-2026-01-17 15:09:18,163 : worker.worker : DEBUG : Step 3311, finished rewards 6.54, envs finished 1
-2026-01-17 15:09:18,205 : worker.worker : DEBUG : Step 3319, finished rewards -70.37, envs finished 1
-2026-01-17 15:09:19,930 : agent.on_policy : DEBUG : Mean Losses: [3.8847585428506135, -0.013624160525068874, 7.808212430402636, 0.5723531071096659]
-2026-01-17 15:09:20,137 : worker.worker : DEBUG : Step 3367, finished rewards -145.30, envs finished 1
-2026-01-17 15:09:20,755 : worker.worker : DEBUG : Step 3502, finished rewards -66.65, envs finished 1
-2026-01-17 15:09:21,003 : worker.worker : DEBUG : Step 3567, finished rewards 249.16, envs finished 1
-2026-01-17 15:09:21,040 : worker.worker : DEBUG : Step 3575, finished rewards 117.97, envs finished 1
-2026-01-17 15:09:22,622 : agent.on_policy : DEBUG : Mean Losses: [2.4997291999869047, -0.023407851601950823, 5.057055689767003, 0.5390779808163643]
-2026-01-17 15:09:22,634 : worker.worker : DEBUG : Step 3586, finished rewards 204.40, envs finished 1
-2026-01-17 15:09:22,813 : worker.worker : DEBUG : Step 3621, finished rewards 190.85, envs finished 1
-2026-01-17 15:09:23,306 : worker.worker : DEBUG : Step 3745, finished rewards 310.37, envs finished 1
-2026-01-17 15:09:23,551 : worker.worker : DEBUG : Step 3791, finished rewards -45.23, envs finished 1
-2026-01-17 15:09:23,633 : worker.worker : DEBUG : Step 3812, finished rewards 277.65, envs finished 1
-2026-01-17 15:09:25,689 : agent.on_policy : DEBUG : Mean Losses: [2.230787064274773, -0.01899597952433396, 4.5095688726753, 0.5001402448862791]
-2026-01-17 15:09:25,801 : worker.worker : DEBUG : Step 3868, finished rewards 263.54, envs finished 1
-2026-01-17 15:09:26,409 : worker.worker : DEBUG : Step 4003, finished rewards 289.75, envs finished 1
-2026-01-17 15:09:26,720 : worker.worker : DEBUG : Step 4054, finished rewards 98.54, envs finished 1
-2026-01-17 15:09:26,846 : worker.worker : DEBUG : Step 4068, finished rewards 284.75, envs finished 1
-2026-01-17 15:09:26,903 : worker.worker : DEBUG : Step 4075, finished rewards -58.88, envs finished 1
-2026-01-17 15:09:27,049 : worker.worker : DEBUG : Step 4095, finished rewards -3.53, envs finished 1
-2026-01-17 15:09:28,983 : agent.on_policy : DEBUG : Mean Losses: [3.2351395208388567, -0.012227361192265107, 6.505291923508048, 0.5279070541262627]
-2026-01-17 15:09:29,108 : worker.worker : DEBUG : Step 4122, finished rewards 229.20, envs finished 1
-2026-01-17 15:09:30,056 : worker.worker : DEBUG : Step 4292, finished rewards 334.54, envs finished 1
-2026-01-17 15:09:30,168 : worker.worker : DEBUG : Step 4313, finished rewards 156.26, envs finished 1
-2026-01-17 15:09:31,867 : agent.on_policy : DEBUG : Mean Losses: [1.9194064000621438, -0.017472797346999868, 3.884153343178332, 0.5197464872151614]
-2026-01-17 15:09:32,525 : worker.worker : DEBUG : Step 4504, finished rewards 283.89, envs finished 1
-2026-01-17 15:09:32,755 : worker.worker : DEBUG : Step 4555, finished rewards 288.45, envs finished 1
-2026-01-17 15:09:32,827 : worker.worker : DEBUG : Step 4569, finished rewards 337.63, envs finished 1
-2026-01-17 15:09:32,862 : worker.worker : DEBUG : Step 4576, finished rewards 347.56, envs finished 1
-2026-01-17 15:09:32,951 : worker.worker : DEBUG : Step 4596, finished rewards 298.00, envs finished 1
-2026-01-17 15:09:34,479 : agent.on_policy : DEBUG : Mean Losses: [1.5438353997655212, -0.011983138784125913, 3.12169339787215, 0.502815898694098]
-2026-01-17 15:09:34,553 : worker.worker : DEBUG : Step 4623, finished rewards 286.66, envs finished 1
-2026-01-17 15:09:35,508 : worker.worker : DEBUG : Step 4793, finished rewards 361.85, envs finished 1
-2026-01-17 15:09:35,635 : worker.worker : DEBUG : Step 4814, finished rewards 398.14, envs finished 1
-2026-01-17 15:09:37,915 : agent.on_policy : DEBUG : Mean Losses: [1.114419033942977, -0.004502370345289819, 2.2465936958324164, 0.4375445656478405]
-2026-01-17 15:09:38,739 : worker.worker : INFO : Step 5000, Avg Reward -82.1801, Max Reward 398.1388, Loss [7.71090511, -0.01008178, 15.45368878, 0.58575021]
-2026-01-17 15:09:38,770 : worker.worker : DEBUG : Step 5005, finished rewards 410.59, envs finished 1
-2026-01-17 15:09:39,062 : worker.worker : DEBUG : Step 5056, finished rewards 413.01, envs finished 1
-2026-01-17 15:09:39,138 : worker.worker : DEBUG : Step 5070, finished rewards 410.12, envs finished 1
-2026-01-17 15:09:39,175 : worker.worker : DEBUG : Step 5077, finished rewards 376.01, envs finished 1
-2026-01-17 15:09:39,287 : worker.worker : DEBUG : Step 5097, finished rewards 415.96, envs finished 1
-2026-01-17 15:09:41,191 : agent.on_policy : DEBUG : Mean Losses: [1.5968234156374819, 0.0027412294351961465, 3.196773801604286, 0.4304714405909181]
-2026-01-17 15:09:41,206 : worker.worker : DEBUG : Step 5124, finished rewards 404.15, envs finished 1
-2026-01-17 15:09:41,846 : worker.worker : DEBUG : Step 5294, finished rewards 365.37, envs finished 1
-2026-01-17 15:09:41,944 : worker.worker : DEBUG : Step 5315, finished rewards 385.36, envs finished 1
-2026-01-17 15:09:43,474 : agent.on_policy : DEBUG : Mean Losses: [1.112005492579192, -0.0056078042121953334, 2.2436950942035763, 0.42342487182468175]
-2026-01-17 15:09:43,996 : worker.worker : DEBUG : Step 5506, finished rewards 352.68, envs finished 1
-2026-01-17 15:09:44,332 : worker.worker : DEBUG : Step 5557, finished rewards 373.65, envs finished 1
-2026-01-17 15:09:44,426 : worker.worker : DEBUG : Step 5571, finished rewards 362.91, envs finished 1
-2026-01-17 15:09:44,498 : worker.worker : DEBUG : Step 5578, finished rewards 379.77, envs finished 1
-2026-01-17 15:09:44,675 : worker.worker : DEBUG : Step 5598, finished rewards 358.13, envs finished 1
-2026-01-17 15:09:44,820 : worker.worker : DEBUG : Step 5625, finished rewards 379.81, envs finished 1
-2026-01-17 15:09:46,716 : agent.on_policy : DEBUG : Mean Losses: [1.6726861932314931, -0.009756164716964121, 3.3738171103410424, 0.4466194650158286]
-2026-01-17 15:09:47,226 : worker.worker : DEBUG : Step 5795, finished rewards 360.62, envs finished 1
-2026-01-17 15:09:47,333 : worker.worker : DEBUG : Step 5816, finished rewards 387.47, envs finished 1
-2026-01-17 15:09:49,132 : agent.on_policy : DEBUG : Mean Losses: [0.8834683911671164, -0.007254548606579192, 1.7889146078610794, 0.3734374240040779]
-2026-01-17 15:09:49,675 : worker.worker : DEBUG : Step 6007, finished rewards 368.94, envs finished 1
-2026-01-17 15:09:49,961 : worker.worker : DEBUG : Step 6058, finished rewards 415.24, envs finished 1
-2026-01-17 15:09:50,068 : worker.worker : DEBUG : Step 6072, finished rewards 407.74, envs finished 1
-2026-01-17 15:09:50,112 : worker.worker : DEBUG : Step 6079, finished rewards 414.82, envs finished 1
-2026-01-17 15:09:50,224 : worker.worker : DEBUG : Step 6099, finished rewards 398.88, envs finished 1
-2026-01-17 15:09:50,348 : worker.worker : DEBUG : Step 6126, finished rewards 410.03, envs finished 1
-2026-01-17 15:09:51,652 : agent.on_policy : DEBUG : Mean Losses: [1.681735998642398, 0.007838692541554337, 3.3551152339205146, 0.36603220738470554]
-2026-01-17 15:09:52,225 : worker.worker : DEBUG : Step 6296, finished rewards 421.43, envs finished 1
-2026-01-17 15:09:52,323 : worker.worker : DEBUG : Step 6317, finished rewards 415.63, envs finished 1
-2026-01-17 15:09:53,763 : agent.on_policy : DEBUG : Mean Losses: [0.7293451325967908, -0.00047589229598088423, 1.4659076062147505, 0.31327749118208886]
-2026-01-17 15:09:54,342 : worker.worker : DEBUG : Step 6508, finished rewards 422.31, envs finished 1
-2026-01-17 15:09:54,546 : worker.worker : DEBUG : Step 6559, finished rewards 427.64, envs finished 1
-2026-01-17 15:09:54,597 : worker.worker : DEBUG : Step 6573, finished rewards 430.78, envs finished 1
-2026-01-17 15:09:54,630 : worker.worker : DEBUG : Step 6580, finished rewards 427.41, envs finished 1
-2026-01-17 15:09:54,716 : worker.worker : DEBUG : Step 6600, finished rewards 428.30, envs finished 1
-2026-01-17 15:09:54,830 : worker.worker : DEBUG : Step 6627, finished rewards 434.44, envs finished 1
-2026-01-17 15:09:56,721 : agent.on_policy : DEBUG : Mean Losses: [1.795793131168466, 0.010621710662962868, 3.5770126783289014, 0.33349139913916587]
-2026-01-17 15:09:57,502 : worker.worker : DEBUG : Step 6797, finished rewards 444.23, envs finished 1
-2026-01-17 15:09:57,660 : worker.worker : DEBUG : Step 6818, finished rewards 451.34, envs finished 1
-2026-01-17 15:09:59,420 : agent.on_policy : DEBUG : Mean Losses: [0.7410915766915422, -0.0011269568698480726, 1.4902166984829819, 0.28898234441876414]
-2026-01-17 15:09:59,772 : worker.worker : DEBUG : Step 7009, finished rewards 457.18, envs finished 1
-2026-01-17 15:09:59,960 : worker.worker : DEBUG : Step 7060, finished rewards 446.32, envs finished 1
-2026-01-17 15:10:00,027 : worker.worker : DEBUG : Step 7074, finished rewards 444.63, envs finished 1
-2026-01-17 15:10:00,058 : worker.worker : DEBUG : Step 7081, finished rewards 442.07, envs finished 1
-2026-01-17 15:10:00,147 : worker.worker : DEBUG : Step 7101, finished rewards 463.09, envs finished 1
-2026-01-17 15:10:00,285 : worker.worker : DEBUG : Step 7128, finished rewards 453.32, envs finished 1
-2026-01-17 15:10:01,753 : agent.on_policy : DEBUG : Mean Losses: [1.9181109695811756, 0.006860663212864893, 3.8280159342102706, 0.27576723173260687]
-2026-01-17 15:10:02,247 : worker.worker : DEBUG : Step 7298, finished rewards 455.90, envs finished 1
-2026-01-17 15:10:02,332 : worker.worker : DEBUG : Step 7319, finished rewards 450.00, envs finished 1
-2026-01-17 15:10:04,248 : agent.on_policy : DEBUG : Mean Losses: [0.744610894563084, -0.0020551237619656606, 1.498912805650616, 0.279038957413286]
-2026-01-17 15:10:04,589 : worker.worker : DEBUG : Step 7510, finished rewards 458.52, envs finished 1
-2026-01-17 15:10:04,801 : worker.worker : DEBUG : Step 7561, finished rewards 446.81, envs finished 1
-2026-01-17 15:10:04,860 : worker.worker : DEBUG : Step 7575, finished rewards 464.79, envs finished 1
-2026-01-17 15:10:04,890 : worker.worker : DEBUG : Step 7582, finished rewards 457.63, envs finished 1
-2026-01-17 15:10:04,978 : worker.worker : DEBUG : Step 7602, finished rewards 431.59, envs finished 1
-2026-01-17 15:10:05,166 : worker.worker : DEBUG : Step 7629, finished rewards 461.50, envs finished 1
-2026-01-17 15:10:06,844 : agent.on_policy : DEBUG : Mean Losses: [1.9757010519897449, 0.011653025264240568, 3.9331985948374495, 0.2551280096173286]
-2026-01-17 15:10:07,325 : worker.worker : DEBUG : Step 7799, finished rewards 444.53, envs finished 1
-2026-01-17 15:10:07,407 : worker.worker : DEBUG : Step 7820, finished rewards 455.26, envs finished 1
-2026-01-17 15:10:09,524 : agent.on_policy : DEBUG : Mean Losses: [0.7907851442541869, 0.0019402065023314207, 1.582989394335891, 0.2649762198328972]
-2026-01-17 15:10:09,821 : worker.worker : DEBUG : Step 8011, finished rewards 456.97, envs finished 1
-2026-01-17 15:10:10,024 : worker.worker : DEBUG : Step 8062, finished rewards 441.28, envs finished 1
-2026-01-17 15:10:10,100 : worker.worker : DEBUG : Step 8076, finished rewards 459.33, envs finished 1
-2026-01-17 15:10:10,142 : worker.worker : DEBUG : Step 8083, finished rewards 448.66, envs finished 1
-2026-01-17 15:10:10,253 : worker.worker : DEBUG : Step 8103, finished rewards 450.83, envs finished 1
-2026-01-17 15:10:10,370 : worker.worker : DEBUG : Step 8130, finished rewards 461.97, envs finished 1
-2026-01-17 15:10:12,096 : agent.on_policy : DEBUG : Mean Losses: [2.1177480875572656, 0.006946761102881283, 4.2267701683333145, 0.25837685661390425]
-2026-01-17 15:10:12,511 : worker.worker : DEBUG : Step 8300, finished rewards 469.82, envs finished 1
-2026-01-17 15:10:12,608 : worker.worker : DEBUG : Step 8321, finished rewards 409.33, envs finished 1
-2026-01-17 15:10:14,628 : agent.on_policy : DEBUG : Mean Losses: [0.8173376015387476, 0.002463455678662285, 1.634650799316296, 0.24512545242905617]
-2026-01-17 15:10:14,900 : worker.worker : DEBUG : Step 8512, finished rewards 465.19, envs finished 1
-2026-01-17 15:10:15,147 : worker.worker : DEBUG : Step 8563, finished rewards 440.93, envs finished 1
-2026-01-17 15:10:15,208 : worker.worker : DEBUG : Step 8577, finished rewards 454.91, envs finished 1
-2026-01-17 15:10:15,242 : worker.worker : DEBUG : Step 8584, finished rewards 441.34, envs finished 1
-2026-01-17 15:10:15,352 : worker.worker : DEBUG : Step 8604, finished rewards 457.96, envs finished 1
-2026-01-17 15:10:15,465 : worker.worker : DEBUG : Step 8631, finished rewards 460.65, envs finished 1
-2026-01-17 15:10:17,008 : agent.on_policy : DEBUG : Mean Losses: [2.0669314622195087, -0.0003805452539381804, 4.139553035417339, 0.24645111095160246]
-2026-01-17 15:10:17,354 : worker.worker : DEBUG : Step 8801, finished rewards 454.97, envs finished 1
-2026-01-17 15:10:17,461 : worker.worker : DEBUG : Step 8822, finished rewards 459.34, envs finished 1
-2026-01-17 15:10:19,253 : agent.on_policy : DEBUG : Mean Losses: [0.7916259637502663, -0.002366535223700339, 1.5928403523750603, 0.24276645476929842]
-2026-01-17 15:10:19,430 : worker.worker : DEBUG : Step 9013, finished rewards 447.86, envs finished 1
-2026-01-17 15:10:19,614 : worker.worker : DEBUG : Step 9064, finished rewards 451.33, envs finished 1
-2026-01-17 15:10:19,668 : worker.worker : DEBUG : Step 9078, finished rewards 449.20, envs finished 1
-2026-01-17 15:10:19,697 : worker.worker : DEBUG : Step 9085, finished rewards 458.44, envs finished 1
-2026-01-17 15:10:19,789 : worker.worker : DEBUG : Step 9105, finished rewards 453.53, envs finished 1
-2026-01-17 15:10:19,897 : worker.worker : DEBUG : Step 9132, finished rewards 456.93, envs finished 1
-2026-01-17 15:10:21,516 : agent.on_policy : DEBUG : Mean Losses: [2.058266647443088, 0.001705930000753142, 4.1181258975411765, 0.25022393092513084]
-2026-01-17 15:10:21,822 : worker.worker : DEBUG : Step 9302, finished rewards 459.52, envs finished 1
-2026-01-17 15:10:21,906 : worker.worker : DEBUG : Step 9323, finished rewards 453.57, envs finished 1
-2026-01-17 15:10:23,639 : agent.on_policy : DEBUG : Mean Losses: [0.7411335282144137, 0.001690685203357134, 1.4829147200871375, 0.20145110115408899]
-2026-01-17 15:10:23,788 : worker.worker : DEBUG : Step 9514, finished rewards 441.83, envs finished 1
-2026-01-17 15:10:24,071 : worker.worker : DEBUG : Step 9565, finished rewards 457.08, envs finished 1
-2026-01-17 15:10:24,149 : worker.worker : DEBUG : Step 9579, finished rewards 471.32, envs finished 1
-2026-01-17 15:10:24,195 : worker.worker : DEBUG : Step 9586, finished rewards 463.91, envs finished 1
-2026-01-17 15:10:24,342 : worker.worker : DEBUG : Step 9606, finished rewards 464.89, envs finished 1
-2026-01-17 15:10:24,452 : worker.worker : DEBUG : Step 9633, finished rewards 456.85, envs finished 1
-2026-01-17 15:10:26,143 : agent.on_policy : DEBUG : Mean Losses: [2.11047820540407, 0.028713775159849318, 4.167346833672491, 0.19089947133325041]
-2026-01-17 15:10:26,414 : worker.worker : DEBUG : Step 9803, finished rewards 470.17, envs finished 1
-2026-01-17 15:10:26,503 : worker.worker : DEBUG : Step 9824, finished rewards 462.61, envs finished 1
-2026-01-17 15:10:28,530 : agent.on_policy : DEBUG : Mean Losses: [0.734057437874435, 0.009677142856526188, 1.4522484633940622, 0.17439310206100345]
-2026-01-17 15:10:28,581 : worker.worker : INFO : Step 10000, Avg Reward 433.0054, Max Reward 471.3164, Loss [1.35398682, 0.00319149, 2.70745099, 0.29301673]
-2026-01-17 15:10:28,584 : network.model : INFO : Saved model to logs/CartPole-PPO/model.pt
-2026-01-17 15:10:31,861 : evaluate.evaluate : INFO : Evaluation results: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1
-2026-01-17 15:10:33,294 : worker.worker : DEBUG : Step 10015, finished rewards 462.19, envs finished 1
-2026-01-17 15:10:33,492 : worker.worker : DEBUG : Step 10066, finished rewards 459.63, envs finished 1
-2026-01-17 15:10:33,548 : worker.worker : DEBUG : Step 10080, finished rewards 461.22, envs finished 1
-2026-01-17 15:10:33,579 : worker.worker : DEBUG : Step 10087, finished rewards 470.23, envs finished 1
-2026-01-17 15:10:33,667 : worker.worker : DEBUG : Step 10107, finished rewards 466.07, envs finished 1
-2026-01-17 15:10:33,781 : worker.worker : DEBUG : Step 10134, finished rewards 463.99, envs finished 1
-2026-01-17 15:10:35,792 : agent.on_policy : DEBUG : Mean Losses: [2.090692045714968, 0.005001415527658537, 4.175375772673578, 0.19972658911719918]
-2026-01-17 15:10:36,189 : worker.worker : DEBUG : Step 10304, finished rewards 465.22, envs finished 1
-2026-01-17 15:10:36,305 : worker.worker : DEBUG : Step 10325, finished rewards 470.41, envs finished 1
-2026-01-17 15:10:38,440 : agent.on_policy : DEBUG : Mean Losses: [0.7970246505130489, 0.013138963574601804, 1.5713085884184692, 0.17685934924520552]
-2026-01-17 15:10:38,502 : worker.worker : DEBUG : Step 10516, finished rewards 471.24, envs finished 1
-2026-01-17 15:10:38,739 : worker.worker : DEBUG : Step 10567, finished rewards 475.01, envs finished 1
-2026-01-17 15:10:38,813 : worker.worker : DEBUG : Step 10581, finished rewards 457.85, envs finished 1
-2026-01-17 15:10:38,847 : worker.worker : DEBUG : Step 10588, finished rewards 465.10, envs finished 1
-2026-01-17 15:10:38,936 : worker.worker : DEBUG : Step 10608, finished rewards 473.13, envs finished 1
-2026-01-17 15:10:39,057 : worker.worker : DEBUG : Step 10635, finished rewards 473.08, envs finished 1
-2026-01-17 15:10:40,687 : agent.on_policy : DEBUG : Mean Losses: [2.0992145272241034, 0.013579139980720356, 4.1754562510162945, 0.2092777483165264]
-2026-01-17 15:10:40,944 : worker.worker : DEBUG : Step 10805, finished rewards 465.73, envs finished 1
-2026-01-17 15:10:41,073 : worker.worker : DEBUG : Step 10826, finished rewards 456.95, envs finished 1
-2026-01-17 15:10:43,672 : agent.on_policy : DEBUG : Mean Losses: [0.7400376989338838, 0.011706634890651912, 1.4601651818091341, 0.17515177438035606]
-2026-01-17 15:10:43,707 : worker.worker : DEBUG : Step 11017, finished rewards 471.85, envs finished 1
-2026-01-17 15:10:43,920 : worker.worker : DEBUG : Step 11068, finished rewards 459.71, envs finished 1
-2026-01-17 15:10:43,996 : worker.worker : DEBUG : Step 11082, finished rewards 466.38, envs finished 1
-2026-01-17 15:10:44,045 : worker.worker : DEBUG : Step 11089, finished rewards 470.75, envs finished 1
-2026-01-17 15:10:44,153 : worker.worker : DEBUG : Step 11109, finished rewards 454.32, envs finished 1
-2026-01-17 15:10:44,338 : worker.worker : DEBUG : Step 11136, finished rewards 465.32, envs finished 1
-2026-01-17 15:10:46,703 : agent.on_policy : DEBUG : Mean Losses: [1.9736796125973342, 0.009777906510862522, 3.930517139445874, 0.1356870787218213]
-2026-01-17 15:10:46,912 : worker.worker : DEBUG : Step 11306, finished rewards 475.56, envs finished 1
-2026-01-17 15:10:47,032 : worker.worker : DEBUG : Step 11327, finished rewards 474.40, envs finished 1
-2026-01-17 15:10:48,024 : worker.worker : DEBUG : Step 11518, finished rewards 469.39, envs finished 1
-2026-01-17 15:10:49,378 : agent.on_policy : DEBUG : Mean Losses: [1.1033535114143889, 0.015600277721387102, 2.1781457301505727, 0.13196149077266456]
-2026-01-17 15:10:49,622 : worker.worker : DEBUG : Step 11569, finished rewards 472.73, envs finished 1
-2026-01-17 15:10:49,698 : worker.worker : DEBUG : Step 11583, finished rewards 466.61, envs finished 1
-2026-01-17 15:10:49,742 : worker.worker : DEBUG : Step 11590, finished rewards 474.91, envs finished 1
-2026-01-17 15:10:49,888 : worker.worker : DEBUG : Step 11610, finished rewards 472.79, envs finished 1
-2026-01-17 15:10:50,039 : worker.worker : DEBUG : Step 11637, finished rewards 462.55, envs finished 1
-2026-01-17 15:10:51,813 : agent.on_policy : DEBUG : Mean Losses: [1.9038921887651667, 0.021937712693761567, 3.767069110221564, 0.15800886854995042]
-2026-01-17 15:10:51,921 : worker.worker : DEBUG : Step 11807, finished rewards 473.82, envs finished 1
-2026-01-17 15:10:52,004 : worker.worker : DEBUG : Step 11828, finished rewards 468.11, envs finished 1
-2026-01-17 15:10:52,736 : worker.worker : DEBUG : Step 12019, finished rewards 458.45, envs finished 1
-2026-01-17 15:10:54,324 : agent.on_policy : DEBUG : Mean Losses: [1.0846385238743097, 0.0008150795119945542, 2.170830596937594, 0.15918698604218662]
-2026-01-17 15:10:54,477 : worker.worker : DEBUG : Step 12070, finished rewards 459.89, envs finished 1
-2026-01-17 15:10:54,535 : worker.worker : DEBUG : Step 12084, finished rewards 458.10, envs finished 1
-2026-01-17 15:10:54,567 : worker.worker : DEBUG : Step 12091, finished rewards 459.94, envs finished 1
-2026-01-17 15:10:54,652 : worker.worker : DEBUG : Step 12111, finished rewards 463.20, envs finished 1
-2026-01-17 15:10:54,773 : worker.worker : DEBUG : Step 12138, finished rewards 453.36, envs finished 1
-2026-01-17 15:10:56,799 : agent.on_policy : DEBUG : Mean Losses: [1.8121296353594516, 0.011920118765556254, 3.6034891582472484, 0.15350704276934266]
-2026-01-17 15:10:56,874 : worker.worker : DEBUG : Step 12308, finished rewards 462.65, envs finished 1
-2026-01-17 15:10:56,985 : worker.worker : DEBUG : Step 12329, finished rewards 470.94, envs finished 1
-2026-01-17 15:10:57,780 : worker.worker : DEBUG : Step 12520, finished rewards 476.93, envs finished 1
-2026-01-17 15:10:59,109 : agent.on_policy : DEBUG : Mean Losses: [0.9926568655766459, 0.007439863103354582, 1.9733353861975047, 0.1450698513071984]
-2026-01-17 15:10:59,199 : worker.worker : DEBUG : Step 12571, finished rewards 474.81, envs finished 1
-2026-01-17 15:10:59,253 : worker.worker : DEBUG : Step 12585, finished rewards 466.65, envs finished 1
-2026-01-17 15:10:59,293 : worker.worker : DEBUG : Step 12592, finished rewards 468.92, envs finished 1
-2026-01-17 15:10:59,398 : worker.worker : DEBUG : Step 12612, finished rewards 471.62, envs finished 1
-2026-01-17 15:10:59,520 : worker.worker : DEBUG : Step 12639, finished rewards 480.81, envs finished 1
-2026-01-17 15:11:01,432 : agent.on_policy : DEBUG : Mean Losses: [1.96655026549779, 0.0020112803266101762, 3.932863945676945, 0.18929745336063206]
-2026-01-17 15:11:01,458 : worker.worker : DEBUG : Step 12809, finished rewards 462.89, envs finished 1
-2026-01-17 15:11:01,547 : worker.worker : DEBUG : Step 12830, finished rewards 473.19, envs finished 1
-2026-01-17 15:11:02,259 : worker.worker : DEBUG : Step 13021, finished rewards 456.94, envs finished 1
-2026-01-17 15:11:03,747 : agent.on_policy : DEBUG : Mean Losses: [0.8741349365031056, 0.00043190174765186386, 1.7503431026649197, 0.14685199549421668]
-2026-01-17 15:11:03,795 : worker.worker : DEBUG : Step 13072, finished rewards 443.85, envs finished 1
-2026-01-17 15:11:03,857 : worker.worker : DEBUG : Step 13086, finished rewards 471.45, envs finished 1
-2026-01-17 15:11:03,887 : worker.worker : DEBUG : Step 13093, finished rewards 458.08, envs finished 1
-2026-01-17 15:11:03,969 : worker.worker : DEBUG : Step 13113, finished rewards 466.71, envs finished 1
-2026-01-17 15:11:04,185 : worker.worker : DEBUG : Step 13140, finished rewards 455.02, envs finished 1
-2026-01-17 15:11:04,883 : worker.worker : DEBUG : Step 13310, finished rewards 475.99, envs finished 1
-2026-01-17 15:11:06,380 : agent.on_policy : DEBUG : Mean Losses: [2.0184726970976046, 0.02092398984350439, 3.9977568297064865, 0.13297031167894602]
-2026-01-17 15:11:06,460 : worker.worker : DEBUG : Step 13331, finished rewards 469.68, envs finished 1
-2026-01-17 15:11:07,291 : worker.worker : DEBUG : Step 13522, finished rewards 466.37, envs finished 1
-2026-01-17 15:11:08,823 : agent.on_policy : DEBUG : Mean Losses: [0.6456548793416005, 0.0021200830517045686, 1.29010358958476, 0.1516996485181153]
-2026-01-17 15:11:08,839 : worker.worker : DEBUG : Step 13573, finished rewards 476.04, envs finished 1
-2026-01-17 15:11:08,900 : worker.worker : DEBUG : Step 13587, finished rewards 471.89, envs finished 1
-2026-01-17 15:11:08,940 : worker.worker : DEBUG : Step 13594, finished rewards 465.13, envs finished 1
-2026-01-17 15:11:09,039 : worker.worker : DEBUG : Step 13614, finished rewards 468.69, envs finished 1
-2026-01-17 15:11:09,260 : worker.worker : DEBUG : Step 13641, finished rewards 467.15, envs finished 1
-2026-01-17 15:11:09,918 : worker.worker : DEBUG : Step 13811, finished rewards 469.20, envs finished 1
-2026-01-17 15:11:11,324 : agent.on_policy : DEBUG : Mean Losses: [1.7704896631650626, 0.006881110091489973, 3.5308444572074222, 0.1813656005077064]
-2026-01-17 15:11:11,354 : worker.worker : DEBUG : Step 13832, finished rewards 459.83, envs finished 1
-2026-01-17 15:11:12,090 : worker.worker : DEBUG : Step 14023, finished rewards 468.88, envs finished 1
-2026-01-17 15:11:12,352 : worker.worker : DEBUG : Step 14074, finished rewards 460.65, envs finished 1
-2026-01-17 15:11:13,654 : agent.on_policy : DEBUG : Mean Losses: [0.9325549354172835, 0.003065880111171282, 1.8622758568191784, 0.1648869292344898]
-2026-01-17 15:11:13,681 : worker.worker : DEBUG : Step 14088, finished rewards 464.62, envs finished 1
-2026-01-17 15:11:13,708 : worker.worker : DEBUG : Step 14095, finished rewards 464.99, envs finished 1
-2026-01-17 15:11:13,799 : worker.worker : DEBUG : Step 14115, finished rewards 464.17, envs finished 1
-2026-01-17 15:11:13,909 : worker.worker : DEBUG : Step 14142, finished rewards 469.59, envs finished 1
-2026-01-17 15:11:14,759 : worker.worker : DEBUG : Step 14312, finished rewards 461.51, envs finished 1
-2026-01-17 15:11:14,857 : worker.worker : DEBUG : Step 14333, finished rewards 449.45, envs finished 1
-2026-01-17 15:11:16,202 : agent.on_policy : DEBUG : Mean Losses: [1.827065855325054, 0.004601209649924653, 3.6481899916561815, 0.16303487746044992]
-2026-01-17 15:11:16,756 : worker.worker : DEBUG : Step 14524, finished rewards 456.13, envs finished 1
-2026-01-17 15:11:16,975 : worker.worker : DEBUG : Step 14575, finished rewards 459.23, envs finished 1
-2026-01-17 15:11:17,038 : worker.worker : DEBUG : Step 14589, finished rewards 465.26, envs finished 1
-2026-01-17 15:11:18,273 : agent.on_policy : DEBUG : Mean Losses: [1.1012441143670002, -0.0026882261532591655, 2.2111247510878456, 0.16300237067043782]
-2026-01-17 15:11:18,288 : worker.worker : DEBUG : Step 14596, finished rewards 459.14, envs finished 1
-2026-01-17 15:11:18,377 : worker.worker : DEBUG : Step 14616, finished rewards 457.96, envs finished 1
-2026-01-17 15:11:18,502 : worker.worker : DEBUG : Step 14643, finished rewards 450.98, envs finished 1
-2026-01-17 15:11:19,134 : worker.worker : DEBUG : Step 14813, finished rewards 462.37, envs finished 1
-2026-01-17 15:11:19,226 : worker.worker : DEBUG : Step 14834, finished rewards 458.88, envs finished 1
-2026-01-17 15:11:20,432 : agent.on_policy : DEBUG : Mean Losses: [1.4454564772779122, -0.007102637391653843, 2.9086543866738794, 0.17680792072787882]
-2026-01-17 15:11:21,038 : worker.worker : INFO : Step 15000, Avg Reward 465.4300, Max Reward 480.8074, Loss [1.43047069, 0.00742956, 2.84936052, 0.16391336]
-2026-01-17 15:11:21,150 : worker.worker : DEBUG : Step 15025, finished rewards 461.11, envs finished 1
-2026-01-17 15:11:21,381 : worker.worker : DEBUG : Step 15076, finished rewards 465.14, envs finished 1
-2026-01-17 15:11:21,437 : worker.worker : DEBUG : Step 15090, finished rewards 466.46, envs finished 1
-2026-01-17 15:11:21,482 : worker.worker : DEBUG : Step 15097, finished rewards 462.15, envs finished 1
-2026-01-17 15:11:22,723 : agent.on_policy : DEBUG : Mean Losses: [1.4513211466946814, 0.0031793205533176662, 2.8991622435882163, 0.1439309715293348]
-2026-01-17 15:11:22,761 : worker.worker : DEBUG : Step 15117, finished rewards 463.32, envs finished 1
-2026-01-17 15:11:22,888 : worker.worker : DEBUG : Step 15144, finished rewards 461.93, envs finished 1
-2026-01-17 15:11:23,569 : worker.worker : DEBUG : Step 15314, finished rewards 469.42, envs finished 1
-2026-01-17 15:11:23,648 : worker.worker : DEBUG : Step 15335, finished rewards 469.68, envs finished 1
-2026-01-17 15:11:25,126 : agent.on_policy : DEBUG : Mean Losses: [1.2967640245049552, 0.013757788982366037, 2.568541545070184, 0.126452201185748]
-2026-01-17 15:11:25,747 : worker.worker : DEBUG : Step 15526, finished rewards 465.25, envs finished 1
-2026-01-17 15:11:25,953 : worker.worker : DEBUG : Step 15577, finished rewards 471.67, envs finished 1
-2026-01-17 15:11:26,015 : worker.worker : DEBUG : Step 15591, finished rewards 473.73, envs finished 1
-2026-01-17 15:11:26,051 : worker.worker : DEBUG : Step 15598, finished rewards 471.51, envs finished 1
-2026-01-17 15:11:27,606 : agent.on_policy : DEBUG : Mean Losses: [1.4511423039897635, 0.0031134873279370368, 2.8985189734507, 0.12306773590389639]
-2026-01-17 15:11:27,614 : worker.worker : DEBUG : Step 15618, finished rewards 463.04, envs finished 1
-2026-01-17 15:11:27,759 : worker.worker : DEBUG : Step 15645, finished rewards 469.76, envs finished 1
-2026-01-17 15:11:28,426 : worker.worker : DEBUG : Step 15815, finished rewards 468.84, envs finished 1
-2026-01-17 15:11:28,506 : worker.worker : DEBUG : Step 15836, finished rewards 463.98, envs finished 1
-2026-01-17 15:11:30,085 : agent.on_policy : DEBUG : Mean Losses: [1.1232880399027636, -0.0012757022661389783, 2.252216420619516, 0.1544454688206315]
-2026-01-17 15:11:30,657 : worker.worker : DEBUG : Step 16027, finished rewards 467.29, envs finished 1
-2026-01-17 15:11:30,844 : worker.worker : DEBUG : Step 16078, finished rewards 468.73, envs finished 1
-2026-01-17 15:11:30,902 : worker.worker : DEBUG : Step 16092, finished rewards 462.15, envs finished 1
-2026-01-17 15:11:30,937 : worker.worker : DEBUG : Step 16099, finished rewards 472.16, envs finished 1
-2026-01-17 15:11:31,033 : worker.worker : DEBUG : Step 16119, finished rewards 457.02, envs finished 1
-2026-01-17 15:11:32,616 : agent.on_policy : DEBUG : Mean Losses: [1.8747489953362675, -0.0035148706258041782, 3.759936165070394, 0.17042058412916958]
-2026-01-17 15:11:32,671 : worker.worker : DEBUG : Step 16146, finished rewards 462.42, envs finished 1
-2026-01-17 15:11:33,294 : worker.worker : DEBUG : Step 16316, finished rewards 471.70, envs finished 1
-2026-01-17 15:11:33,377 : worker.worker : DEBUG : Step 16337, finished rewards 470.30, envs finished 1
-2026-01-17 15:11:35,021 : agent.on_policy : DEBUG : Mean Losses: [0.9707343080386636, -0.01613288838416338, 1.9779268861282617, 0.20962500320747496]
-2026-01-17 15:11:35,524 : worker.worker : DEBUG : Step 16528, finished rewards 464.58, envs finished 1
-2026-01-17 15:11:35,740 : worker.worker : DEBUG : Step 16579, finished rewards 462.40, envs finished 1
-2026-01-17 15:11:35,806 : worker.worker : DEBUG : Step 16593, finished rewards 470.49, envs finished 1
-2026-01-17 15:11:35,841 : worker.worker : DEBUG : Step 16600, finished rewards 467.08, envs finished 1
-2026-01-17 15:11:35,927 : worker.worker : DEBUG : Step 16620, finished rewards 465.66, envs finished 1
-2026-01-17 15:11:37,473 : agent.on_policy : DEBUG : Mean Losses: [1.871776011750626, -0.007875162648269906, 3.763536152587039, 0.21168983746320008]
-2026-01-17 15:11:37,511 : worker.worker : DEBUG : Step 16647, finished rewards 463.79, envs finished 1
-2026-01-17 15:11:38,289 : worker.worker : DEBUG : Step 16817, finished rewards 469.02, envs finished 1
-2026-01-17 15:11:38,398 : worker.worker : DEBUG : Step 16838, finished rewards 465.82, envs finished 1
-2026-01-17 15:11:40,064 : agent.on_policy : DEBUG : Mean Losses: [0.8615311455600022, -0.0028198065992910415, 1.7324388179258676, 0.18684493079781533]
-2026-01-17 15:11:40,545 : worker.worker : DEBUG : Step 17029, finished rewards 462.81, envs finished 1
-2026-01-17 15:11:40,761 : worker.worker : DEBUG : Step 17080, finished rewards 473.44, envs finished 1
-2026-01-17 15:11:40,822 : worker.worker : DEBUG : Step 17094, finished rewards 461.06, envs finished 1
-2026-01-17 15:11:40,854 : worker.worker : DEBUG : Step 17101, finished rewards 470.63, envs finished 1
-2026-01-17 15:11:40,950 : worker.worker : DEBUG : Step 17121, finished rewards 467.26, envs finished 1
-2026-01-17 15:11:41,097 : worker.worker : DEBUG : Step 17148, finished rewards 470.66, envs finished 1
-2026-01-17 15:11:42,472 : agent.on_policy : DEBUG : Mean Losses: [2.2367256816505687, 0.00502069438516628, 4.46669008472818, 0.16400417117401958]
-2026-01-17 15:11:43,084 : worker.worker : DEBUG : Step 17318, finished rewards 463.53, envs finished 1
-2026-01-17 15:11:43,174 : worker.worker : DEBUG : Step 17339, finished rewards 465.63, envs finished 1
-2026-01-17 15:11:45,765 : agent.on_policy : DEBUG : Mean Losses: [0.7476626719777414, 3.1368535075504414e-05, 1.4990855631025624, 0.19114729412831366]
-2026-01-17 15:11:46,144 : worker.worker : DEBUG : Step 17530, finished rewards 461.31, envs finished 1
-2026-01-17 15:11:46,380 : worker.worker : DEBUG : Step 17581, finished rewards 459.64, envs finished 1
-2026-01-17 15:11:46,455 : worker.worker : DEBUG : Step 17595, finished rewards 454.74, envs finished 1
-2026-01-17 15:11:46,490 : worker.worker : DEBUG : Step 17602, finished rewards 458.67, envs finished 1
-2026-01-17 15:11:46,636 : worker.worker : DEBUG : Step 17622, finished rewards 465.28, envs finished 1
-2026-01-17 15:11:46,799 : worker.worker : DEBUG : Step 17649, finished rewards 462.19, envs finished 1
-2026-01-17 15:11:48,591 : agent.on_policy : DEBUG : Mean Losses: [2.289574586132221, -0.0022932330262847244, 4.5873200697707945, 0.1792211672756821]
-2026-01-17 15:11:49,182 : worker.worker : DEBUG : Step 17819, finished rewards 457.80, envs finished 1
-2026-01-17 15:11:49,285 : worker.worker : DEBUG : Step 17840, finished rewards 451.60, envs finished 1
-2026-01-17 15:11:51,065 : agent.on_policy : DEBUG : Mean Losses: [0.7689836135054066, -0.005367170069803251, 1.551662665826734, 0.14805547604337335]
-2026-01-17 15:11:51,498 : worker.worker : DEBUG : Step 18031, finished rewards 449.86, envs finished 1
-2026-01-17 15:11:51,714 : worker.worker : DEBUG : Step 18082, finished rewards 466.57, envs finished 1
-2026-01-17 15:11:51,768 : worker.worker : DEBUG : Step 18096, finished rewards 461.50, envs finished 1
-2026-01-17 15:11:51,802 : worker.worker : DEBUG : Step 18103, finished rewards 454.31, envs finished 1
-2026-01-17 15:11:51,890 : worker.worker : DEBUG : Step 18123, finished rewards 458.79, envs finished 1
-2026-01-17 15:11:51,989 : worker.worker : DEBUG : Step 18150, finished rewards 466.49, envs finished 1
-2026-01-17 15:11:53,311 : agent.on_policy : DEBUG : Mean Losses: [2.1989963110951067, 0.005808003558195196, 4.3892446682380974, 0.14340386944822966]
-2026-01-17 15:11:53,819 : worker.worker : DEBUG : Step 18320, finished rewards 461.87, envs finished 1
-2026-01-17 15:11:53,900 : worker.worker : DEBUG : Step 18341, finished rewards 456.46, envs finished 1
-2026-01-17 15:11:55,672 : agent.on_policy : DEBUG : Mean Losses: [0.7376696102741335, 0.0032180334807890175, 1.4712139031660627, 0.11553699725773185]
-2026-01-17 15:11:56,038 : worker.worker : DEBUG : Step 18532, finished rewards 459.18, envs finished 1
-2026-01-17 15:11:56,257 : worker.worker : DEBUG : Step 18583, finished rewards 467.38, envs finished 1
-2026-01-17 15:11:56,330 : worker.worker : DEBUG : Step 18597, finished rewards 468.16, envs finished 1
-2026-01-17 15:11:56,373 : worker.worker : DEBUG : Step 18604, finished rewards 468.55, envs finished 1
-2026-01-17 15:11:56,493 : worker.worker : DEBUG : Step 18624, finished rewards 459.34, envs finished 1
-2026-01-17 15:11:56,629 : worker.worker : DEBUG : Step 18651, finished rewards 469.67, envs finished 1
-2026-01-17 15:11:58,222 : agent.on_policy : DEBUG : Mean Losses: [2.191324287818861, 0.006374962320842314, 4.372421627508447, 0.12614857573062183]
-2026-01-17 15:11:58,726 : worker.worker : DEBUG : Step 18821, finished rewards 470.62, envs finished 1
-2026-01-17 15:11:58,826 : worker.worker : DEBUG : Step 18842, finished rewards 468.32, envs finished 1
-2026-01-17 15:12:00,398 : agent.on_policy : DEBUG : Mean Losses: [0.7199251076563087, -0.005920769862859743, 1.4548423118110805, 0.15752830561250447]
-2026-01-17 15:12:00,737 : worker.worker : DEBUG : Step 19033, finished rewards 448.80, envs finished 1
-2026-01-17 15:12:00,993 : worker.worker : DEBUG : Step 19084, finished rewards 463.97, envs finished 1
-2026-01-17 15:12:01,051 : worker.worker : DEBUG : Step 19098, finished rewards 465.39, envs finished 1
-2026-01-17 15:12:01,083 : worker.worker : DEBUG : Step 19105, finished rewards 461.54, envs finished 1
-2026-01-17 15:12:01,172 : worker.worker : DEBUG : Step 19125, finished rewards 462.13, envs finished 1
-2026-01-17 15:12:01,286 : worker.worker : DEBUG : Step 19152, finished rewards 466.97, envs finished 1
-2026-01-17 15:12:02,760 : agent.on_policy : DEBUG : Mean Losses: [2.1762670345488004, -0.005185130122117698, 4.365737995054223, 0.1416827965993434]
-2026-01-17 15:12:03,228 : worker.worker : DEBUG : Step 19322, finished rewards 469.20, envs finished 1
-2026-01-17 15:12:03,314 : worker.worker : DEBUG : Step 19343, finished rewards 465.05, envs finished 1
-2026-01-17 15:12:05,252 : agent.on_policy : DEBUG : Mean Losses: [0.742456705099903, 0.0022633156069787217, 1.4829038161671633, 0.1258522281423211]
-2026-01-17 15:12:05,565 : worker.worker : DEBUG : Step 19534, finished rewards 461.96, envs finished 1
-2026-01-17 15:12:05,799 : worker.worker : DEBUG : Step 19585, finished rewards 473.06, envs finished 1
-2026-01-17 15:12:05,858 : worker.worker : DEBUG : Step 19599, finished rewards 463.52, envs finished 1
-2026-01-17 15:12:05,890 : worker.worker : DEBUG : Step 19606, finished rewards 472.19, envs finished 1
-2026-01-17 15:12:05,992 : worker.worker : DEBUG : Step 19626, finished rewards 471.65, envs finished 1
-2026-01-17 15:12:06,139 : worker.worker : DEBUG : Step 19653, finished rewards 470.56, envs finished 1
-2026-01-17 15:12:07,980 : agent.on_policy : DEBUG : Mean Losses: [2.1845287224758065, -0.0025478793686488643, 4.376590471425152, 0.12186287576332688]
-2026-01-17 15:12:08,411 : worker.worker : DEBUG : Step 19823, finished rewards 474.62, envs finished 1
-2026-01-17 15:12:08,496 : worker.worker : DEBUG : Step 19844, finished rewards 470.26, envs finished 1
-2026-01-17 15:12:10,452 : agent.on_policy : DEBUG : Mean Losses: [0.7369882243554458, -0.0020017860981170086, 1.4803556249069516, 0.11877974171657116]
-2026-01-17 15:12:10,564 : worker.worker : INFO : Step 20000, Avg Reward 465.0225, Max Reward 474.6228, Loss [1.43162043, -0.00060837, 2.8675173, 0.15298501]
-2026-01-17 15:12:10,568 : network.model : INFO : Saved model to logs/CartPole-PPO/model.pt
-2026-01-17 15:12:14,182 : evaluate.evaluate : INFO : Evaluation results: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1
-2026-01-17 15:15:36,793 : evaluate.evaluate : INFO : Evaluation results: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1000
-2026-01-17 15:15:36,857 : worker.worker : INFO : ==================== End training ====================
+2026-01-18 15:24:57,295 : worker.worker : INFO : ==================== Start training ====================
+2026-01-18 15:24:57,323 : network.model : INFO : Saved model to logs/CartPole-PPO/model.pt
+2026-01-18 15:24:58,625 : evaluate.evaluate : INFO : Evaluation results: mean = 9.00, std = 0.00, min = 9.00, max = 9.00, count = 1
+2026-01-18 15:24:58,626 : evaluate.evaluate : INFO : Evaluation lengths: mean = 9.00, std = 0.00, min = 9.00, max = 9.00, count = 1
+2026-01-18 15:25:00,137 : agent.callbacks.train_logger : DEBUG : loss 3.2288 
+2026-01-18 15:25:01,413 : agent.callbacks.train_logger : DEBUG : loss 2.9949 
+2026-01-18 15:25:02,396 : agent.callbacks.train_logger : DEBUG : loss 2.7470 
+2026-01-18 15:25:02,066 : agent.callbacks.train_logger : DEBUG : loss 2.4316 
+2026-01-18 15:25:03,223 : agent.callbacks.train_logger : DEBUG : loss 2.0305 
+2026-01-18 15:25:04,092 : agent.callbacks.train_logger : DEBUG : loss 1.7341 
+2026-01-18 15:25:04,937 : agent.callbacks.train_logger : DEBUG : loss 1.4193 
+2026-01-18 15:25:06,005 : agent.callbacks.train_logger : DEBUG : loss 0.9504 
+2026-01-18 15:25:07,161 : agent.callbacks.train_logger : DEBUG : loss 0.8574 
+2026-01-18 15:25:08,448 : agent.callbacks.train_logger : DEBUG : loss 0.7424 
+2026-01-18 15:25:09,512 : agent.callbacks.train_logger : DEBUG : loss 0.6824 
+2026-01-18 15:25:10,440 : agent.callbacks.train_logger : DEBUG : loss 0.4723 
+2026-01-18 15:25:11,344 : agent.callbacks.train_logger : DEBUG : loss 0.4463 
+2026-01-18 15:25:12,189 : agent.callbacks.train_logger : DEBUG : loss 0.7841 
+2026-01-18 15:25:13,154 : agent.callbacks.train_logger : DEBUG : loss 0.4233 
+2026-01-18 15:25:14,034 : agent.callbacks.train_logger : DEBUG : loss 0.3853 
+2026-01-18 15:25:14,910 : agent.callbacks.train_logger : DEBUG : loss 0.5593 
+2026-01-18 15:25:15,796 : agent.callbacks.train_logger : DEBUG : loss 0.1488 
+2026-01-18 15:25:16,693 : agent.callbacks.train_logger : DEBUG : loss 0.5406 
+2026-01-18 15:25:18,543 : agent.callbacks.train_logger : DEBUG : loss 0.4009 
+2026-01-18 15:25:19,714 : agent.callbacks.train_logger : DEBUG : loss 0.3106 
+2026-01-18 15:25:20,798 : agent.callbacks.train_logger : DEBUG : loss 0.2241 
+2026-01-18 15:25:21,804 : agent.callbacks.train_logger : DEBUG : loss 0.5473 
+2026-01-18 15:25:22,895 : agent.callbacks.train_logger : DEBUG : loss 0.1813 
+2026-01-18 15:25:23,999 : agent.callbacks.train_logger : DEBUG : loss 0.6439 
+2026-01-18 15:25:25,613 : agent.callbacks.train_logger : DEBUG : loss 0.0691 
+2026-01-18 15:25:26,626 : agent.callbacks.train_logger : DEBUG : loss 0.2492 
+2026-01-18 15:25:27,786 : agent.callbacks.train_logger : DEBUG : loss 0.0992 
+2026-01-18 15:25:28,993 : agent.callbacks.train_logger : DEBUG : loss 0.1613 
+2026-01-18 15:25:31,051 : agent.callbacks.train_logger : DEBUG : loss 0.0703 
+2026-01-18 15:25:31,106 : agent.callbacks.train_logger : DEBUG : loss 0.1701 
+2026-01-18 15:25:32,302 : agent.callbacks.train_logger : DEBUG : loss 0.1437 
+2026-01-18 15:25:33,439 : agent.callbacks.train_logger : DEBUG : loss 0.1294 
+2026-01-18 15:25:34,434 : agent.callbacks.train_logger : DEBUG : loss 0.1579 
+2026-01-18 15:25:35,490 : agent.callbacks.train_logger : DEBUG : loss 0.3492 
+2026-01-18 15:25:36,537 : agent.callbacks.train_logger : DEBUG : loss 0.0274 
+2026-01-18 15:25:37,893 : agent.callbacks.train_logger : DEBUG : loss 0.0261 
+2026-01-18 15:25:38,950 : agent.callbacks.train_logger : DEBUG : loss 0.1069 
+2026-01-18 15:25:40,074 : agent.callbacks.train_logger : DEBUG : loss 0.0961 
+2026-01-18 15:25:41,059 : agent.callbacks.train_logger : DEBUG : loss 0.0066 
+2026-01-18 15:25:42,066 : agent.callbacks.train_logger : DEBUG : loss 0.0396 
+2026-01-18 15:25:42,998 : agent.callbacks.train_logger : DEBUG : loss 0.1430 
+2026-01-18 15:25:44,009 : agent.callbacks.train_logger : DEBUG : loss 0.1240 
+2026-01-18 15:25:44,958 : agent.callbacks.train_logger : DEBUG : loss 0.0134 
+2026-01-18 15:25:45,866 : agent.callbacks.train_logger : DEBUG : loss 0.0778 
+2026-01-18 15:25:46,884 : agent.callbacks.train_logger : DEBUG : loss 0.1176 
+2026-01-18 15:25:48,077 : agent.callbacks.train_logger : DEBUG : loss 0.1256 
+2026-01-18 15:25:49,181 : agent.callbacks.train_logger : DEBUG : loss 0.0056 
+2026-01-18 15:25:50,238 : agent.callbacks.train_logger : DEBUG : loss 0.0543 
+2026-01-18 15:25:51,240 : agent.callbacks.train_logger : DEBUG : loss 0.0979 
+2026-01-18 15:25:52,263 : agent.callbacks.train_logger : DEBUG : loss 0.1536 
+2026-01-18 15:25:53,262 : agent.callbacks.train_logger : DEBUG : loss 0.0527 
+2026-01-18 15:25:54,223 : agent.callbacks.train_logger : DEBUG : loss 0.0912 
+2026-01-18 15:25:55,225 : agent.callbacks.train_logger : DEBUG : loss 0.0934 
+2026-01-18 15:25:56,217 : agent.callbacks.train_logger : DEBUG : loss 0.1184 
+2026-01-18 15:25:57,180 : agent.callbacks.train_logger : DEBUG : loss 0.0387 
+2026-01-18 15:25:58,478 : agent.callbacks.train_logger : DEBUG : loss 0.1045 
+2026-01-18 15:25:59,613 : agent.callbacks.train_logger : DEBUG : loss 0.1064 
+2026-01-18 15:25:59,507 : agent.callbacks.train_logger : DEBUG : loss 0.1053 
+2026-01-18 15:26:00,388 : agent.callbacks.train_logger : DEBUG : loss 0.0581 
+2026-01-18 15:26:01,385 : agent.callbacks.train_logger : DEBUG : loss 0.1061 
+2026-01-18 15:26:02,415 : agent.callbacks.train_logger : DEBUG : loss 0.1644 
+2026-01-18 15:26:03,417 : agent.callbacks.train_logger : DEBUG : loss 0.1058 
+2026-01-18 15:26:04,379 : agent.callbacks.train_logger : DEBUG : loss 0.0372 
+2026-01-18 15:26:05,349 : agent.callbacks.train_logger : DEBUG : loss 0.0819 
+2026-01-18 15:26:06,383 : agent.callbacks.train_logger : DEBUG : loss 0.1405 
+2026-01-18 15:26:07,615 : agent.callbacks.train_logger : DEBUG : loss 0.0872 
+2026-01-18 15:26:08,755 : agent.callbacks.train_logger : DEBUG : loss 0.0535 
+2026-01-18 15:26:09,859 : agent.callbacks.train_logger : DEBUG : loss 0.1038 
+2026-01-18 15:26:10,923 : agent.callbacks.train_logger : DEBUG : loss 0.1620 
+2026-01-18 15:26:11,862 : agent.callbacks.train_logger : DEBUG : loss 0.0644 
+2026-01-18 15:26:12,826 : agent.callbacks.train_logger : DEBUG : loss 0.0529 
+2026-01-18 15:26:13,862 : agent.callbacks.train_logger : DEBUG : loss 0.1079 
+2026-01-18 15:26:14,809 : agent.callbacks.train_logger : DEBUG : loss 0.2190 
+2026-01-18 15:26:15,782 : agent.callbacks.train_logger : DEBUG : loss 0.0385 
+2026-01-18 15:26:16,787 : agent.callbacks.train_logger : DEBUG : loss 0.0656 
+2026-01-18 15:26:18,037 : agent.callbacks.train_logger : DEBUG : loss 0.1170 
+2026-01-18 15:26:19,141 : agent.callbacks.train_logger : DEBUG : loss 0.1809 
+2026-01-18 15:26:19,202 : network.model : INFO : Saved model to logs/CartPole-PPO/model.pt
+2026-01-18 15:26:23,163 : evaluate.evaluate : INFO : Evaluation results: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1
+2026-01-18 15:26:23,163 : evaluate.evaluate : INFO : Evaluation lengths: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1
+2026-01-18 15:26:25,892 : agent.callbacks.train_logger : DEBUG : loss 0.0058 
+2026-01-18 15:26:27,241 : agent.callbacks.train_logger : DEBUG : loss 0.0580 
+2026-01-18 15:26:28,320 : agent.callbacks.train_logger : DEBUG : loss 0.1881 
+2026-01-18 15:26:30,195 : agent.callbacks.train_logger : DEBUG : loss 0.1959 
+2026-01-18 15:26:32,097 : agent.callbacks.train_logger : DEBUG : loss -0.0062 
+2026-01-18 15:26:33,986 : agent.callbacks.train_logger : DEBUG : loss 0.0555 
+2026-01-18 15:26:36,097 : agent.callbacks.train_logger : DEBUG : loss 0.2060 
+2026-01-18 15:26:38,852 : agent.callbacks.train_logger : DEBUG : loss 0.1742 
+2026-01-18 15:26:40,124 : agent.callbacks.train_logger : DEBUG : loss 0.0024 
+2026-01-18 15:26:41,710 : agent.callbacks.train_logger : DEBUG : loss 0.0574 
+2026-01-18 15:26:43,175 : agent.callbacks.train_logger : DEBUG : loss 0.1811 
+2026-01-18 15:26:44,484 : agent.callbacks.train_logger : DEBUG : loss 0.1663 
+2026-01-18 15:26:45,642 : agent.callbacks.train_logger : DEBUG : loss 0.0050 
+2026-01-18 15:26:46,798 : agent.callbacks.train_logger : DEBUG : loss 0.0920 
+2026-01-18 15:26:48,988 : agent.callbacks.train_logger : DEBUG : loss 0.1409 
+2026-01-18 15:26:50,094 : agent.callbacks.train_logger : DEBUG : loss 0.1673 
+2026-01-18 15:26:51,268 : agent.callbacks.train_logger : DEBUG : loss 0.0751 
+2026-01-18 15:26:52,768 : agent.callbacks.train_logger : DEBUG : loss 0.1194 
+2026-01-18 15:26:54,129 : agent.callbacks.train_logger : DEBUG : loss 0.1134 
+2026-01-18 15:26:55,232 : agent.callbacks.train_logger : DEBUG : loss 0.1436 
+2026-01-18 15:26:56,430 : agent.callbacks.train_logger : DEBUG : loss 0.0636 
+2026-01-18 15:26:57,569 : agent.callbacks.train_logger : DEBUG : loss 0.1128 
+2026-01-18 15:26:58,117 : agent.callbacks.train_logger : DEBUG : loss 0.1077 
+2026-01-18 15:26:59,287 : agent.callbacks.train_logger : DEBUG : loss 0.1367 
+2026-01-18 15:27:00,807 : agent.callbacks.train_logger : DEBUG : loss 0.0612 
+2026-01-18 15:27:01,827 : agent.callbacks.train_logger : DEBUG : loss 0.1221 
+2026-01-18 15:27:02,867 : agent.callbacks.train_logger : DEBUG : loss 0.1686 
+2026-01-18 15:27:03,874 : agent.callbacks.train_logger : DEBUG : loss 0.1101 
+2026-01-18 15:27:04,837 : agent.callbacks.train_logger : DEBUG : loss 0.0531 
+2026-01-18 15:27:05,729 : agent.callbacks.train_logger : DEBUG : loss 0.1047 
+2026-01-18 15:27:06,715 : agent.callbacks.train_logger : DEBUG : loss 0.1501 
+2026-01-18 15:27:07,945 : agent.callbacks.train_logger : DEBUG : loss 0.0985 
+2026-01-18 15:27:09,040 : agent.callbacks.train_logger : DEBUG : loss 0.0631 
+2026-01-18 15:27:10,177 : agent.callbacks.train_logger : DEBUG : loss 0.1112 
+2026-01-18 15:27:11,130 : agent.callbacks.train_logger : DEBUG : loss 0.1523 
+2026-01-18 15:27:12,070 : agent.callbacks.train_logger : DEBUG : loss 0.0926 
+2026-01-18 15:27:12,957 : agent.callbacks.train_logger : DEBUG : loss 0.0629 
+2026-01-18 15:27:13,908 : agent.callbacks.train_logger : DEBUG : loss 0.1084 
+2026-01-18 15:27:14,943 : agent.callbacks.train_logger : DEBUG : loss 0.1607 
+2026-01-18 15:27:15,880 : agent.callbacks.train_logger : DEBUG : loss 0.0495 
+2026-01-18 15:27:16,835 : agent.callbacks.train_logger : DEBUG : loss 0.0534 
+2026-01-18 15:27:17,980 : agent.callbacks.train_logger : DEBUG : loss 0.1102 
+2026-01-18 15:27:19,060 : agent.callbacks.train_logger : DEBUG : loss 0.1939 
+2026-01-18 15:27:19,968 : agent.callbacks.train_logger : DEBUG : loss 0.0234 
+2026-01-18 15:27:21,199 : agent.callbacks.train_logger : DEBUG : loss 0.0725 
+2026-01-18 15:27:22,150 : agent.callbacks.train_logger : DEBUG : loss 0.1051 
+2026-01-18 15:27:23,065 : agent.callbacks.train_logger : DEBUG : loss 0.2248 
+2026-01-18 15:27:24,051 : agent.callbacks.train_logger : DEBUG : loss 0.0096 
+2026-01-18 15:27:24,946 : agent.callbacks.train_logger : DEBUG : loss 0.0636 
+2026-01-18 15:27:25,899 : agent.callbacks.train_logger : DEBUG : loss 0.1548 
+2026-01-18 15:27:25,547 : agent.callbacks.train_logger : DEBUG : loss 0.1766 
+2026-01-18 15:27:26,364 : agent.callbacks.train_logger : DEBUG : loss 0.0044 
+2026-01-18 15:27:27,577 : agent.callbacks.train_logger : DEBUG : loss 0.0597 
+2026-01-18 15:27:28,591 : agent.callbacks.train_logger : DEBUG : loss 0.1911 
+2026-01-18 15:27:29,721 : agent.callbacks.train_logger : DEBUG : loss 0.1584 
+2026-01-18 15:27:30,731 : agent.callbacks.train_logger : DEBUG : loss 0.0022 
+2026-01-18 15:27:31,796 : agent.callbacks.train_logger : DEBUG : loss 0.0464 
+2026-01-18 15:27:32,872 : agent.callbacks.train_logger : DEBUG : loss 0.1612 
+2026-01-18 15:27:34,110 : agent.callbacks.train_logger : DEBUG : loss 0.1602 
+2026-01-18 15:27:35,101 : agent.callbacks.train_logger : DEBUG : loss 0.0079 
+2026-01-18 15:27:36,069 : agent.callbacks.train_logger : DEBUG : loss 0.0810 
+2026-01-18 15:27:37,124 : agent.callbacks.train_logger : DEBUG : loss 0.1255 
+2026-01-18 15:27:38,543 : agent.callbacks.train_logger : DEBUG : loss 0.1659 
+2026-01-18 15:27:39,947 : agent.callbacks.train_logger : DEBUG : loss 0.0593 
+2026-01-18 15:27:40,935 : agent.callbacks.train_logger : DEBUG : loss 0.1146 
+2026-01-18 15:27:41,887 : agent.callbacks.train_logger : DEBUG : loss 0.1094 
+2026-01-18 15:27:42,821 : agent.callbacks.train_logger : DEBUG : loss 0.1621 
+2026-01-18 15:27:43,748 : agent.callbacks.train_logger : DEBUG : loss 0.0775 
+2026-01-18 15:27:44,657 : agent.callbacks.train_logger : DEBUG : loss 0.1209 
+2026-01-18 15:27:45,643 : agent.callbacks.train_logger : DEBUG : loss 0.1070 
+2026-01-18 15:27:46,546 : agent.callbacks.train_logger : DEBUG : loss 0.1283 
+2026-01-18 15:27:47,463 : agent.callbacks.train_logger : DEBUG : loss 0.0575 
+2026-01-18 15:27:48,732 : agent.callbacks.train_logger : DEBUG : loss 0.1146 
+2026-01-18 15:27:49,678 : agent.callbacks.train_logger : DEBUG : loss 0.1698 
+2026-01-18 15:27:50,765 : agent.callbacks.train_logger : DEBUG : loss 0.1030 
+2026-01-18 15:27:51,655 : agent.callbacks.train_logger : DEBUG : loss 0.0680 
+2026-01-18 15:27:52,637 : agent.callbacks.train_logger : DEBUG : loss 0.1183 
+2026-01-18 15:27:53,567 : agent.callbacks.train_logger : DEBUG : loss 0.1686 
+2026-01-18 15:27:53,706 : network.model : INFO : Saved model to logs/CartPole-PPO/model.pt
+2026-01-18 15:27:55,853 : evaluate.evaluate : INFO : Evaluation results: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1
+2026-01-18 15:27:55,853 : evaluate.evaluate : INFO : Evaluation lengths: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1
+2026-01-18 15:27:58,629 : agent.callbacks.train_logger : DEBUG : loss 0.1077 
+2026-01-18 15:27:59,635 : agent.callbacks.train_logger : DEBUG : loss 0.0606 
+2026-01-18 15:28:00,796 : agent.callbacks.train_logger : DEBUG : loss 0.1170 
+2026-01-18 15:28:01,753 : agent.callbacks.train_logger : DEBUG : loss 0.1601 
+2026-01-18 15:28:02,686 : agent.callbacks.train_logger : DEBUG : loss 0.0818 
+2026-01-18 15:28:03,678 : agent.callbacks.train_logger : DEBUG : loss 0.0581 
+2026-01-18 15:28:04,576 : agent.callbacks.train_logger : DEBUG : loss 0.1138 
+2026-01-18 15:28:05,548 : agent.callbacks.train_logger : DEBUG : loss 0.2142 
+2026-01-18 15:28:06,462 : agent.callbacks.train_logger : DEBUG : loss 0.0404 
+2026-01-18 15:28:07,567 : agent.callbacks.train_logger : DEBUG : loss 0.0582 
+2026-01-18 15:28:08,595 : agent.callbacks.train_logger : DEBUG : loss 0.1118 
+2026-01-18 15:28:09,572 : agent.callbacks.train_logger : DEBUG : loss 0.1890 
+2026-01-18 15:28:10,621 : agent.callbacks.train_logger : DEBUG : loss 0.0104 
+2026-01-18 15:28:11,527 : agent.callbacks.train_logger : DEBUG : loss 0.0690 
+2026-01-18 15:28:12,498 : agent.callbacks.train_logger : DEBUG : loss 0.1117 
+2026-01-18 15:28:13,394 : agent.callbacks.train_logger : DEBUG : loss 0.1974 
+2026-01-18 15:28:14,325 : agent.callbacks.train_logger : DEBUG : loss -0.0073 
+2026-01-18 15:28:15,260 : agent.callbacks.train_logger : DEBUG : loss 0.0550 
+2026-01-18 15:28:16,184 : agent.callbacks.train_logger : DEBUG : loss 0.1540 
+2026-01-18 15:28:17,129 : agent.callbacks.train_logger : DEBUG : loss 0.1665 
+2026-01-18 15:28:18,297 : agent.callbacks.train_logger : DEBUG : loss 0.0013 
+2026-01-18 15:28:19,321 : agent.callbacks.train_logger : DEBUG : loss 0.0545 
+2026-01-18 15:28:20,281 : agent.callbacks.train_logger : DEBUG : loss 0.1829 
+2026-01-18 15:28:21,371 : agent.callbacks.train_logger : DEBUG : loss 0.1640 
+2026-01-18 15:28:22,274 : agent.callbacks.train_logger : DEBUG : loss 0.0010 
+2026-01-18 15:28:23,177 : agent.callbacks.train_logger : DEBUG : loss 0.0934 
+2026-01-18 15:28:23,297 : agent.callbacks.train_logger : DEBUG : loss 0.1492 
+2026-01-18 15:28:24,113 : agent.callbacks.train_logger : DEBUG : loss 0.1672 
+2026-01-18 15:28:25,051 : agent.callbacks.train_logger : DEBUG : loss -0.0019 
+2026-01-18 15:28:26,081 : agent.callbacks.train_logger : DEBUG : loss 0.0624 
+2026-01-18 15:28:27,155 : agent.callbacks.train_logger : DEBUG : loss 0.1154 
+2026-01-18 15:28:28,267 : agent.callbacks.train_logger : DEBUG : loss 0.1588 
+2026-01-18 15:28:29,222 : agent.callbacks.train_logger : DEBUG : loss 0.0673 
+2026-01-18 15:28:30,310 : agent.callbacks.train_logger : DEBUG : loss 0.1057 
+2026-01-18 15:28:31,207 : agent.callbacks.train_logger : DEBUG : loss 0.1136 
+2026-01-18 15:28:32,225 : agent.callbacks.train_logger : DEBUG : loss 0.1442 
+2026-01-18 15:28:33,290 : agent.callbacks.train_logger : DEBUG : loss 0.0600 
+2026-01-18 15:28:34,204 : agent.callbacks.train_logger : DEBUG : loss 0.1112 
+2026-01-18 15:28:35,193 : agent.callbacks.train_logger : DEBUG : loss 0.1191 
+2026-01-18 15:28:36,147 : agent.callbacks.train_logger : DEBUG : loss 0.1138 
+2026-01-18 15:28:37,072 : agent.callbacks.train_logger : DEBUG : loss 0.0656 
+2026-01-18 15:28:38,258 : agent.callbacks.train_logger : DEBUG : loss 0.1203 
+2026-01-18 15:28:39,307 : agent.callbacks.train_logger : DEBUG : loss 0.1593 
+2026-01-18 15:28:40,419 : agent.callbacks.train_logger : DEBUG : loss 0.1077 
+2026-01-18 15:28:41,540 : agent.callbacks.train_logger : DEBUG : loss 0.0618 
+2026-01-18 15:28:42,696 : agent.callbacks.train_logger : DEBUG : loss 0.1112 
+2026-01-18 15:28:43,619 : agent.callbacks.train_logger : DEBUG : loss 0.1644 
+2026-01-18 15:28:44,583 : agent.callbacks.train_logger : DEBUG : loss 0.0967 
+2026-01-18 15:28:45,462 : agent.callbacks.train_logger : DEBUG : loss 0.0667 
+2026-01-18 15:28:46,368 : agent.callbacks.train_logger : DEBUG : loss 0.1133 
+2026-01-18 15:28:47,298 : agent.callbacks.train_logger : DEBUG : loss 0.1697 
+2026-01-18 15:28:48,402 : agent.callbacks.train_logger : DEBUG : loss 0.0680 
+2026-01-18 15:28:49,391 : agent.callbacks.train_logger : DEBUG : loss 0.0627 
+2026-01-18 15:28:50,342 : agent.callbacks.train_logger : DEBUG : loss 0.1085 
+2026-01-18 15:28:51,404 : agent.callbacks.train_logger : DEBUG : loss 0.2182 
+2026-01-18 15:28:52,310 : agent.callbacks.train_logger : DEBUG : loss 0.0308 
+2026-01-18 15:28:51,967 : agent.callbacks.train_logger : DEBUG : loss 0.0655 
+2026-01-18 15:28:52,832 : agent.callbacks.train_logger : DEBUG : loss 0.1242 
+2026-01-18 15:28:53,709 : agent.callbacks.train_logger : DEBUG : loss 0.2424 
+2026-01-18 15:28:54,688 : agent.callbacks.train_logger : DEBUG : loss 0.0077 
+2026-01-18 15:28:55,610 : agent.callbacks.train_logger : DEBUG : loss 0.0659 
+2026-01-18 15:28:56,524 : agent.callbacks.train_logger : DEBUG : loss 0.1591 
+2026-01-18 15:28:58,096 : agent.callbacks.train_logger : DEBUG : loss 0.1888 
+2026-01-18 15:28:59,291 : agent.callbacks.train_logger : DEBUG : loss 0.0054 
+2026-01-18 15:29:00,614 : agent.callbacks.train_logger : DEBUG : loss 0.0612 
+2026-01-18 15:29:01,793 : agent.callbacks.train_logger : DEBUG : loss 0.2181 
+2026-01-18 15:29:02,874 : agent.callbacks.train_logger : DEBUG : loss 0.1707 
+2026-01-18 15:29:04,230 : agent.callbacks.train_logger : DEBUG : loss -0.0010 
+2026-01-18 15:29:05,346 : agent.callbacks.train_logger : DEBUG : loss 0.0568 
+2026-01-18 15:29:06,328 : agent.callbacks.train_logger : DEBUG : loss 0.1762 
+2026-01-18 15:29:07,263 : agent.callbacks.train_logger : DEBUG : loss 0.1751 
+2026-01-18 15:29:08,425 : agent.callbacks.train_logger : DEBUG : loss 0.0073 
+2026-01-18 15:29:09,488 : agent.callbacks.train_logger : DEBUG : loss 0.0944 
+2026-01-18 15:29:10,486 : agent.callbacks.train_logger : DEBUG : loss 0.1422 
+2026-01-18 15:29:11,442 : agent.callbacks.train_logger : DEBUG : loss 0.1707 
+2026-01-18 15:29:12,351 : agent.callbacks.train_logger : DEBUG : loss 0.0671 
+2026-01-18 15:29:13,286 : agent.callbacks.train_logger : DEBUG : loss 0.1185 
+2026-01-18 15:29:14,223 : agent.callbacks.train_logger : DEBUG : loss 0.1213 
+2026-01-18 15:29:14,446 : network.model : INFO : Saved model to logs/CartPole-PPO/model.pt
+2026-01-18 15:29:17,950 : evaluate.evaluate : INFO : Evaluation results: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1
+2026-01-18 15:29:17,951 : evaluate.evaluate : INFO : Evaluation lengths: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1
+2026-01-18 15:29:20,395 : agent.callbacks.train_logger : DEBUG : loss 0.1594 
+2026-01-18 15:29:21,412 : agent.callbacks.train_logger : DEBUG : loss 0.0634 
+2026-01-18 15:29:21,042 : agent.callbacks.train_logger : DEBUG : loss 0.1121 
+2026-01-18 15:29:21,858 : agent.callbacks.train_logger : DEBUG : loss 0.1155 
+2026-01-18 15:29:22,748 : agent.callbacks.train_logger : DEBUG : loss 0.1468 
+2026-01-18 15:29:23,647 : agent.callbacks.train_logger : DEBUG : loss 0.0633 
+2026-01-18 15:29:24,635 : agent.callbacks.train_logger : DEBUG : loss 0.1108 
+2026-01-18 15:29:25,522 : agent.callbacks.train_logger : DEBUG : loss 0.1576 
+2026-01-18 15:29:26,424 : agent.callbacks.train_logger : DEBUG : loss 0.1096 
+2026-01-18 15:29:27,550 : agent.callbacks.train_logger : DEBUG : loss 0.0595 
+2026-01-18 15:29:28,689 : agent.callbacks.train_logger : DEBUG : loss 0.1138 
+2026-01-18 15:29:29,613 : agent.callbacks.train_logger : DEBUG : loss 0.1698 
+2026-01-18 15:29:30,767 : agent.callbacks.train_logger : DEBUG : loss 0.1043 
+2026-01-18 15:29:31,655 : agent.callbacks.train_logger : DEBUG : loss 0.0623 
+2026-01-18 15:29:32,553 : agent.callbacks.train_logger : DEBUG : loss 0.1144 
+2026-01-18 15:29:33,517 : agent.callbacks.train_logger : DEBUG : loss 0.1677 
+2026-01-18 15:29:34,410 : agent.callbacks.train_logger : DEBUG : loss 0.0927 
+2026-01-18 15:29:35,380 : agent.callbacks.train_logger : DEBUG : loss 0.0619 
+2026-01-18 15:29:36,533 : agent.callbacks.train_logger : DEBUG : loss 0.1101 
+2026-01-18 15:29:37,894 : agent.callbacks.train_logger : DEBUG : loss 0.1570 
+2026-01-18 15:29:39,179 : agent.callbacks.train_logger : DEBUG : loss 0.0480 
+2026-01-18 15:29:40,423 : agent.callbacks.train_logger : DEBUG : loss 0.0613 
+2026-01-18 15:29:41,482 : agent.callbacks.train_logger : DEBUG : loss 0.1099 
+2026-01-18 15:29:42,601 : agent.callbacks.train_logger : DEBUG : loss 0.2025 
+2026-01-18 15:29:43,679 : agent.callbacks.train_logger : DEBUG : loss 0.0213 
+2026-01-18 15:29:44,888 : agent.callbacks.train_logger : DEBUG : loss 0.0627 
+2026-01-18 15:29:45,871 : agent.callbacks.train_logger : DEBUG : loss 0.1072 
+2026-01-18 15:29:46,898 : agent.callbacks.train_logger : DEBUG : loss 0.2151 
+2026-01-18 15:29:47,983 : agent.callbacks.train_logger : DEBUG : loss 0.0102 
+2026-01-18 15:29:49,065 : agent.callbacks.train_logger : DEBUG : loss 0.0687 
+2026-01-18 15:29:50,074 : agent.callbacks.train_logger : DEBUG : loss 0.1573 
+2026-01-18 15:29:49,768 : agent.callbacks.train_logger : DEBUG : loss 0.1753 
+2026-01-18 15:29:50,599 : agent.callbacks.train_logger : DEBUG : loss 0.0026 
+2026-01-18 15:29:51,413 : agent.callbacks.train_logger : DEBUG : loss 0.0540 
+2026-01-18 15:29:52,274 : agent.callbacks.train_logger : DEBUG : loss 0.1850 
+2026-01-18 15:29:53,141 : agent.callbacks.train_logger : DEBUG : loss 0.1611 
+2026-01-18 15:29:54,028 : agent.callbacks.train_logger : DEBUG : loss 0.0006 
+2026-01-18 15:29:54,979 : agent.callbacks.train_logger : DEBUG : loss 0.0431 
+2026-01-18 15:29:55,877 : agent.callbacks.train_logger : DEBUG : loss 0.1501 
+2026-01-18 15:29:56,744 : agent.callbacks.train_logger : DEBUG : loss 0.1652 
+2026-01-18 15:29:58,008 : agent.callbacks.train_logger : DEBUG : loss 0.0025 
+2026-01-18 15:29:59,082 : agent.callbacks.train_logger : DEBUG : loss 0.0670 
+2026-01-18 15:30:00,201 : agent.callbacks.train_logger : DEBUG : loss 0.1223 
+2026-01-18 15:30:01,141 : agent.callbacks.train_logger : DEBUG : loss 0.1432 
+2026-01-18 15:30:02,048 : agent.callbacks.train_logger : DEBUG : loss 0.0578 
+2026-01-18 15:30:02,966 : agent.callbacks.train_logger : DEBUG : loss 0.1098 
+2026-01-18 15:30:03,871 : agent.callbacks.train_logger : DEBUG : loss 0.1178 
+2026-01-18 15:30:04,765 : agent.callbacks.train_logger : DEBUG : loss 0.1609 
+2026-01-18 15:30:05,673 : agent.callbacks.train_logger : DEBUG : loss 0.0622 
+2026-01-18 15:30:06,660 : agent.callbacks.train_logger : DEBUG : loss 0.1184 
+2026-01-18 15:30:07,669 : agent.callbacks.train_logger : DEBUG : loss 0.1143 
+2026-01-18 15:30:08,752 : agent.callbacks.train_logger : DEBUG : loss 0.1168 
+2026-01-18 15:30:09,757 : agent.callbacks.train_logger : DEBUG : loss 0.0656 
+2026-01-18 15:30:10,749 : agent.callbacks.train_logger : DEBUG : loss 0.1135 
+2026-01-18 15:30:11,732 : agent.callbacks.train_logger : DEBUG : loss 0.1736 
+2026-01-18 15:30:12,603 : agent.callbacks.train_logger : DEBUG : loss 0.1087 
+2026-01-18 15:30:13,515 : agent.callbacks.train_logger : DEBUG : loss 0.0631 
+2026-01-18 15:30:14,403 : agent.callbacks.train_logger : DEBUG : loss 0.1157 
+2026-01-18 15:30:15,294 : agent.callbacks.train_logger : DEBUG : loss 0.1644 
+2026-01-18 15:30:16,235 : agent.callbacks.train_logger : DEBUG : loss 0.1032 
+2026-01-18 15:30:17,146 : agent.callbacks.train_logger : DEBUG : loss 0.0535 
+2026-01-18 15:30:18,172 : agent.callbacks.train_logger : DEBUG : loss 0.1093 
+2026-01-18 15:30:17,998 : agent.callbacks.train_logger : DEBUG : loss 0.1521 
+2026-01-18 15:30:18,856 : agent.callbacks.train_logger : DEBUG : loss 0.0702 
+2026-01-18 15:30:19,875 : agent.callbacks.train_logger : DEBUG : loss 0.0606 
+2026-01-18 15:30:20,762 : agent.callbacks.train_logger : DEBUG : loss 0.1074 
+2026-01-18 15:30:21,720 : agent.callbacks.train_logger : DEBUG : loss 0.2064 
+2026-01-18 15:30:22,666 : agent.callbacks.train_logger : DEBUG : loss 0.0400 
+2026-01-18 15:30:23,572 : agent.callbacks.train_logger : DEBUG : loss 0.0560 
+2026-01-18 15:30:24,655 : agent.callbacks.train_logger : DEBUG : loss 0.1068 
+2026-01-18 15:30:26,197 : agent.callbacks.train_logger : DEBUG : loss 0.1789 
+2026-01-18 15:30:27,506 : agent.callbacks.train_logger : DEBUG : loss 0.0060 
+2026-01-18 15:30:28,780 : agent.callbacks.train_logger : DEBUG : loss 0.0489 
+2026-01-18 15:30:29,869 : agent.callbacks.train_logger : DEBUG : loss 0.1116 
+2026-01-18 15:30:30,908 : agent.callbacks.train_logger : DEBUG : loss 0.1980 
+2026-01-18 15:30:31,748 : agent.callbacks.train_logger : DEBUG : loss -0.0013 
+2026-01-18 15:30:32,646 : agent.callbacks.train_logger : DEBUG : loss 0.0601 
+2026-01-18 15:30:33,581 : agent.callbacks.train_logger : DEBUG : loss 0.1463 
+2026-01-18 15:30:33,835 : network.model : INFO : Saved model to logs/CartPole-PPO/model.pt
+2026-01-18 15:30:37,186 : evaluate.evaluate : INFO : Evaluation results: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1
+2026-01-18 15:30:37,187 : evaluate.evaluate : INFO : Evaluation lengths: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1
+2026-01-18 15:30:39,671 : agent.callbacks.train_logger : DEBUG : loss 0.1749 
+2026-01-18 15:30:40,741 : agent.callbacks.train_logger : DEBUG : loss -0.0009 
+2026-01-18 15:30:41,653 : agent.callbacks.train_logger : DEBUG : loss 0.0494 
+2026-01-18 15:30:42,688 : agent.callbacks.train_logger : DEBUG : loss 0.1871 
+2026-01-18 15:30:43,564 : agent.callbacks.train_logger : DEBUG : loss 0.1688 
+2026-01-18 15:30:44,543 : agent.callbacks.train_logger : DEBUG : loss 0.0005 
+2026-01-18 15:30:45,430 : agent.callbacks.train_logger : DEBUG : loss 0.0942 
+2026-01-18 15:30:46,566 : agent.callbacks.train_logger : DEBUG : loss 0.1511 
+2026-01-18 15:30:46,486 : agent.callbacks.train_logger : DEBUG : loss 0.1699 
+2026-01-18 15:30:47,612 : agent.callbacks.train_logger : DEBUG : loss -0.0056 
+2026-01-18 15:30:48,704 : agent.callbacks.train_logger : DEBUG : loss 0.1195 
+2026-01-18 15:30:49,748 : agent.callbacks.train_logger : DEBUG : loss 0.1197 
+2026-01-18 15:30:50,676 : agent.callbacks.train_logger : DEBUG : loss 0.1609 
+2026-01-18 15:30:51,604 : agent.callbacks.train_logger : DEBUG : loss 0.0647 
+2026-01-18 15:30:52,481 : agent.callbacks.train_logger : DEBUG : loss 0.1160 
+2026-01-18 15:30:53,424 : agent.callbacks.train_logger : DEBUG : loss 0.1135 
+2026-01-18 15:30:54,455 : agent.callbacks.train_logger : DEBUG : loss 0.1447 
+2026-01-18 15:30:55,610 : agent.callbacks.train_logger : DEBUG : loss 0.0551 
+2026-01-18 15:30:56,498 : agent.callbacks.train_logger : DEBUG : loss 0.1143 
+2026-01-18 15:30:57,637 : agent.callbacks.train_logger : DEBUG : loss 0.1673 
+2026-01-18 15:30:58,911 : agent.callbacks.train_logger : DEBUG : loss 0.1096 
+2026-01-18 15:30:59,955 : agent.callbacks.train_logger : DEBUG : loss 0.0585 
+2026-01-18 15:31:01,929 : agent.callbacks.train_logger : DEBUG : loss 0.1178 
+2026-01-18 15:31:03,143 : agent.callbacks.train_logger : DEBUG : loss 0.1639 
+2026-01-18 15:31:04,380 : agent.callbacks.train_logger : DEBUG : loss 0.1046 
+2026-01-18 15:31:05,471 : agent.callbacks.train_logger : DEBUG : loss 0.0591 
+2026-01-18 15:31:06,492 : agent.callbacks.train_logger : DEBUG : loss 0.1120 
+2026-01-18 15:31:07,445 : agent.callbacks.train_logger : DEBUG : loss 0.1625 
+2026-01-18 15:31:08,851 : agent.callbacks.train_logger : DEBUG : loss 0.0939 
+2026-01-18 15:31:10,031 : agent.callbacks.train_logger : DEBUG : loss 0.0599 
+2026-01-18 15:31:11,231 : agent.callbacks.train_logger : DEBUG : loss 0.1125 
+2026-01-18 15:31:12,328 : agent.callbacks.train_logger : DEBUG : loss 0.1595 
+2026-01-18 15:31:13,528 : agent.callbacks.train_logger : DEBUG : loss 0.0589 
+2026-01-18 15:31:14,791 : agent.callbacks.train_logger : DEBUG : loss 0.0602 
+2026-01-18 15:31:15,909 : agent.callbacks.train_logger : DEBUG : loss 0.1130 
+2026-01-18 15:31:15,750 : agent.callbacks.train_logger : DEBUG : loss 0.2126 
+2026-01-18 15:31:16,755 : agent.callbacks.train_logger : DEBUG : loss 0.0284 
+2026-01-18 15:31:18,293 : agent.callbacks.train_logger : DEBUG : loss 0.0634 
+2026-01-18 15:31:19,503 : agent.callbacks.train_logger : DEBUG : loss 0.1158 
+2026-01-18 15:31:20,665 : agent.callbacks.train_logger : DEBUG : loss 0.2358 
+2026-01-18 15:31:21,893 : agent.callbacks.train_logger : DEBUG : loss -0.0001 
+2026-01-18 15:31:22,943 : agent.callbacks.train_logger : DEBUG : loss 0.0682 
+2026-01-18 15:31:24,045 : agent.callbacks.train_logger : DEBUG : loss 0.1632 
+2026-01-18 15:31:25,138 : agent.callbacks.train_logger : DEBUG : loss 0.1874 
+2026-01-18 15:31:26,316 : agent.callbacks.train_logger : DEBUG : loss -0.0004 
+2026-01-18 15:31:27,721 : agent.callbacks.train_logger : DEBUG : loss 0.0576 
+2026-01-18 15:31:29,061 : agent.callbacks.train_logger : DEBUG : loss 0.2089 
+2026-01-18 15:31:30,358 : agent.callbacks.train_logger : DEBUG : loss 0.1694 
+2026-01-18 15:31:31,503 : agent.callbacks.train_logger : DEBUG : loss 0.0028 
+2026-01-18 15:31:32,601 : agent.callbacks.train_logger : DEBUG : loss 0.0505 
+2026-01-18 15:31:33,690 : agent.callbacks.train_logger : DEBUG : loss 0.1721 
+2026-01-18 15:31:34,762 : agent.callbacks.train_logger : DEBUG : loss 0.1673 
+2026-01-18 15:31:35,930 : agent.callbacks.train_logger : DEBUG : loss -0.0020 
+2026-01-18 15:31:36,978 : agent.callbacks.train_logger : DEBUG : loss 0.0874 
+2026-01-18 15:31:38,048 : agent.callbacks.train_logger : DEBUG : loss 0.1434 
+2026-01-18 15:31:39,094 : agent.callbacks.train_logger : DEBUG : loss 0.1715 
+2026-01-18 15:31:40,142 : agent.callbacks.train_logger : DEBUG : loss 0.0712 
+2026-01-18 15:31:41,302 : agent.callbacks.train_logger : DEBUG : loss 0.1063 
+2026-01-18 15:31:42,187 : agent.callbacks.train_logger : DEBUG : loss 0.1141 
+2026-01-18 15:31:43,236 : agent.callbacks.train_logger : DEBUG : loss 0.1584 
+2026-01-18 15:31:44,179 : agent.callbacks.train_logger : DEBUG : loss 0.0633 
+2026-01-18 15:31:43,861 : agent.callbacks.train_logger : DEBUG : loss 0.1172 
+2026-01-18 15:31:44,653 : agent.callbacks.train_logger : DEBUG : loss 0.1173 
+2026-01-18 15:31:45,509 : agent.callbacks.train_logger : DEBUG : loss 0.1401 
+2026-01-18 15:31:46,371 : agent.callbacks.train_logger : DEBUG : loss 0.0620 
+2026-01-18 15:31:47,502 : agent.callbacks.train_logger : DEBUG : loss 0.1143 
+2026-01-18 15:31:48,769 : agent.callbacks.train_logger : DEBUG : loss 0.1675 
+2026-01-18 15:31:49,937 : agent.callbacks.train_logger : DEBUG : loss 0.1085 
+2026-01-18 15:31:50,845 : agent.callbacks.train_logger : DEBUG : loss 0.0627 
+2026-01-18 15:31:51,768 : agent.callbacks.train_logger : DEBUG : loss 0.1225 
+2026-01-18 15:31:52,631 : agent.callbacks.train_logger : DEBUG : loss 0.1682 
+2026-01-18 15:31:53,529 : agent.callbacks.train_logger : DEBUG : loss 0.1057 
+2026-01-18 15:31:54,478 : agent.callbacks.train_logger : DEBUG : loss 0.0656 
+2026-01-18 15:31:55,387 : agent.callbacks.train_logger : DEBUG : loss 0.1111 
+2026-01-18 15:31:56,300 : agent.callbacks.train_logger : DEBUG : loss 0.1691 
+2026-01-18 15:31:57,526 : agent.callbacks.train_logger : DEBUG : loss 0.0852 
+2026-01-18 15:31:58,826 : agent.callbacks.train_logger : DEBUG : loss 0.0678 
+2026-01-18 15:31:59,810 : agent.callbacks.train_logger : DEBUG : loss 0.1216 
+2026-01-18 15:32:00,220 : network.model : INFO : Saved model to logs/CartPole-PPO/model.pt
+2026-01-18 15:32:03,472 : evaluate.evaluate : INFO : Evaluation results: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1
+2026-01-18 15:32:03,472 : evaluate.evaluate : INFO : Evaluation lengths: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1
+2026-01-18 15:36:21,659 : evaluate.evaluate : INFO : Evaluation results: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1000
+2026-01-18 15:36:21,660 : evaluate.evaluate : INFO : Evaluation lengths: mean = 500.00, std = 0.00, min = 500.00, max = 500.00, count = 1000
+2026-01-18 15:36:21,732 : worker.worker : INFO : ==================== End training ====================

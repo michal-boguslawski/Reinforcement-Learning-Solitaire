@@ -1,56 +1,54 @@
-experiment_name: CartPole-A2C
+experiment_name: BipedalWalker-PPO
 
 env_kwargs:
-  general_wrappers: {}
-  id: CartPole-v1
-  num_envs: 8
+  id: BipedalWalker-v3
+  num_envs: 16
   training_wrappers:
+    # terminal_bonus:
+    #   truncated_bonus: -10
     power_obs_reward:
-      abs_factors:
-      - -1
-      - 0
-      - -10
-      - 0
-      pow_factors:
-      - -0.01
-      - 0
-      - -10
-      - 0
-    terminal_bonus:
-      terminated_bonus: -100
+      abs_factors: [-0.05, 0, 0.1, -0.02, -0.01, 0.01, 0, 0, 0, -0.01, 0.01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    no_movement_truncate:
+      index: 2
+    observations_interaction:
+      factors:
+        "(5, 10)": -10.
     scale_reward:
-      loc_factor: 0.0
-      scale_factor: 0.1
+      scale_factor: 0.05
+      loc_factor: -0.01
   vectorization_mode: async
 
 policy:
-  type: a2c
+  type: ppo
   kwargs:
-    advantage_normalize: batch
+    advantage_normalize: global
     gamma: 0.99
     lambda_: 0.95
-    entropy_coef: 0.01
+    entropy_coef: 0.001
     value_loss_coef: 0.5
+    clip_epsilon: 0.2
+    num_epochs: 10
     optimizer_kwargs:
-      actor_lr: 3e-4
-      critic_lr: 1e-3
+      actor_lr: 3e-5
+      critic_lr: 1e-4
     exploration_method:
       name: distribution
 
 worker_kwargs:
   device: auto
-  record_step: 10000
+  record_step: 100000
 
 train_kwargs:
-  batch_size: 128
+  batch_size: 2048
   minibatch_size: 128
-  num_steps: 50000
+  num_steps: 1000000
 
 network:
   kwargs:
     backbone_kwargs: {}
     backbone_name: mlp
-    distribution: categorical
+    distribution: normal
     head_kwargs: {}
     head_name: actor_critic
-    num_features: 16
+    num_features: 32
+    initial_deviation: 0.6

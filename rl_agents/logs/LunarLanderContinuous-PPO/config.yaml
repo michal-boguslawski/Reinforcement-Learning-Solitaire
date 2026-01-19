@@ -1,36 +1,45 @@
 env_kwargs:
+  continuous: true
+  general_wrappers: {}
   id: LunarLander-v3
   num_envs: 8
+  training_wrappers:
+    scale_reward:
+      loc_factor: 0.0
+      scale_factor: 0.1
   vectorization_mode: async
 experiment_name: LunarLanderContinuous-PPO
 network:
   kwargs:
     backbone_kwargs: {}
     backbone_name: mlp
-    distribution: categorical
-    feature_extractor_name: shared
+    core_kwargs: {}
+    core_name: identity
+    distribution: normal
     head_kwargs: {}
     head_name: actor_critic
-    initial_log_std: -1.0
-    num_features: 64
-    policy_name: actor_critic
+    initial_deviation: 1.0
+    num_features: 32
 policy:
   kwargs:
     advantage_normalize: batch
     clip_epsilon: 0.2
     entropy_coef: 0.001
-    entropy_decay: 0.99
-    exploration_method: distribution
+    exploration_method:
+      kwargs: {}
+      name: distribution
     gamma: 0.99
     lambda_: 0.95
-    lr: 0.0003
-    num_epochs: 10
+    num_epochs: 4
+    optimizer_kwargs:
+      actor_lr: 0.0003
+      critic_lr: 0.001
     value_loss_coef: 0.5
   type: ppo
 train_kwargs:
-  batch_size: 1024
-  minibatch_size: 128
-  num_steps: 100000
+  batch_size: 256
+  minibatch_size: 64
+  num_steps: 200000
 worker_kwargs:
   device: auto
-  record_step: 20000
+  record_step: 50000

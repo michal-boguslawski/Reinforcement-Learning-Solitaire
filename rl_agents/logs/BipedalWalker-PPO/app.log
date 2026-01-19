@@ -1,0 +1,9 @@
+2026-01-19 16:48:29,307 : worker.worker : INFO : ==================== Start training ====================
+2026-01-19 16:48:29,424 : network.model : INFO : Saved model to logs/BipedalWalker-PPO/model.pt
+2026-01-19 16:48:52,052 : evaluate.evaluate : INFO : Evaluation results: mean = -35.85, std = 0.00, min = -35.85, max = -35.85, count = 1
+2026-01-19 16:48:52,052 : evaluate.evaluate : INFO : Evaluation lengths: mean = 1600.00, std = 0.00, min = 1600.00, max = 1600.00, count = 1
+2026-01-19 16:48:52,054 : evaluate.evaluate : INFO : Covariance matrix:
+[0.18973666 0.18973666 0.18973666 0.18973666]
+2026-01-19 16:49:43,977 : agent.callbacks.train_logger : DEBUG : policy_loss -0.0042 critic_loss 0.2366 entropy 3.6127 loss 0.1105 
+2026-01-19 16:50:26,087 : agent.callbacks.train_logger : DEBUG : policy_loss -0.0036 critic_loss 0.1190 entropy 3.5787 loss 0.0524 
+2026-01-19 16:51:07,440 : agent.callbacks.train_logger : DEBUG : policy_loss -0.0041 critic_loss 0.0815 entropy 3.5402 loss 0.0331 

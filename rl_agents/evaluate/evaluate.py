@@ -40,10 +40,10 @@ class Evaluator:
         self.training_wrappers = training_wrappers
         self.general_wrappers = general_wrappers
 
-        self._setup_envs()
+        self._setup_envs(*args, **kwargs)
         self._closed = False
 
-    def _setup_envs(self):
+    def _setup_envs(self, *args, **kwargs):
         self.envs = make_vec(
             id=self.id,
             num_envs=self.num_envs,
@@ -54,16 +54,28 @@ class Evaluator:
             training_wrappers=self.training_wrappers,
             general_wrappers=self.general_wrappers,
             vectorization_mode=self.vectorization_mode,
+            *args,
+            **kwargs
         )
 
-    def _print_evaluation_results(self, rewards: list[float], action_output: ActionOutput | None = None):
+    def _print_evaluation_results(self, rewards: list[float], lengths: list[float], action_output: ActionOutput | None = None):
         rewards_array = np.array(rewards)
+        lengths_array = np.array(lengths)
+
         logger.info(
             f"Evaluation results: mean = {rewards_array.mean():.2f}, "
             f"std = {rewards_array.std():.2f}, "
             f"min = {rewards_array.min():.2f}, "
             f"max = {rewards_array.max():.2f}, "
             f"count = {len(rewards)}"
+        )
+
+        logger.info(
+            f"Evaluation lengths: mean = {lengths_array.mean():.2f}, "
+            f"std = {lengths_array.std():.2f}, "
+            f"min = {lengths_array.min():.2f}, "
+            f"max = {lengths_array.max():.2f}, "
+            f"count = {len(lengths)}"
         )
 
         if action_output is not None:
@@ -83,6 +95,7 @@ class Evaluator:
         state, info = self.envs.reset()
         finished_envs = 0
         rewards = []
+        lengths = []
         action_output = None
         
         tq = tqdm.tqdm(total=min_episodes, desc="Evaluating", unit="episodes")
@@ -104,7 +117,10 @@ class Evaluator:
                 tmp_rewards = info.get("episode", {}).get("r")
                 rewards.extend(tmp_rewards[done].cpu().numpy().tolist())
 
-        self._print_evaluation_results(rewards, action_output)
+                tmp_lengths = info.get("episode", {}).get("l")
+                lengths.extend(tmp_lengths[done].cpu().numpy().tolist())
+
+        self._print_evaluation_results(rewards, lengths, action_output)
 
     def close(self):
         if not self._closed and hasattr(self, "envs"):

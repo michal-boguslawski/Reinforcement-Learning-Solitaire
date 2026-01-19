@@ -48,11 +48,12 @@ class PPOPolicy(OnPolicy, EntropyMixin):
         r_t = T.exp(log_probs - old_log_probs.detach())
         r_t = r_t.sum(-1) if r_t.ndim > 1 else r_t
 
-        actor_loss = -(T.min(
+        policy_loss = -(T.min(
             r_t * advantages,
             T.clamp(r_t, 1 - self.clip_epsilon, 1 + self.clip_epsilon) * advantages
         )).mean()
-        return actor_loss
+        self._emit_loss(policy_loss, "policy_loss")
+        return policy_loss
 
     def _compute_critic_loss(
         self,
@@ -63,7 +64,9 @@ class PPOPolicy(OnPolicy, EntropyMixin):
         values_clipped = old_values + (values - old_values).clamp(-self.clip_epsilon, self.clip_epsilon)
         loss_unclipped = self.loss_fn(values, returns)
         loss_clipped = self.loss_fn(values_clipped, returns)
-        return T.max(loss_unclipped, loss_clipped).mean()
+        critic_loss = T.max(loss_unclipped, loss_clipped).mean()
+        self._emit_loss(critic_loss, "critic_loss")
+        return critic_loss
 
     def _calculate_loss(self, batch: OnPolicyMinibatch) -> T.Tensor:
         states, returns, actions, advantages, old_log_probs, old_values, core_states = (
@@ -89,6 +92,7 @@ class PPOPolicy(OnPolicy, EntropyMixin):
             returns.detach()
         )
         entropy = self.compute_entropy(output.dist)
+        self._emit_loss(entropy, "entropy")
         return policy_loss + self.value_loss_coef * critic_loss - self.entropy_coef * entropy
 
     def _build_param_groups(self, optimizer_kwargs: dict | None = None) -> list[dict]:
