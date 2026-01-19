@@ -40,12 +40,15 @@ class Worker:
         network_config: dict[str, Any] = {},
         device: T.device | Literal["auto", "cpu", "cuda"] = T.device("cpu"),
         record_step: int = 100_000,
+        verbose: int = 0,
         *args,
         **kwargs
     ):
         self.experiment_name = experiment_name
         self.device = get_device(device)
+        logger.info(f"Current device {self.device}")
         self.record_step = record_step
+        self.verbose = verbose
 
         self._setup_env(env_config)
         self._setup_network(network_config, self.device)
@@ -53,7 +56,7 @@ class Worker:
 
     def _setup_env(self, env_config: dict[str, Any]) -> None:
         self.env_config = env_config
-        self.env = make_vec(**env_config)
+        self.env = make_vec(verbose=self.verbose, **env_config)
         self.env_details = get_env_vec_details(self.env)
         self.action_space_type = self.env_details.action_space_type
 
@@ -95,6 +98,18 @@ class Worker:
         
         self.state, _ = self.env.reset()
 
+    def _log_step(self, info: dict, done: T.Tensor, terminated: T.Tensor, truncated: T.Tensor):
+        episode_statistics = info.get("episode")
+        if episode_statistics:
+            final_rewards = episode_statistics["r"]
+            final_lenghts = episode_statistics["l"]
+            log = f"Episodes ended. n: {done.cpu().sum().item()}, "
+            log += f"terminated: {terminated.cpu().sum().item()}, "
+            log += f"truncated: {truncated.cpu().sum().item()}, "
+            log += f"mean reward: {final_rewards[done.cpu()].cpu().mean().item()}, "
+            log += f"mean length: {final_lenghts[done.cpu()].float().cpu().mean().item()}"
+            logger.debug(log)
+
     def _step(self):
         try:
             state = self.state.to(self.device)
@@ -103,7 +118,7 @@ class Worker:
 
             env_action = prepare_action_for_env(action, self.action_space_type)
 
-            next_state, reward, terminated, truncated, _ = self.env.step(env_action)
+            next_state, reward, terminated, truncated, info = self.env.step(env_action)
         except Exception as e:
             logger.error(f"Error during episode step: {e}")
             raise e
@@ -133,6 +148,9 @@ class Worker:
         
         self.state = next_state
         self.core_state = action_output.core_state
+
+        if self.verbose == 1:
+            self._log_step(info, done, terminated, truncated)
 
         return done
 

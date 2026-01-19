@@ -7,20 +7,20 @@ env_kwargs:
       index: 2
     observations_interaction:
       factors:
-        (5, 10): -10.0
+        (5, 10): -0.1
     power_obs_reward:
       abs_factors:
-      - -0.05
+      - 0.0
       - 0
-      - 0
-      - 0
-      - -0.01
       - 0.01
+      - -0.002
+      - -0.001
+      - 0.001
       - 0
       - 0
       - 0
-      - -0.01
-      - 0.01
+      - -0.001
+      - 0.001
       - 0
       - 0
       - 0
@@ -69,7 +69,8 @@ policy:
 train_kwargs:
   batch_size: 2048
   minibatch_size: 128
-  num_steps: 1000000
+  num_steps: 500000
 worker_kwargs:
   device: auto
-  record_step: 100000
+  record_step: 50000
+  verbose: 1

@@ -15,9 +15,10 @@ def make_vec(
     name_prefix: str | None = None,
     training_wrappers: dict | None = None,
     general_wrappers: dict | None = None,
+    verbose: int = 0,
     *args,
     **kwargs
-):
+) -> gym.vector.VectorEnv:
     wrappers = []
     wrappers.append(lambda env: DtypeObservation(env, np.float32))
 
@@ -33,10 +34,11 @@ def make_vec(
 
     if training:
         wrappers.extend(prepare_wrappers(training_wrappers))
-    else:
-        wrappers.append(lambda env: RecordEpisodeStatistics(env))
 
     wrappers.extend(prepare_wrappers(general_wrappers))
+
+    if ( not training ) or ( verbose == 1 ):
+        wrappers.append(lambda env: RecordEpisodeStatistics(env))
 
     if num_envs <= 0:
         raise ValueError(f"num_envs must be positive, got {num_envs}")

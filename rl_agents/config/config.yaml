@@ -7,12 +7,12 @@ env_kwargs:
     # terminal_bonus:
     #   truncated_bonus: -10
     power_obs_reward:
-      abs_factors: [-0.05, 0, 0.1, -0.02, -0.01, 0.01, 0, 0, 0, -0.01, 0.01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      abs_factors: [0., 0, 0.01, -0.002, -0.001, 0.001, 0, 0, 0, -0.001, 0.001, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     no_movement_truncate:
       index: 2
     observations_interaction:
       factors:
-        "(5, 10)": -10.
+        "(5, 10)": -0.1
     scale_reward:
       scale_factor: 0.05
       loc_factor: -0.01
@@ -36,12 +36,13 @@ policy:
 
 worker_kwargs:
   device: auto
-  record_step: 100000
+  record_step: 50000
+  verbose: 1
 
 train_kwargs:
   batch_size: 2048
   minibatch_size: 128
-  num_steps: 1000000
+  num_steps: 500000
 
 network:
   kwargs:
