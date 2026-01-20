@@ -6,5 +6,6 @@ ACTIVATION_FUNCTIONS = {
     "relu": nn.ReLU,
     "sigmoid": nn.Sigmoid,
     "identity": nn.Identity,
-    "gelu": nn.GELU
+    "gelu": nn.GELU,
+    "silu": nn.SiLU,
 }

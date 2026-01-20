@@ -32,14 +32,16 @@ class PowerObsRewardWrapper(gym.Wrapper):
         env,
         pow_factors: T.Tensor | None = None,
         abs_factors: T.Tensor | None = None,
+        nominal_factors: T.Tensor | None = None,
         decay_factor: float | None = 1
     ):
         super().__init__(env)
         self.pow_factors = pow_factors
         self.abs_factors = abs_factors
+        self.nominal_factors = nominal_factors
         self.decay = 1
         self.decay_factor = decay_factor or 1
-        print(f"PowerObsRewardWrapper attached with params {pow_factors} {abs_factors} {decay_factor}")
+        print(f"PowerObsRewardWrapper attached with params {pow_factors} {abs_factors} {nominal_factors} {decay_factor}")
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
@@ -48,6 +50,8 @@ class PowerObsRewardWrapper(gym.Wrapper):
             reward += (obs ** 2 * self.pow_factors).sum().item() * self.decay
         if self.abs_factors is not None:
             reward += (np.abs(obs) * self.abs_factors).sum().item() * self.decay
+        if self.nominal_factors is not None:
+            reward += (obs * self.nominal_factors).sum().item() * self.decay
         if terminated:
             self.decay *= self.decay_factor
         
@@ -69,11 +73,12 @@ class NoMovementInvPunishmentRewardWrapper(gym.Wrapper):
 
 
 class NoMovementTruncateWrapper(gym.Wrapper):
-    def __init__(self, env, index: int, steps: int = 50, eps: float = 1e-3):
+    def __init__(self, env, index: int, penalty: float | int = 10., steps: int = 50, eps: float = 1e-3):
         super().__init__(env)
         self.index = index
         self.steps = steps
         self.eps = eps
+        self.penalty = penalty
         self._counter = 0
 
     def step(self, action):
@@ -86,6 +91,7 @@ class NoMovementTruncateWrapper(gym.Wrapper):
             self._counter = 0
         if self._counter > self.steps:
             truncated = True
+            reward = float(reward) - self.penalty
             self._counter = 0
             print("Env truncated due to lack of movement")
 

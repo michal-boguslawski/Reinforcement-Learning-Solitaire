@@ -46,7 +46,7 @@ class BasePolicy(ABC):
         self._callbacks: list[PolicyCallback] = []
 
     @abstractmethod
-    def _calculate_loss(self, batch: OnPolicyMinibatch) -> T.Tensor:
+    def _calculate_loss(self, batch: OnPolicyMinibatch, temperature: float = 1) -> T.Tensor:
         pass
 
     @abstractmethod
@@ -98,10 +98,10 @@ class BasePolicy(ABC):
         )
         return action_output
 
-    def _train_step(self, minibatch_size: int, batch: Dict[str, T.Tensor | None], *args, **kwargs) -> None:
+    def _train_step(self, minibatch_size: int, batch: Dict[str, T.Tensor | None], temperature: int = 1, *args, **kwargs) -> None:
         minibatch_generator = self._generate_minibatches(minibatch_size=minibatch_size, **batch)
         for minibatch in minibatch_generator:
-            loss = self._calculate_loss(minibatch)
+            loss = self._calculate_loss(minibatch, temperature=temperature)
             self._emit_loss(loss, "loss")
             self._backward(loss)
 

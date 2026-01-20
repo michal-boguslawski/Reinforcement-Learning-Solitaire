@@ -12,6 +12,7 @@ class EnvConfig(BaseModel):
     hardcore: bool | None = None
     training_wrappers: dict = Field(default_factory=dict)
     general_wrappers: dict = Field(default_factory=dict)
+    normalize_rewards: bool = False
 
 
 class ExplorationMethod(BaseModel):
@@ -47,6 +48,7 @@ class WorkerConfig(BaseModel):
     device: Literal["auto", "cpu", "cuda"]
     record_step: int = Field(100_000, ge=5_000)
     verbose: int = 0
+    temperature_config: dict = Field(default_factory=dict)
 
 
 class TrainConfig(BaseModel):

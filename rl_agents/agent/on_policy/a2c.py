@@ -40,15 +40,16 @@ class A2CPolicy(OnPolicy, EntropyMixin):
         self._emit_loss(critic_loss, "critic_loss")
         return critic_loss
 
-    def _calculate_loss(self, batch: OnPolicyMinibatch) -> T.Tensor:
-        states, returns, actions, advantages = (
+    def _calculate_loss(self, batch: OnPolicyMinibatch, temperature: float = 1.) -> T.Tensor:
+        states, returns, actions, advantages, core_states = (
             batch.states,
             batch.returns,
             batch.actions,
             batch.advantages,
+            batch.core_states
         )
 
-        output = self.network(states)
+        output = self.network(states, core_state=core_states, temperature=temperature)
 
         policy_loss = self._compute_policy_loss(output.dist, actions, advantages)
         critic_loss = self._compute_critic_loss(output.critic_value, returns)

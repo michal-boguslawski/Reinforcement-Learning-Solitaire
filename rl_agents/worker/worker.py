@@ -37,10 +37,11 @@ class Worker:
         experiment_name: str,
         env_config: dict[str, Any],
         policy_config: dict[str, Any],
-        network_config: dict[str, Any] = {},
+        network_config: dict[str, Any] | None = None,
         device: T.device | Literal["auto", "cpu", "cuda"] = T.device("cpu"),
         record_step: int = 100_000,
         verbose: int = 0,
+        temperature_config: dict[str, Any] | None = None,
         *args,
         **kwargs
     ):
@@ -51,8 +52,15 @@ class Worker:
         self.verbose = verbose
 
         self._setup_env(env_config)
-        self._setup_network(network_config, self.device)
+        self._setup_network(network_config or {}, self.device)
         self._setup_policy(policy_config, self.device)
+        self._setup_temperature(temperature_config or {})
+
+    def _setup_temperature(self, temperature_config: dict[str, Any]) -> None:
+        self.temperature_start = temperature_config.get("temperature_start", 1)
+        self.temperature_end = temperature_config.get("temperature_end", 1)
+        self.temperature_steps = temperature_config.get("temperature_steps", 1)
+        self.temperature = self.temperature_start
 
     def _setup_env(self, env_config: dict[str, Any]) -> None:
         self.env_config = env_config
@@ -110,10 +118,14 @@ class Worker:
             log += f"mean length: {final_lenghts[done.cpu()].float().cpu().mean().item()}"
             logger.debug(log)
 
+    def _set_temperature(self, num_steps: int):
+        self.temperature = self.temperature_start - (self.temperature_start - self.temperature_end) * num_steps / self.temperature_steps
+        logger.debug(f"Current temperature: {self.temperature}")
+
     def _step(self):
         try:
             state = self.state.to(self.device)
-            action_output = self.agent.action(state=state, core_state=self.core_state)
+            action_output = self.agent.action(state=state, core_state=self.core_state, temperature=self.temperature)
             action = action_output.action
 
             env_action = prepare_action_for_env(action, self.action_space_type)
@@ -158,7 +170,8 @@ class Worker:
         self.agent.train(
             batch_size=self.batch_size,
             minibatch_size=self.minibatch_size,
-            timesteps = self.timesteps
+            timesteps=self.timesteps,
+            temperature=self.temperature,
         )
 
     def train(
@@ -186,6 +199,7 @@ class Worker:
 
             if (num_step % self.train_step == 0 and num_step > 0):
                 self._train_agent()
+                self._set_temperature(num_step)
 
             no_of_finished_envs = done.sum().cpu()
             if no_of_finished_envs:

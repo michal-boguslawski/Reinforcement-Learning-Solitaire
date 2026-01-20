@@ -15,12 +15,16 @@ def make_vec(
     name_prefix: str | None = None,
     training_wrappers: dict | None = None,
     general_wrappers: dict | None = None,
+    normalize_rewards: bool = False,
     verbose: int = 0,
     *args,
     **kwargs
 ) -> gym.vector.VectorEnv:
     wrappers = []
     wrappers.append(lambda env: DtypeObservation(env, np.float32))
+
+    if ( not training ) or ( verbose == 1 ):
+        wrappers.append(lambda env: RecordEpisodeStatistics(env))
 
     if record and video_folder is not None and name_prefix is not None:
         record_wrapper = lambda env: RecordVideo(
@@ -37,9 +41,6 @@ def make_vec(
 
     wrappers.extend(prepare_wrappers(general_wrappers))
 
-    if ( not training ) or ( verbose == 1 ):
-        wrappers.append(lambda env: RecordEpisodeStatistics(env))
-
     if num_envs <= 0:
         raise ValueError(f"num_envs must be positive, got {num_envs}")
     
@@ -52,6 +53,10 @@ def make_vec(
             *args,
             **kwargs
         )
+
+        if normalize_rewards and training:
+            envs = vec_wrappers.NormalizeReward(envs)
+
         envs = vec_wrappers.NumpyToTorch(envs)
 
         # if len(envs.observation_space.shape) == 4:
