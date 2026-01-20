@@ -9,6 +9,7 @@ class EnvConfig(BaseModel):
     vectorization_mode: Literal["sync", "async"]
     num_envs: int
     continuous: bool | None = None
+    hardcore: bool | None = None
     training_wrappers: dict = Field(default_factory=dict)
     general_wrappers: dict = Field(default_factory=dict)
 

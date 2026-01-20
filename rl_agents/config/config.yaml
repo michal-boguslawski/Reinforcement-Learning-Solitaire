@@ -1,21 +1,25 @@
-experiment_name: BipedalWalker-PPO
+experiment_name: BipedalWalkerHardcore-PPO
 
 env_kwargs:
   id: BipedalWalker-v3
   num_envs: 16
+  hardcore: true
   training_wrappers:
-    # terminal_bonus:
-    #   truncated_bonus: -10
+    terminal_bonus:
+      truncated_bonus: -1.
     power_obs_reward:
-      abs_factors: [0., 0, 0.01, -0.002, -0.001, 0.001, 0, 0, 0, -0.001, 0.001, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      abs_factors: [-0.2, -0.05, 0., -0.002, -0.001, 0.001, 0, 0, 0, -0.001, 0.001, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     no_movement_truncate:
       index: 2
+      eps: 0.01
     observations_interaction:
       factors:
         "(5, 10)": -0.1
     scale_reward:
       scale_factor: 0.05
       loc_factor: -0.01
+    # time_limit:
+    #   max_episode_steps: 500
   vectorization_mode: async
 
 policy:
@@ -24,7 +28,7 @@ policy:
     advantage_normalize: global
     gamma: 0.99
     lambda_: 0.95
-    entropy_coef: 0.001
+    entropy_coef: 0.01
     value_loss_coef: 0.5
     clip_epsilon: 0.2
     num_epochs: 10
@@ -36,20 +40,20 @@ policy:
 
 worker_kwargs:
   device: auto
-  record_step: 50000
+  record_step: 100000
   verbose: 1
 
 train_kwargs:
   batch_size: 2048
-  minibatch_size: 128
-  num_steps: 500000
+  minibatch_size: 64
+  num_steps: 10000000
 
 network:
   kwargs:
-    backbone_kwargs: {}
+    backbone_kwargs: {"hidden_dims": 256}
     backbone_name: mlp
     distribution: normal
     head_kwargs: {}
     head_name: actor_critic
-    num_features: 32
+    num_features: 64
     initial_deviation: 0.6
