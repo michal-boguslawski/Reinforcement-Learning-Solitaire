@@ -6,11 +6,11 @@ env_kwargs:
   num_envs: 16
   training_wrappers:
     clip_reward:
-      min_reward: 30.0
+      min_reward: 50.0
     no_movement_truncate:
       eps: 0.01
       index: 2
-      penalty: 0
+      penalty: 2.0
     observations_interaction:
       factors:
         (5, 10): -0.5
@@ -66,10 +66,10 @@ env_kwargs:
       - 0
       - 0
     scale_reward:
-      loc_factor: -0.02
+      loc_factor: -0.05
       scale_factor: 1.0
     terminal_bonus:
-      truncated_bonus: -2.0
+      truncated_bonus: -1.0
   vectorization_mode: async
 experiment_name: BipedalWalkerHardcore-PPO
 network:
@@ -92,23 +92,20 @@ policy:
     exploration_method:
       kwargs: {}
       name: distribution
-    gamma: 0.995
+    gamma: 0.99
     lambda_: 0.95
-    num_epochs: 5
+    num_epochs: 4
     optimizer_kwargs:
-      actor_lr: 3.0e-05
-      critic_lr: 0.0001
+      actor_lr: 0.0003
+      critic_lr: 0.001
     value_loss_coef: 0.5
   type: ppo
 train_kwargs:
   batch_size: 2048
   minibatch_size: 128
-  num_steps: 10000000
+  num_steps: 5000000
 worker_kwargs:
   device: auto
   record_step: 50000
-  temperature_config:
-    temperature_end: 1.0
-    temperature_start: 2.0
-    temperature_steps: 10000000
+  temperature_config: {}
   verbose: 1
