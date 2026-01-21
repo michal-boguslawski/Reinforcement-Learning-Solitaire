@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import torch as T
 from torch import nn
+from torch.amp import GradScaler, autocast # type: ignore
 from typing import Any, Generator, Dict
 
 from .exploration.factory import get_exploration
@@ -34,6 +35,8 @@ class BasePolicy(ABC):
         self.buffer = ReplayBuffer(buffer_size=buffer_size, device=device)
         self.action_space_type = action_space_type
         self.device = device
+        self.use_amp = device.type == "cuda"
+        self.scaler = GradScaler(enabled=self.use_amp)
         self.optimizer = T.optim.Adam(self._build_param_groups(optimizer_kwargs))
         self.max_grad_norm = 0.5
         self.loss_fn = loss_fn
@@ -76,7 +79,7 @@ class BasePolicy(ABC):
         net = self.network
         assert isinstance(net, RLModel), f"Expected RLModel, got {type(net)}"
 
-        with T.no_grad():
+        with T.no_grad(), T.autocast("cuda", enabled=self.use_amp):
             output = net(input_tensor=state, core_state=core_state, temperature=temperature)
         
         action = self._exploration_method(
@@ -101,7 +104,8 @@ class BasePolicy(ABC):
     def _train_step(self, minibatch_size: int, batch: Dict[str, T.Tensor | None], temperature: int = 1, *args, **kwargs) -> None:
         minibatch_generator = self._generate_minibatches(minibatch_size=minibatch_size, **batch)
         for minibatch in minibatch_generator:
-            loss = self._calculate_loss(minibatch, temperature=temperature)
+            with T.autocast(device_type="cuda", enabled=self.use_amp):
+                loss = self._calculate_loss(minibatch, temperature=temperature)
             self._emit_loss(loss, "loss")
             self._backward(loss)
 
@@ -114,10 +118,18 @@ class BasePolicy(ABC):
         self.network.train()
 
     def _backward(self, loss: T.Tensor):
-        self.optimizer.zero_grad()
-        loss.backward()
-        nn.utils.clip_grad_norm_(self.network.parameters(), self.max_grad_norm)
-        self.optimizer.step()
+        self.optimizer.zero_grad(set_to_none=True)
+
+        if self.use_amp:
+            self.scaler.scale(loss).backward()
+            self.scaler.unscale_(self.optimizer)
+            nn.utils.clip_grad_norm_(self.network.parameters(), self.max_grad_norm)
+            self.scaler.step(self.optimizer)
+            self.scaler.update()
+        else:
+            loss.backward()
+            nn.utils.clip_grad_norm_(self.network.parameters(), self.max_grad_norm)
+            self.optimizer.step()
 
     def save_weights(self, folder_path: str):
         self.network.save_weights(folder_path)

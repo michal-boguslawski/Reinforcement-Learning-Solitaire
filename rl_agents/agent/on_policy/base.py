@@ -4,7 +4,8 @@ import torch as T
 from typing import Dict, Generator, Tuple
 
 from ..base import BasePolicy
-from ..utils import preprocess_batch
+from ..utils.preprocessing import preprocess_batch
+from ..utils.running_mean import RunningMeanStdEMA
 from models.models import ActionSpaceType, Observation, OnPolicyMinibatch
 from utils.utils import compute_advantage_and_results
 
@@ -12,9 +13,11 @@ from utils.utils import compute_advantage_and_results
 class OnPolicy(BasePolicy):
     action_space_type: ActionSpaceType
 
-    def __init__(self, advantage_normalize: str | None = None, *args, **kwargs):
+    def __init__(self, advantage_normalize: str | None = None, returns_normalize: bool = False, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.advantage_normalize = advantage_normalize
+        self.returns_normalize = returns_normalize
+        self.rms = RunningMeanStdEMA(device=self.device)
     
     def _extract_state_values(self, batch: Observation) -> Tuple[T.Tensor, T.Tensor]:
         if self.has_critic:
@@ -42,6 +45,10 @@ class OnPolicy(BasePolicy):
                 gamma_=self.gamma_,
                 lambda_=self.lambda_
         )
+
+        if self.returns_normalize:
+            self.rms.update(returns)
+            returns = self.rms.normalize(returns).clamp(-10, 10)
 
         if self.advantage_normalize == "global":
             advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-6)

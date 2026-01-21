@@ -35,6 +35,7 @@ class PolicyKwargs(BaseModel):
     num_epochs: int | None = None
     clip_epsilon: float | None = None
     advantage_normalize: Literal["batch", "global"] | None = None
+    returns_normalize: bool = False
     exploration_method: ExplorationMethod
     optimizer_kwargs: OptimizerConfig
 
