@@ -1,4 +1,4 @@
-experiment_name: BipedalWalker/PPO/reshaped-rewards-v2
+experiment_name: BipedalWalker/PPO/gru
 
 env_kwargs:
   id: BipedalWalker-v3
@@ -10,7 +10,7 @@ env_kwargs:
     terminal_bonus:
       truncated_bonus: -1.
     power_obs_reward:
-      abs_factors: [-0.2, -0.05, 0., -0.002, -0.001, 0.001, 0, 0, 0, -0.001, 0.001, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      abs_factors: [-0.3, -0.05, 0., -0.002, -0.001, 0.001, 0, 0, 0, -0.001, 0.001, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       # penalize too much of hull movements, hip extension, but reward hip speed
       nominal_factors: [0., 0., 0.2, 0., 0., 0., 0, 0, 0, 0., 0., 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       # encourage to move forward
@@ -18,6 +18,12 @@ env_kwargs:
       index: 2
       eps: 0.01
       penalty: 2.
+    action_reward:
+      pow_factors: [-10., -1., -10., -1.]
+      abs_factors: [0.2, 0.1, 0.2, 0.1]
+    actions_interaction:
+      factors:
+        "(0, 2)": -10.
     observations_interaction:
       factors:
         "(5, 10)": -1.
@@ -36,10 +42,10 @@ policy:
     # returns_normalize: true
     gamma: 0.99
     lambda_: 0.95
-    entropy_coef: 0.01
-    value_loss_coef: 0.3
+    entropy_coef: 0.001
+    value_loss_coef: 0.5
     clip_epsilon: 0.2
-    num_epochs: 5
+    num_epochs: 4
     optimizer_kwargs:
       actor_lr: 3e-5
       critic_lr: 1e-4
@@ -48,7 +54,7 @@ policy:
 
 worker_kwargs:
   device: auto
-  record_step: 50000
+  record_step: 100000
   verbose: 1
   # temperature_config:
   #   temperature_start: 2.
@@ -65,7 +71,8 @@ network:
     backbone_kwargs: {"hidden_dims": 64}
     backbone_name: mlp
     distribution: normal
+    core_name: gru
     head_kwargs: {}
     head_name: actor_critic
     num_features: 64
-    initial_deviation: 0.5
+    initial_deviation: 0.6

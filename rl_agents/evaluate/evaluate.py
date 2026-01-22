@@ -97,18 +97,20 @@ class Evaluator:
         rewards = []
         lengths = []
         action_output = None
+        core_state = None
         
         tq = tqdm.tqdm(total=min_episodes, desc="Evaluating", unit="episodes")
         
         while finished_envs < min_episodes:
             state = state.to(device)
             with T.no_grad():
-                action_output = agent.action(state=state, training=False, temperature=0.1)
+                action_output = agent.action(state=state, core_state=core_state, training=False, temperature=0.1)
 
             action = action_output.action
             env_action = prepare_action_for_env(action, action_space_type)
             state, _, terminated, truncated, info = self.envs.step(env_action)
             done = T.logical_or(terminated, truncated)
+            core_state = action_output.core_state
             tmp_finished_envs = done.sum().cpu().item()
             finished_envs += tmp_finished_envs
 
