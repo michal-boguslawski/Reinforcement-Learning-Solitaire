@@ -37,7 +37,7 @@ class RunningMeanStd:
 
 
 class RunningMeanStdEMA:
-    def __init__(self, decay: float = 0.001, warmup_steps: int = 0, device=T.device("cpu"), dtype=T.float32):
+    def __init__(self, decay: float = 0.02, warmup_steps: int = 0, device=T.device("cpu"), dtype=T.float32):
         self.mean = T.zeros(1, device=device, dtype=dtype)
         self.var = T.ones(1, device=device, dtype=dtype)
         self.decay = decay
@@ -57,6 +57,7 @@ class RunningMeanStdEMA:
         else:
             self.mean = batch_mean
             self.var = batch_var
+            self._init = True
 
         logger.debug(f"Running mean updated: mean={self.mean.item():.4f}, var={self.var.item():.4f}, steps {self.steps}")
 

@@ -1,0 +1,3 @@
+2026-01-22 09:39:30,271 : worker.worker : INFO : Current device cuda
+2026-01-22 09:39:31,431 : worker.worker : INFO : ==================== Start training ====================
+2026-01-22 09:39:31,704 : network.model : INFO : Saved model to logs/BipedalWalker/PPO/reshaped-rewards-v2/model.pt

@@ -1,4 +1,4 @@
-experiment_name: BipedalWalker/PPO/normalized-returns
+experiment_name: BipedalWalker/PPO/reshaped-rewards-v2
 
 env_kwargs:
   id: BipedalWalker-v3
@@ -9,22 +9,22 @@ env_kwargs:
       min_reward: -50.
     terminal_bonus:
       truncated_bonus: -1.
-  #   power_obs_reward:
-  #     abs_factors: [-0.2, -0.05, 0., -0.002, -0.001, 0.001, 0, 0, 0, -0.001, 0.001, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-  #     # penalize too much of hull movements, hip extension, but reward hip speed
-  #     nominal_factors: [0., 0., 0.1, 0., 0., 0., 0, 0, 0, 0., 0., 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-  #     # encourage to move forward
+    power_obs_reward:
+      abs_factors: [-0.2, -0.05, 0., -0.002, -0.001, 0.001, 0, 0, 0, -0.001, 0.001, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      # penalize too much of hull movements, hip extension, but reward hip speed
+      nominal_factors: [0., 0., 0.2, 0., 0., 0., 0, 0, 0, 0., 0., 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      # encourage to move forward
     no_movement_truncate:
       index: 2
       eps: 0.01
       penalty: 2.
-  #   observations_interaction:
-  #     factors:
-  #       "(5, 10)": -0.5
-  #       # reward hip movements in opposite directions
-    # scale_reward:
-    #   scale_factor: 0.1
-    #   loc_factor: 0.
+    observations_interaction:
+      factors:
+        "(5, 10)": -1.
+        # reward hip movements in opposite directions
+    scale_reward:
+      scale_factor: 0.1
+      loc_factor: -0.001
     # time_limit:
     #   max_episode_steps: 500
   vectorization_mode: async
@@ -33,13 +33,13 @@ policy:
   type: ppo
   kwargs:
     advantage_normalize: batch
-    returns_normalize: true
+    # returns_normalize: true
     gamma: 0.99
     lambda_: 0.95
-    entropy_coef: 0.001
-    value_loss_coef: 0.25
+    entropy_coef: 0.01
+    value_loss_coef: 0.3
     clip_epsilon: 0.2
-    num_epochs: 4
+    num_epochs: 5
     optimizer_kwargs:
       actor_lr: 3e-5
       critic_lr: 1e-4
@@ -68,4 +68,4 @@ network:
     head_kwargs: {}
     head_name: actor_critic
     num_features: 64
-    initial_deviation: 1.
+    initial_deviation: 0.5

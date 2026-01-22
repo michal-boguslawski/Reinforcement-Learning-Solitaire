@@ -24,7 +24,7 @@ network:
     distribution: normal
     head_kwargs: {}
     head_name: actor_critic
-    initial_deviation: 1.0
+    initial_deviation: 0.5
     num_features: 64
 policy:
   kwargs:
@@ -41,7 +41,7 @@ policy:
       actor_lr: 3.0e-05
       critic_lr: 0.0001
     returns_normalize: true
-    value_loss_coef: 0.25
+    value_loss_coef: 0.3
   type: ppo
 train_kwargs:
   batch_size: 2048
