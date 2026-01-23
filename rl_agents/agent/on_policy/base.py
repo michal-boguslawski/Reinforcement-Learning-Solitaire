@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 import random
 import torch as T
@@ -5,9 +6,12 @@ from typing import Dict, Generator, Tuple
 
 from ..base import BasePolicy
 from ..utils.preprocessing import preprocess_batch
-from ..utils.running_mean import RunningMeanStdEMA
+from ..utils.running_mean import RunningMeanStd
 from models.models import ActionSpaceType, Observation, OnPolicyMinibatch
 from utils.utils import compute_advantage_and_results
+
+
+logger = logging.getLogger(__name__)
 
 
 class OnPolicy(BasePolicy):
@@ -17,7 +21,7 @@ class OnPolicy(BasePolicy):
         super().__init__(*args, **kwargs)
         self.advantage_normalize = advantage_normalize
         self.returns_normalize = returns_normalize
-        self.rms = RunningMeanStdEMA(device=self.device)
+        self.rms = RunningMeanStd(device=self.device)
     
     def _extract_state_values(self, batch: Observation) -> Tuple[T.Tensor, T.Tensor]:
         if self.has_critic:
@@ -45,6 +49,9 @@ class OnPolicy(BasePolicy):
                 gamma_=self.gamma_,
                 lambda_=self.lambda_
         )
+
+        self._emit_log(returns, "stats/mean_returns")
+        self._emit_log(advantages, "stats/mean_advantages")
 
         if self.returns_normalize:
             self.rms.update(returns)

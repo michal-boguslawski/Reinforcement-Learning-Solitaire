@@ -3,8 +3,8 @@ from typing import Protocol
 
 
 class PolicyCallback(Protocol):
-    def on_loss(self, loss: T.Tensor, name: str):
+    def on_log(self, log: T.Tensor, name: str):
         pass
 
-    def on_train_end(self):
+    def flush(self):
         pass

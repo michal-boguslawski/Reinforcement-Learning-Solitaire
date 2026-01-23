@@ -13,16 +13,12 @@ class TrainPolicyLogger(PolicyCallback):
         super().__init__()
         self.logs = {}
 
-    def on_loss(self, loss: T.Tensor, name: str):
+    def on_log(self, log: T.Tensor, name: str):
         loss_list = self.logs.get(name, [])
-        loss_list.append(loss.detach().cpu().item())
+        loss_list.append(log.detach().cpu().mean().item())
         self.logs[name] = loss_list
 
-    def on_train_end(self):
-        log = ""
-        for key, value in self.logs.items():
-            if isinstance(value, list):
-                value = np.mean(value)
-            log += f"{key} {value:.4f} "
+    def flush(self):
+        log = {key: np.mean(value) for key, value in self.logs.items()}
         logger.debug(log)
         self.logs.clear()

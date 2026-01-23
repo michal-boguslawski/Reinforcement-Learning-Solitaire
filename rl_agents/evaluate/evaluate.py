@@ -121,6 +121,11 @@ class Evaluator:
 
                 tmp_lengths = info.get("episode", {}).get("l")
                 lengths.extend(tmp_lengths[done].cpu().numpy().tolist())
+                logger.debug({
+                    "evaluation/episode_reward": tmp_rewards[done].cpu().mean().item(),
+                    "evaluation/episode_length": tmp_lengths[done].cpu().to(T.float32).mean().item(),
+                    "evaluation/episodes_ended": done.cpu().to(T.float32).sum().item(),
+                })
 
         self._print_evaluation_results(rewards, lengths, action_output)
 

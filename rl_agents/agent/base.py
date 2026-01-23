@@ -63,7 +63,7 @@ class BasePolicy(ABC):
     def train(self, minibatch_size: int, *args, **kwargs) -> None:
         batch = self._get_batch_for_training(*args, **kwargs)
         self._train_step(minibatch_size=minibatch_size, batch=batch, *args, **kwargs)
-        self._emit_train_end()
+        self._emit_flush()
 
     @property
     def has_critic(self) -> bool:
@@ -106,7 +106,7 @@ class BasePolicy(ABC):
         for minibatch in minibatch_generator:
             with T.autocast(device_type="cuda", enabled=self.use_amp):
                 loss = self._calculate_loss(minibatch, temperature=temperature)
-            self._emit_loss(loss, "loss")
+            self._emit_log(loss, "train/total_loss")
             self._backward(loss)
 
     def eval_mode(self) -> None:
@@ -147,10 +147,10 @@ class BasePolicy(ABC):
     def add_callback(self, callback: PolicyCallback):
         self._callbacks.append(callback)
 
-    def _emit_loss(self, loss: T.Tensor, name: str):
+    def _emit_log(self, log: T.Tensor, name: str):
         for cb in self._callbacks:
-            cb.on_loss(loss, name)
+            cb.on_log(log, name)
 
-    def _emit_train_end(self):
+    def _emit_flush(self):
         for cb in self._callbacks:
-            cb.on_train_end()
+            cb.flush()

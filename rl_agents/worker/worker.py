@@ -111,16 +111,18 @@ class Worker:
         if episode_statistics:
             final_rewards = episode_statistics["r"]
             final_lenghts = episode_statistics["l"]
-            log = f"Episodes ended. n: {done.cpu().sum().item()}, "
-            log += f"terminated: {terminated.cpu().sum().item()}, "
-            log += f"truncated: {truncated.cpu().sum().item()}, "
-            log += f"mean reward: {final_rewards[done.cpu()].cpu().mean().item()}, "
-            log += f"mean length: {final_lenghts[done.cpu()].float().cpu().mean().item()}"
+            log = {
+                "episode/n": done.cpu().sum().item(),
+                "episode/terminated": terminated.cpu().sum().item(),
+                "episode/truncated": truncated.cpu().sum().item(),
+                "episode/mean_reward": final_rewards[done.cpu()].cpu().mean().item(),
+                "episode/mean_length": final_lenghts[done.cpu()].float().cpu().mean().item(),
+            }
             logger.debug(log)
 
     def _set_temperature(self, num_steps: int):
         self.temperature = self.temperature_start - (self.temperature_start - self.temperature_end) * num_steps / self.temperature_steps
-        logger.debug(f"Current temperature: {self.temperature}")
+        logger.debug({"hyperparameters/temperature": self.temperature})
 
     def _step(self):
         try:
@@ -154,6 +156,7 @@ class Worker:
             "value": action_output.value,
             "log_probs": action_output.log_probs,
             "core_state": core_state,
+            # "dist": action_output.dist,
         }
         
         self.agent.update_buffer(record)

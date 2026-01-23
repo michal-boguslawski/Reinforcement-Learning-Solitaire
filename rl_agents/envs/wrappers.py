@@ -1,9 +1,13 @@
 import ast
 import gymnasium as gym
+import logging
 import numpy as np
 import torch as T
 
 from .utils import border_color_check
+
+
+logger = logging.getLogger(__name__)
 
 
 class TerminalBonusWrapper(gym.Wrapper):
@@ -11,7 +15,7 @@ class TerminalBonusWrapper(gym.Wrapper):
         super().__init__(env)
         self.terminated_bonus = terminated_bonus or 0
         self.truncated_bonus = truncated_bonus or 0
-        print(f"TerminalBonusWrapper attached with params {terminated_bonus} {truncated_bonus}")
+        logger.info(f"TerminalBonusWrapper attached with params {terminated_bonus} {truncated_bonus}")
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
@@ -41,7 +45,7 @@ class PowerObsRewardWrapper(gym.Wrapper):
         self.nominal_factors = nominal_factors
         self.decay = 1
         self.decay_factor = decay_factor or 1
-        print(f"PowerObsRewardWrapper attached with params {pow_factors} {abs_factors} {nominal_factors} {decay_factor}")
+        logger.info(f"PowerObsRewardWrapper attached with params {pow_factors} {abs_factors} {nominal_factors} {decay_factor}")
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
@@ -93,7 +97,7 @@ class NoMovementTruncateWrapper(gym.Wrapper):
             truncated = True
             reward = float(reward) - self.penalty
             self._counter = 0
-            print("Env truncated due to lack of movement")
+            logger.info("Env truncated due to lack of movement")
 
         return obs, reward, terminated, truncated, info
 
@@ -147,7 +151,7 @@ class ActionPowerRewardWrapper(gym.Wrapper):
         self.abs_factors = abs_factors
         self.decay = 1
         self.decay_factor = decay_factor or 1
-        print(f"ActionPowerRewardWrapper attached with params {pow_factors} {abs_factors} {decay_factor}")
+        logger.info(f"ActionPowerRewardWrapper attached with params {pow_factors} {abs_factors} {decay_factor}")
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
@@ -170,7 +174,7 @@ class ActionInteractionWrapper(gym.Wrapper):
     ):
         super().__init__(env)
         self.factors = self._parse_factors(factors)
-        print(f"ActionInteractionWrapper attached with params {self.factors}")
+        logger.info(f"ActionInteractionWrapper attached with params {self.factors}")
 
     def _parse_factors(self, factors: dict) -> np.ndarray:
         env_shape = self.env.action_space.shape
@@ -221,7 +225,7 @@ class OutOfTrackPenaltyAndTerminationWrapper(gym.Wrapper):
         self.step_counter = 0
         self.counter = 0
         self.current_penalty = 0
-        print(f"OutOfTrackPenaltyAndTerminationWrapper attached with penalty {self.out_of_track_penalty}")
+        logger.info(f"OutOfTrackPenaltyAndTerminationWrapper attached with penalty {self.out_of_track_penalty}")
 
     def reset(self, **kwargs):
         obs, info = self.env.reset(**kwargs)
@@ -268,7 +272,7 @@ class ObservationsInteractionWrapper(gym.Wrapper):
     ):
         super().__init__(env)
         self.factors = self._parse_factors(factors)
-        print(f"PowerObsRewardWrapper attached with params {self.factors}")
+        logger.info(f"PowerObsRewardWrapper attached with params {self.factors}")
 
     def _parse_factors(self, factors: dict) -> np.ndarray:
         env_shape = self.env.observation_space.shape

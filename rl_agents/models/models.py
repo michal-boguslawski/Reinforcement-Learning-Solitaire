@@ -17,6 +17,7 @@ class Observation:
     reward: T.Tensor
     done: T.Tensor
     log_probs: T.Tensor
+    dist: Distribution | None = None
     value: T.Tensor | None = None
     core_state: T.Tensor | None = None
 

@@ -12,12 +12,12 @@ handlers:
     formatter: standard
     stream: ext://sys.stdout
 
-  file:
-    class: logging.FileHandler
-    level: DEBUG
-    formatter: standard
-    filename: "__LOG_FILE__"
+  # file:
+  #   class: logging.FileHandler
+  #   level: DEBUG
+  #   formatter: standard
+  #   filename: "__LOG_FILE__"
 
 root:
   level: DEBUG
-  handlers: [console, file]
+  handlers: [console]
