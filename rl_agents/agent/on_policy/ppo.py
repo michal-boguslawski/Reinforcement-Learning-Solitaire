@@ -12,8 +12,7 @@ class PPOPolicy(OnPolicy, EntropyMixin):
     def __init__(
         self,
         value_loss_coef: float = 0.5,
-        entropy_coef: float = 0.01,
-        entropy_decay: float = 1.,
+        entropy_kwargs: dict = {},
         num_epochs: int = 10,
         clip_epsilon: float = 0.2,
         *args,
@@ -22,12 +21,16 @@ class PPOPolicy(OnPolicy, EntropyMixin):
         super().__init__(*args, **kwargs)
 
         self.value_loss_coef = value_loss_coef
-        self.entropy_coef = entropy_coef
-        self.entropy_decay = entropy_decay
+        self.entropy_kwargs = entropy_kwargs
         self.num_epochs = num_epochs
         self.clip_epsilon = clip_epsilon
 
         self.loss_fn = T.nn.HuberLoss(reduction="none")
+        self._entropy_setup()
+
+    def _entropy_setup(self):
+        from ..factories import get_scheduler
+        self.entropy_coef = get_scheduler(**self.entropy_kwargs)
 
     @property
     def has_critic(self) -> bool:
@@ -36,6 +39,7 @@ class PPOPolicy(OnPolicy, EntropyMixin):
     def _train_step(self, minibatch_size: int, batch: Dict[str, T.Tensor | None], *args, **kwargs):
         for _ in range(self.num_epochs):
             super()._train_step(minibatch_size, batch, *args, **kwargs)
+        self.entropy_coef.step()
 
     def _compute_policy_loss(
         self,
@@ -93,7 +97,7 @@ class PPOPolicy(OnPolicy, EntropyMixin):
         )
         entropy = self.compute_entropy(output.dist)
         self._emit_log(entropy, "train/entropy")
-        return policy_loss + self.value_loss_coef * critic_loss - self.entropy_coef * entropy
+        return policy_loss + self.value_loss_coef * critic_loss - self.entropy_coef() * entropy
 
     def _build_param_groups(self, optimizer_kwargs: dict | None = None) -> list[dict]:
         optimizer_kwargs = optimizer_kwargs or {"lr": 3e-4}

@@ -24,7 +24,7 @@ class RunningMeanStd:
         new_mean = self.mean + delta * batch_count / tot_count
         m_a = self.var * self.count
         m_b = batch_var * batch_count
-        M2 = m_a + m_b * delta**2 * self.count * batch_count / tot_count
+        M2 = m_a + m_b + delta**2 * self.count * batch_count / tot_count
 
         self.mean = new_mean
         self.var = M2 / tot_count
@@ -33,11 +33,11 @@ class RunningMeanStd:
         logger.debug(f"Running mean updated: mean={self.mean.item():.4f}, var={self.var.item():.4f}")
 
     def normalize(self, x: T.Tensor) -> T.Tensor:
-        return (x - self.mean) / (T.sqrt(self.var + 1e-8))
+        return x / (T.sqrt(self.var + 1e-8))
 
 
 class RunningMeanStdEMA:
-    def __init__(self, decay: float = 0.02, warmup_steps: int = 0, device=T.device("cpu"), dtype=T.float32):
+    def __init__(self, decay: float = 0.05, warmup_steps: int = 0, device=T.device("cpu"), dtype=T.float32):
         self.mean = T.zeros(1, device=device, dtype=dtype)
         self.var = T.ones(1, device=device, dtype=dtype)
         self.decay = decay
@@ -52,8 +52,9 @@ class RunningMeanStdEMA:
         batch_var = x.var(unbiased=False)
         
         if self._init:
+            delta = batch_mean - self.mean
             self.mean = (1 - self.decay) * self.mean + self.decay * batch_mean
-            self.var = (1 - self.decay) * self.var + self.decay * batch_var
+            self.var = (1 - self.decay) * (self.var + delta**2) + self.decay * batch_var
         else:
             self.mean = batch_mean
             self.var = batch_var
@@ -64,7 +65,7 @@ class RunningMeanStdEMA:
     def normalize(self, x: T.Tensor) -> T.Tensor:
         if self.steps < self.warmup_steps:
             return x
-        return (x - self.mean) / (T.sqrt(self.var + 1e-8))
+        return x / (T.sqrt(self.var + 1e-8))
 
 
 class RunningMeanStdFast:
@@ -119,7 +120,7 @@ class RunningMeanStdFast:
         Normalize x using running mean and variance
         """
         x = x.to(device=self.mean.device)
-        return (x - self.mean) / (T.sqrt(self.var + 1e-8))
+        return x / (T.sqrt(self.var + 1e-8))
 
     def state_dict(self) -> dict:
         """

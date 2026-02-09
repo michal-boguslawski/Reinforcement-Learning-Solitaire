@@ -2,7 +2,7 @@ import torch as T
 from torch import nn
 
 from .base import BasePolicy
-from .registry import POLICIES
+from .registry import POLICIES, SCHEDULERS
 from .callbacks.train_logger import TrainPolicyLogger
 
 
@@ -29,3 +29,14 @@ def get_policy(
         policy.add_callback(TrainPolicyLogger())
 
     return policy
+
+
+def get_scheduler(
+    scheduler_type: str,
+    *args,
+    **kwargs
+):
+    scheduler = SCHEDULERS.get(scheduler_type)
+    if scheduler is None:
+        raise ValueError(f"Scheduler {scheduler_type} does not exist")
+    return scheduler(**kwargs)

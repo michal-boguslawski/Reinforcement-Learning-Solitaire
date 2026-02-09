@@ -1,6 +1,10 @@
 version: 1
 disable_existing_loggers: false
 
+filters:
+  no_dicts:
+    "()": config.filters.no_dict.NoDictFilter
+
 formatters:
   standard:
     format: "%(asctime)s : %(name)s : %(levelname)s : %(message)s"
@@ -12,12 +16,13 @@ handlers:
     formatter: standard
     stream: ext://sys.stdout
 
-  # file:
-  #   class: logging.FileHandler
-  #   level: DEBUG
-  #   formatter: standard
-  #   filename: "__LOG_FILE__"
+  file:
+    class: logging.FileHandler
+    level: DEBUG
+    formatter: standard
+    filename: "__LOG_FILE__"
+    filters: [no_dicts]
 
 root:
   level: DEBUG
-  handlers: [console]
+  handlers: [console, file]

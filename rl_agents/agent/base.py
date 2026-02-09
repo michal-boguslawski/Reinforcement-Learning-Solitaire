@@ -37,7 +37,7 @@ class BasePolicy(ABC):
         self.device = device
         self.use_amp = device.type == "cuda"
         self.scaler = GradScaler(enabled=self.use_amp)
-        self.optimizer = T.optim.Adam(self._build_param_groups(optimizer_kwargs))
+        self.optimizer = T.optim.Adam(self._build_param_groups(optimizer_kwargs), betas=(0.85, 0.999))
         self.max_grad_norm = 0.5
         self.loss_fn = loss_fn
 

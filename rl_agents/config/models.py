@@ -26,6 +26,13 @@ class OptimizerConfig(BaseModel):
     critic_lr: float | None = None
 
 
+class EntropyConfig(BaseModel):
+    scheduler_type: str = "linear_entropy"
+    max_entropy: float
+    total_steps: int
+    min_entropy: float | None = None
+
+
 class PolicyKwargs(BaseModel):
     gamma: float = Field(0.99, ge=0, le=1)
     lambda_: float = Field(0.95, ge=0, le=1)
@@ -36,6 +43,7 @@ class PolicyKwargs(BaseModel):
     clip_epsilon: float | None = None
     advantage_normalize: Literal["batch", "global"] | None = None
     returns_normalize: bool = False
+    entropy_kwargs: EntropyConfig
     exploration_method: ExplorationMethod
     optimizer_kwargs: OptimizerConfig
 

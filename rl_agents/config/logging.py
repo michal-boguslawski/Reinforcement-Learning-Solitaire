@@ -30,7 +30,8 @@ def setup_logger(experiment_name: str, config_file_name="logging_config.yaml") -
     )
     tb_handler.setLevel(logging.DEBUG)
 
-    # config["handlers"]["file"]["filename"] = str(log_file)
+    log_file = log_dir / "app.log"
+    config["handlers"]["file"]["filename"] = str(log_file)
     logging.config.dictConfig(config)
     
     logging.getLogger().addHandler(tb_handler)
