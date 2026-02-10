@@ -57,6 +57,12 @@ class PPOPolicy(OnPolicy, EntropyMixin):
             T.clamp(r_t, 1 - self.clip_epsilon, 1 + self.clip_epsilon) * advantages
         )).mean()
         self._emit_log(policy_loss, "train/policy_loss")
+
+        clip_frac = ((r_t.detach() - 1).abs() > self.clip_epsilon).mean()
+        self._emit_log(clip_frac, "train/clip_fraction")
+
+        approx_kl = (old_log_probs.detach() - log_probs.detach()).mean()
+        self._emit_log(approx_kl, "train/kl_div")
         return policy_loss
 
     def _compute_critic_loss(

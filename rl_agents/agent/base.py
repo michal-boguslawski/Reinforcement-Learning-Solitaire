@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import torch as T
 from torch import nn
+from torch.optim.lr_scheduler import LinearLR
 from torch.amp import GradScaler, autocast # type: ignore
 from typing import Any, Generator, Dict
 
@@ -37,7 +38,8 @@ class BasePolicy(ABC):
         self.device = device
         self.use_amp = device.type == "cuda"
         self.scaler = GradScaler(enabled=self.use_amp)
-        self.optimizer = T.optim.Adam(self._build_param_groups(optimizer_kwargs), betas=(0.85, 0.999))
+        self.optimizer = T.optim.Adam(self._build_param_groups(optimizer_kwargs))
+        self.scheduler = LinearLR(self.optimizer, start_factor=1., end_factor=1e-6, total_iters=5000)
         self.max_grad_norm = 0.5
         self.loss_fn = loss_fn
 
@@ -63,6 +65,8 @@ class BasePolicy(ABC):
     def train(self, minibatch_size: int, *args, **kwargs) -> None:
         batch = self._get_batch_for_training(*args, **kwargs)
         self._train_step(minibatch_size=minibatch_size, batch=batch, *args, **kwargs)
+        if self.scheduler:
+            self.scheduler.step()
         self._emit_flush()
 
     @property

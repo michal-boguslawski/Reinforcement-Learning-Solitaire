@@ -55,7 +55,7 @@ class OnPolicy(BasePolicy):
 
         if self.returns_normalize:
             self.rms.update(returns)
-            returns = self.rms.normalize(returns).clamp(-10, 10)
+            returns = self.rms.normalize(returns)
 
         if self.advantage_normalize == "global":
             advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-6)
