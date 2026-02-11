@@ -3,7 +3,7 @@ env_kwargs:
   hardcore: true
   id: BipedalWalker-v3
   normalize_rewards: false
-  num_envs: 8
+  num_envs: 16
   training_wrappers:
     action_reward:
       abs_factors:

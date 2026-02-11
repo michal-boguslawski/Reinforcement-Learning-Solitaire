@@ -49,7 +49,9 @@ class PPOPolicy(OnPolicy, EntropyMixin):
         advantages: T.Tensor
     ):
         log_probs = dist.log_prob(actions.squeeze(-1) if self.action_space_type == "discrete" else actions)
-        r_t = T.exp(log_probs - old_log_probs.detach())
+        log_ratio = log_probs - old_log_probs.detach()
+        log_ratio = T.clamp(log_ratio, -10, 10)
+        r_t = T.exp(log_ratio)
         r_t = r_t.sum(-1) if r_t.ndim > 1 else r_t
 
         policy_loss = -(T.min(
@@ -58,7 +60,7 @@ class PPOPolicy(OnPolicy, EntropyMixin):
         )).mean()
         self._emit_log(policy_loss, "train/policy_loss")
 
-        clip_frac = ((r_t.detach() - 1).abs() > self.clip_epsilon).mean()
+        clip_frac = ((r_t.detach() - 1).abs() > self.clip_epsilon).float().mean()
         self._emit_log(clip_frac, "train/clip_fraction")
 
         approx_kl = (old_log_probs.detach() - log_probs.detach()).mean()
