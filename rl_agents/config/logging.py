@@ -7,13 +7,13 @@ import yaml
 from .handlers.tensorboard import BatchedTensorBoardHandler
 
 
-def setup_logger(experiment_name: str, config_file_name="logging_config.yaml") -> None:
+def setup_logger(env_name: str, experiment_name: str, config_file_name="logging_config.yaml") -> None:
     config_file_path = Path(__file__).parent / config_file_name
     with open(config_file_path) as f:
         config = yaml.safe_load(f)
 
-    log_dir = Path("logs") / experiment_name
-    tb_log_dir = log_dir / "tensorboard"
+    log_dir = Path("logs") / env_name / experiment_name
+    tb_log_dir = Path("logs") / env_name / "tensorboard" / experiment_name
     log_dir.mkdir(parents=True, exist_ok=True)
     tb_log_dir.mkdir(parents=True, exist_ok=True)
 

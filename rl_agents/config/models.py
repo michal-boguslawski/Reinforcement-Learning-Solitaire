@@ -43,9 +43,10 @@ class PolicyKwargs(BaseModel):
     clip_epsilon: float | None = None
     advantage_normalize: Literal["batch", "global"] | None = None
     returns_normalize: bool = False
-    entropy_kwargs: EntropyConfig
+    entropy_kwargs: EntropyConfig | None = None
     exploration_method: ExplorationMethod
-    optimizer_kwargs: OptimizerConfig
+    optimizer_kwargs: OptimizerConfig | None = None
+    scheduler_kwargs: dict | None = None
 
 
 class PolicyConfig(BaseModel):
@@ -89,6 +90,7 @@ class NetworkConfig(BaseModel):
 # ---------- Root config ----------
 
 class ExperimentConfigModel(BaseModel):
+    env_name: str
     experiment_name: str
     env_kwargs: EnvConfig
     policy: PolicyConfig

@@ -26,6 +26,7 @@ class BasePolicy(ABC):
         buffer_size: int | None = None,
         device: T.device = T.device("cpu"),
         optimizer_kwargs: dict | None = None,
+        scheduler_kwargs: dict | None = None,
         loss_fn: nn.modules.loss._Loss = nn.HuberLoss(),
         *args,
         **kwargs
@@ -38,8 +39,8 @@ class BasePolicy(ABC):
         self.device = device
         self.use_amp = device.type == "cuda"
         self.scaler = GradScaler(enabled=self.use_amp)
-        self.optimizer = T.optim.Adam(self._build_param_groups(optimizer_kwargs))
-        self.scheduler = LinearLR(self.optimizer, start_factor=1., end_factor=1e-6, total_iters=5000)
+        self.scheduler_kwargs = scheduler_kwargs or {}
+        self.optimizer_kwargs = optimizer_kwargs or {"lr": 3e-4}
         self.max_grad_norm = 0.5
         self.loss_fn = loss_fn
 
@@ -47,8 +48,15 @@ class BasePolicy(ABC):
             exploration_method_name=exploration_method["name"],
             exploration_kwargs=exploration_method.get("kwargs", {})
         )
+        self._optimizer_setup()
 
         self._callbacks: list[PolicyCallback] = []
+
+    def _optimizer_setup(self):
+        from .factories import get_lr_scheduler
+        self.optimizer = T.optim.Adam(self._build_param_groups(self.optimizer_kwargs))
+        self.scheduler = get_lr_scheduler(optimizer=self.optimizer, **self.scheduler_kwargs)
+        # self.scheduler = LinearLR(self.optimizer, start_factor=1., end_factor=1e-6, total_iters=5000)
 
     @abstractmethod
     def _calculate_loss(self, batch: OnPolicyMinibatch, temperature: float = 1) -> T.Tensor:
@@ -67,6 +75,8 @@ class BasePolicy(ABC):
         self._train_step(minibatch_size=minibatch_size, batch=batch, *args, **kwargs)
         if self.scheduler:
             self.scheduler.step()
+            for i, val in enumerate(self.scheduler.get_last_lr()):
+                self._emit_log(val, f"hyperparameters/lr_{i}")
         self._emit_flush()
 
     @property

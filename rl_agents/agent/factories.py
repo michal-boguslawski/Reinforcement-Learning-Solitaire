@@ -40,3 +40,17 @@ def get_scheduler(
     if scheduler is None:
         raise ValueError(f"Scheduler {scheduler_type} does not exist")
     return scheduler(**kwargs)
+
+
+def get_lr_scheduler(
+    optimizer,
+    scheduler_type: str | None = None,
+    *args,
+    **kwargs
+):
+    if scheduler_type is None:
+        return None
+    scheduler = SCHEDULERS.get(scheduler_type)
+    if scheduler is None:
+        raise ValueError(f"Scheduler {scheduler_type} does not exist")
+    return scheduler(optimizer=optimizer, **kwargs)
