@@ -15,6 +15,7 @@ class PPOPolicy(OnPolicy, EntropyMixin):
         entropy_kwargs: dict = {},
         num_epochs: int = 10,
         clip_epsilon: float = 0.2,
+        use_value_clipping: str | None = None,
         *args,
         **kwargs
     ):
@@ -24,6 +25,7 @@ class PPOPolicy(OnPolicy, EntropyMixin):
         self.entropy_kwargs = entropy_kwargs
         self.num_epochs = num_epochs
         self.clip_epsilon = clip_epsilon
+        self.use_value_clipping = use_value_clipping
 
         self.loss_fn = T.nn.HuberLoss(reduction="none")
         self._entropy_setup()
@@ -73,10 +75,22 @@ class PPOPolicy(OnPolicy, EntropyMixin):
         old_values: T.Tensor,
         returns: T.Tensor
     ):
-        values_clipped = old_values + (values - old_values).clamp(-self.clip_epsilon, self.clip_epsilon)
-        loss_unclipped = self.loss_fn(values, returns)
-        loss_clipped = self.loss_fn(values_clipped, returns)
-        critic_loss = T.max(loss_unclipped, loss_clipped).mean()
+        if self.use_value_clipping == "nominal":
+
+            values_clipped = old_values + (values - old_values).clamp(-self.clip_epsilon, self.clip_epsilon)
+            loss_unclipped = self.loss_fn(values, returns)
+            loss_clipped = self.loss_fn(values_clipped, returns)
+            critic_loss = T.max(loss_unclipped, loss_clipped).mean()
+
+        elif self.use_value_clipping == "relative":
+            values_clipped = old_values + (values - old_values).clamp(-self.clip_epsilon * old_values.abs(), self.clip_epsilon * old_values.abs())
+            loss_unclipped = self.loss_fn(values, returns)
+            loss_clipped = self.loss_fn(values_clipped, returns)
+            critic_loss = T.max(loss_unclipped, loss_clipped).mean()
+
+        else:
+            critic_loss = self.loss_fn(values, returns).mean()
+
         self._emit_log(critic_loss, "train/critic_loss")
         return critic_loss
 

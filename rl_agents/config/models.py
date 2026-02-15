@@ -41,6 +41,7 @@ class PolicyKwargs(BaseModel):
     entropy_decay: float | None = None
     num_epochs: int | None = None
     clip_epsilon: float | None = None
+    use_value_clipping: Literal["nominal", "relative"] | None = None
     advantage_normalize: Literal["batch", "global"] | None = None
     returns_normalize: bool = False
     entropy_kwargs: EntropyConfig | None = None
