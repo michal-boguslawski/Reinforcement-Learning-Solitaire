@@ -1,11 +1,23 @@
+env_kwargs:
+  general_wrappers: {}
+  id: Swimmer-v5
+  normalize_rewards: false
+  num_envs: 8
+  training_wrappers: {}
+  vectorization_mode: async
 env_name: Swimmer
 experiment_name: Swimmer/v1
-
-env_kwargs:
-  id: Swimmer-v5
-  num_envs: 8
-  vectorization_mode: async
-
+network:
+  kwargs:
+    backbone_kwargs: {}
+    backbone_name: mlp
+    core_kwargs: {}
+    core_name: identity
+    distribution: normal
+    head_kwargs: {}
+    head_name: actor_critic
+    initial_deviation: 1.0
+    num_features: 32
 policy:
   kwargs:
     advantage_normalize: batch
@@ -16,6 +28,7 @@ policy:
       scheduler_type: linear_entropy
       total_steps: 1000
     exploration_method:
+      kwargs: {}
       name: distribution
     gamma: 0.99
     lambda_: 0.95
@@ -23,6 +36,7 @@ policy:
     optimizer_kwargs:
       actor_lr: 0.0003
       critic_lr: 0.001
+    returns_normalize: false
     scheduler_kwargs:
       end_factor: 0.0001
       scheduler_type: linear_lr
@@ -30,21 +44,12 @@ policy:
       total_iters: 2000
     value_loss_coef: 0.5
   type: ppo
-
-worker_kwargs:
-  device: auto
-  record_step: 100_000
-  verbose: 1
-
 train_kwargs:
   batch_size: 2048
   minibatch_size: 128
-  num_steps: 1_000_000
-
-network:
-  kwargs:
-    backbone_name: mlp
-    distribution: normal
-    head_name: actor_critic
-    initial_deviation: 1.0
-    num_features: 32
+  num_steps: 1000000
+worker_kwargs:
+  device: auto
+  record_step: 100000
+  temperature_config: {}
+  verbose: 1

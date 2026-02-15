@@ -1,0 +1,30 @@
+2026-02-15 11:51:59,977 : worker.worker : INFO : Current device cpu
+2026-02-15 11:52:00,072 : OpenGL.platform.ctypesloader : DEBUG : Loaded libOSMesa.so => libOSMesa.so <CDLL 'libOSMesa.so', handle 63b0d5f4e850 at 0x7b8ca051dfd0>
+2026-02-15 11:52:00,074 : OpenGL.acceleratesupport : DEBUG : OpenGL_accelerate module loaded
+2026-02-15 11:52:00,080 : OpenGL.arrays.arraydatatype : DEBUG : Using accelerated ArrayDatatype
+2026-02-15 11:52:01,884 : worker.worker : INFO : ==================== Start training ====================
+2026-02-15 11:52:01,915 : network.model : INFO : Saved model to logs/Swimmer/Swimmer/v1/model.pt
+2026-02-15 11:53:34,172 : evaluate.evaluate : INFO : Evaluation results: mean = -20.34, std = 0.00, min = -20.34, max = -20.34, count = 1
+2026-02-15 11:53:34,180 : evaluate.evaluate : INFO : Evaluation lengths: mean = 1000.00, std = 0.00, min = 1000.00, max = 1000.00, count = 1
+2026-02-15 11:53:34,189 : evaluate.evaluate : INFO : Covariance matrix:
+[0.31622776 0.31622776]
+2026-02-15 12:17:44,814 : network.model : INFO : Saved model to logs/Swimmer/Swimmer/v1/model.pt
+2026-02-15 12:19:15,040 : evaluate.evaluate : INFO : Evaluation results: mean = 46.91, std = 0.00, min = 46.91, max = 46.91, count = 1
+2026-02-15 12:19:15,046 : evaluate.evaluate : INFO : Evaluation lengths: mean = 1000.00, std = 0.00, min = 1000.00, max = 1000.00, count = 1
+2026-02-15 12:19:15,056 : evaluate.evaluate : INFO : Covariance matrix:
+[0.29197577 0.2204384 ]
+2026-02-15 12:43:02,492 : network.model : INFO : Saved model to logs/Swimmer/Swimmer/v1/model.pt
+2026-02-15 12:44:14,110 : evaluate.evaluate : INFO : Evaluation results: mean = 62.76, std = 0.00, min = 62.76, max = 62.76, count = 1
+2026-02-15 12:44:14,113 : evaluate.evaluate : INFO : Evaluation lengths: mean = 1000.00, std = 0.00, min = 1000.00, max = 1000.00, count = 1
+2026-02-15 12:44:14,118 : evaluate.evaluate : INFO : Covariance matrix:
+[0.3169026  0.12367102]
+2026-02-15 13:06:00,734 : network.model : INFO : Saved model to logs/Swimmer/Swimmer/v1/model.pt
+2026-02-15 13:07:13,943 : evaluate.evaluate : INFO : Evaluation results: mean = 51.29, std = 0.00, min = 51.29, max = 51.29, count = 1
+2026-02-15 13:07:13,944 : evaluate.evaluate : INFO : Evaluation lengths: mean = 1000.00, std = 0.00, min = 1000.00, max = 1000.00, count = 1
+2026-02-15 13:07:13,945 : evaluate.evaluate : INFO : Covariance matrix:
+[0.3566427  0.09594985]
+2026-02-15 13:30:45,465 : network.model : INFO : Saved model to logs/Swimmer/Swimmer/v1/model.pt
+2026-02-15 13:32:00,192 : evaluate.evaluate : INFO : Evaluation results: mean = 64.09, std = 0.00, min = 64.09, max = 64.09, count = 1
+2026-02-15 13:32:00,193 : evaluate.evaluate : INFO : Evaluation lengths: mean = 1000.00, std = 0.00, min = 1000.00, max = 1000.00, count = 1
+2026-02-15 13:32:00,195 : evaluate.evaluate : INFO : Covariance matrix:
+[0.46385118 0.07054893]

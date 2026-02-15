@@ -17,11 +17,9 @@ logger = logging.getLogger(__name__)
 class OnPolicy(BasePolicy):
     action_space_type: ActionSpaceType
 
-    def __init__(self, advantage_normalize: str | None = None, returns_normalize: bool = False, *args, **kwargs):
+    def __init__(self, advantage_normalize: str | None = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.advantage_normalize = advantage_normalize
-        self.returns_normalize = returns_normalize
-        self.rms = RunningMeanStdEMA(device=self.device)
     
     def _extract_state_values(self, batch: Observation) -> Tuple[T.Tensor, T.Tensor]:
         if self.has_critic:
@@ -52,10 +50,6 @@ class OnPolicy(BasePolicy):
 
         self._emit_log(returns, "stats/mean_returns")
         self._emit_log(advantages, "stats/mean_advantages")
-
-        if self.returns_normalize:
-            self.rms.update(returns)
-            returns = self.rms.normalize(returns)
 
         if self.advantage_normalize == "global":
             advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-6)

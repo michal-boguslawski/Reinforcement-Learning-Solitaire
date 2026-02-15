@@ -43,7 +43,6 @@ class PolicyKwargs(BaseModel):
     clip_epsilon: float | None = None
     use_value_clipping: Literal["nominal", "relative"] | None = None
     advantage_normalize: Literal["batch", "global"] | None = None
-    returns_normalize: bool = False
     entropy_kwargs: EntropyConfig | None = None
     exploration_method: ExplorationMethod
     optimizer_kwargs: OptimizerConfig | None = None
