@@ -75,18 +75,28 @@ class PPOPolicy(OnPolicy, EntropyMixin):
         old_values: T.Tensor,
         returns: T.Tensor
     ):
-        if self.use_value_clipping == "nominal":
+        if self.use_value_clipping == "absolute":
 
             values_clipped = old_values + (values - old_values).clamp(-self.clip_epsilon, self.clip_epsilon)
             loss_unclipped = self.loss_fn(values, returns)
             loss_clipped = self.loss_fn(values_clipped, returns)
             critic_loss = T.max(loss_unclipped, loss_clipped).mean()
 
+            clip_frac = (loss_clipped > loss_unclipped).float().mean()
+            self._emit_log(clip_frac, "train/value_clip_fraction")
+
         elif self.use_value_clipping == "relative":
-            values_clipped = old_values + (values - old_values).clamp(-self.clip_epsilon * old_values.abs(), self.clip_epsilon * old_values.abs())
+            values_clipped = old_values + (values - old_values).clamp(
+                -self.clip_epsilon * old_values.abs().clamp(min=1),
+                self.clip_epsilon * old_values.abs().clamp(min=1)
+            )
             loss_unclipped = self.loss_fn(values, returns)
             loss_clipped = self.loss_fn(values_clipped, returns)
+
             critic_loss = T.max(loss_unclipped, loss_clipped).mean()
+
+            clip_frac = (loss_clipped > loss_unclipped).float().mean()
+            self._emit_log(clip_frac, "train/value_clip_fraction")
 
         else:
             critic_loss = self.loss_fn(values, returns).mean()

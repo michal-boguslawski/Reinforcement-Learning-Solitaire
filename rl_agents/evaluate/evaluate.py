@@ -10,7 +10,6 @@ from envs.factories import make_vec
 from envs.utils import get_env_vec_details
 from config.config import ExperimentConfig
 from models.models import ActionOutput
-from network.model import RLModel
 from worker.utils import prepare_action_for_env, get_device
 
 
@@ -127,6 +126,8 @@ class Evaluator:
                     "evaluation/episodes_ended": done.cpu().to(T.float32).sum().item(),
                 })
 
+        if state.ndim < 4:
+            logger.info(f"Final state {state.mean(0)}")
         self._print_evaluation_results(rewards, lengths, action_output)
 
     def close(self):

@@ -1,0 +1,23 @@
+2026-02-15 22:20:28,095 : worker.worker : INFO : Current device cuda
+2026-02-15 22:20:28,208 : OpenGL.platform.ctypesloader : DEBUG : Loaded libEGL.so => libEGL.so <CDLL 'libEGL.so', handle 96a1b40 at 0x7f9a4c7dc710>
+2026-02-15 22:20:28,209 : OpenGL.platform.ctypesloader : DEBUG : Loaded libOpenGL.so => libOpenGL.so <CDLL 'libOpenGL.so', handle 96a31d0 at 0x7f9a4c7aa810>
+2026-02-15 22:20:28,210 : OpenGL.acceleratesupport : DEBUG : OpenGL_accelerate module loaded
+2026-02-15 22:20:28,217 : OpenGL.arrays.arraydatatype : DEBUG : Using accelerated ArrayDatatype
+2026-02-15 22:20:28,224 : OpenGL.platform.ctypesloader : DEBUG : Loaded libOpenGL.so => libOpenGL.so <CDLL 'libOpenGL.so', handle 96a31d0 at 0x7f9a4c54fbc0>
+2026-02-15 22:20:28,308 : envs.wrappers : INFO : PowerObsRewardWrapper attached with params [-0.1, -0.02, -0.005, 0.0, -0.01, 0.0, 0.0, 0.0] None [0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0] 0.995
+2026-02-15 22:20:28,331 : envs.wrappers : INFO : PowerObsRewardWrapper attached with params [-0.1, -0.02, -0.005, 0.0, -0.01, 0.0, 0.0, 0.0] None [0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0] 0.995
+2026-02-15 22:20:28,337 : envs.wrappers : INFO : PowerObsRewardWrapper attached with params [-0.1, -0.02, -0.005, 0.0, -0.01, 0.0, 0.0, 0.0] None [0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0] 0.995
+2026-02-15 22:20:28,343 : envs.wrappers : INFO : PowerObsRewardWrapper attached with params [-0.1, -0.02, -0.005, 0.0, -0.01, 0.0, 0.0, 0.0] None [0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0] 0.995
+2026-02-15 22:20:28,349 : envs.wrappers : INFO : PowerObsRewardWrapper attached with params [-0.1, -0.02, -0.005, 0.0, -0.01, 0.0, 0.0, 0.0] None [0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0] 0.995
+2026-02-15 22:20:28,356 : envs.wrappers : INFO : PowerObsRewardWrapper attached with params [-0.1, -0.02, -0.005, 0.0, -0.01, 0.0, 0.0, 0.0] None [0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0] 0.995
+2026-02-15 22:20:28,361 : envs.wrappers : INFO : PowerObsRewardWrapper attached with params [-0.1, -0.02, -0.005, 0.0, -0.01, 0.0, 0.0, 0.0] None [0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0] 0.995
+2026-02-15 22:20:28,369 : envs.wrappers : INFO : PowerObsRewardWrapper attached with params [-0.1, -0.02, -0.005, 0.0, -0.01, 0.0, 0.0, 0.0] None [0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0] 0.995
+2026-02-15 22:20:28,376 : envs.wrappers : INFO : PowerObsRewardWrapper attached with params [-0.1, -0.02, -0.005, 0.0, -0.01, 0.0, 0.0, 0.0] None [0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0] 0.995
+2026-02-15 22:20:29,691 : worker.worker : INFO : ==================== Start training ====================
+2026-02-15 22:20:30,042 : network.model : INFO : Saved model to logs/Swimmer/Swimmer/v5/model.pt
+2026-02-15 22:20:36,301 : evaluate.evaluate : INFO : Final state tensor([-1.2551e-01, -1.7459e+00,  1.7119e+00, -1.2683e-02, -3.6467e-02,
+         1.5024e-02,  1.1344e-03, -1.7323e-01])
+2026-02-15 22:20:36,302 : evaluate.evaluate : INFO : Evaluation results: mean = -16.71, std = 0.00, min = -16.71, max = -16.71, count = 1
+2026-02-15 22:20:36,303 : evaluate.evaluate : INFO : Evaluation lengths: mean = 1000.00, std = 0.00, min = 1000.00, max = 1000.00, count = 1
+2026-02-15 22:20:36,304 : evaluate.evaluate : INFO : Covariance matrix:
+[0.18973666 0.18973666]
