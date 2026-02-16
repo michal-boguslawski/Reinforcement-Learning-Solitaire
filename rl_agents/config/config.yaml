@@ -1,5 +1,5 @@
 env_name: BipedalWalkerHardcore
-experiment_name: BipedalWalkerHardcore/PPO/v1
+experiment_name: PPO/v1
 
 env_kwargs:
   id: BipedalWalker-v3
