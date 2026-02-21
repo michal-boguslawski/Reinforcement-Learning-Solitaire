@@ -50,6 +50,7 @@ class Worker:
         logger.info(f"Current device {self.device}")
         self.record_step = record_step
         self.verbose = verbose
+        self.policy_config = policy_config
 
         self._setup_env(env_config)
         self._setup_network(network_config or {}, self.device)
@@ -64,7 +65,7 @@ class Worker:
 
     def _setup_env(self, env_config: dict[str, Any]) -> None:
         self.env_config = env_config
-        self.env = make_vec(verbose=self.verbose, **env_config)
+        self.env = make_vec(verbose=self.verbose, normalize_gamma=self.policy_config.get("gamma", 0.99), **env_config)
         self.env_details = get_env_vec_details(self.env)
         self.action_space_type = self.env_details.action_space_type
 

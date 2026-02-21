@@ -16,6 +16,7 @@ def make_vec(
     training_wrappers: dict | None = None,
     general_wrappers: dict | None = None,
     normalize_rewards: bool = False,
+    normalize_gamma: float = 0.99,
     verbose: int = 0,
     *args,
     **kwargs
@@ -55,7 +56,7 @@ def make_vec(
         )
 
         if normalize_rewards and training:
-            envs = vec_wrappers.NormalizeReward(envs)
+            envs = vec_wrappers.NormalizeReward(envs, gamma=normalize_gamma)
 
         envs = vec_wrappers.NumpyToTorch(envs)
 
