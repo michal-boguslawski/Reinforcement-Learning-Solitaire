@@ -32,11 +32,11 @@ class EGreedyExploration(BaseExploration):
         if self.epsilon_ > 0 and self.epsilon_ > random.random() and training:
             param_shape = getattr(dist, "param_shape")
             if param_shape is None:
-                raise AttributeError("Distribution is wrong)")
+                raise AttributeError("Distribution is wrong")
             batch_size, n = param_shape
-            action = T.randint(0, n, (batch_size, 1))
+            action = T.randint(0, n, (batch_size, ))
         else:
-            action = logits.argmax(-1, keepdim=True)
+            action = logits.argmax(-1, keepdim=False)
 
         self._counter()
 

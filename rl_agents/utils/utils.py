@@ -1,4 +1,5 @@
 import torch as T
+from typing import Tuple
 
 
 def step_return_discounting(
@@ -30,3 +31,20 @@ def step_return_discounting(
         g = values[..., t] + discount * g * (1 - dones[..., t].float())
         returns[..., t] = g
     return returns
+
+
+def compute_advantage_and_results(
+    rewards: T.Tensor, 
+    dones: T.Tensor,
+    state_values: T.Tensor,
+    next_state_values: T.Tensor,
+    gamma_: float = 1,
+    lambda_: float = 1
+) -> Tuple[T.Tensor, T.Tensor]:
+    q_target = rewards + gamma_ * (1 - dones) * next_state_values
+    td_errors = q_target - state_values
+    advantages = step_return_discounting(
+        values=td_errors, dones=dones, discount=(gamma_ * lambda_)
+    )
+    returns = advantages + state_values
+    return returns, advantages

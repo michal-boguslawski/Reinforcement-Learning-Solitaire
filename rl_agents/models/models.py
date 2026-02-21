@@ -17,6 +17,7 @@ class Observation:
     reward: T.Tensor
     done: T.Tensor
     log_probs: T.Tensor
+    dist: Distribution | None = None
     value: T.Tensor | None = None
     core_state: T.Tensor | None = None
 
@@ -38,6 +39,7 @@ class OnPolicyMinibatch:
     actions: T.Tensor
     advantages: T.Tensor
     log_probs: T.Tensor
+    state_values: T.Tensor
     core_states: T.Tensor | None = None
 
 

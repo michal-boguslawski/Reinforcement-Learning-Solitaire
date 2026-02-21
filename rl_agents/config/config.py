@@ -7,117 +7,6 @@ import yaml
 from .models import ExperimentConfigModel
 
 
-class EnvConfig:
-    env_config = {
-        "CartPole-v1":
-            {
-                "training_wrappers": {
-                    "terminal_bonus": {
-                        "terminated_bonus": -100
-                    },
-                    "power_obs_reward": {
-                        "pow_factors": [-0.01, 0, -10, 0],
-                        "abs_factors": [-1, 0, -10, 0],
-                    },
-                }
-            },
-        "MountainCarContinuous-v0":
-            {
-                "training_wrappers":
-                    {
-                        "power_obs_reward": {
-                            "pow_factors": [0, 50],
-                            "abs_factors": [0, 0.5],
-                            "decay_factor": 0.5,
-                        },
-                        "scale_reward": {
-                            "scale_factor": 0.1,
-                            "loc_factor": 0.
-                        },
-                    }
-            },
-        "Acrobot-v1":
-            {
-                "training_wrappers":
-                    {
-                        "terminal_bonus": {
-                            "terminated_bonus": 100
-                        },
-                        "power_obs_reward": {
-                                "pow_factors": [0, 0, 0, 0, 0.01, 0.01],
-                        }
-                    }
-            },
-        "Pendulum-v1":
-            {
-                # "scale_reward": 2/16.2736044,
-                # "loc_reward": -1,
-            },
-        "LunarLander-v3":
-            {
-                
-            },
-        "BipedalWalker-v3":
-            {
-                "training_wrappers":
-                    {
-                        "scale_reward":
-                            {
-                                "scale_factor": 1,
-                                "loc_factor": -0.1
-                            }
-                    }                
-            },
-        "HalfCheetah-v5":
-            {
-                "training_wrappers":
-                    {
-                        "scale_reward":
-                            {
-                                "scale_factor": 1,
-                                "loc_factor": 0
-                            }
-                    }                
-            },
-        "CarRacing-v3":
-            {
-                "general_wrappers": {
-                    "rescale_observation":
-                        {
-                            "min_obs": -1.,
-                            "max_obs": 1.
-                        },
-                    "permute_observations": {},
-                },
-                "training_wrappers": {
-                    "out_of_track":
-                        {
-                            "terminate_after": 20},
-                    "actions_interactions":
-                        {
-                            "factors":
-                                {(0, 1): -1., (1, 2): -1.}
-                        },
-                    "action_reward": {
-                            "abs_factors": [-0.02, 0.1, -0.01],
-                            "decay_factor": 1.,
-                        },
-                    "scale_reward":
-                        {
-                            "scale_factor": 0.1,
-                            "loc_factor": 0
-                        }
-                }
-            }
-    }
-
-    def __init__(self, env_name: str):
-        self.env_name = env_name
-    
-    def get_config(self) -> dict[str, Any]:
-        return self.env_config.get(self.env_name, {})
-
-
 class ExperimentConfig:
     def __init__(self, config_path: str = os.path.join(Path(__file__).parent.absolute(), "config.yaml")):
         self.config_path = config_path
@@ -129,8 +18,8 @@ class ExperimentConfig:
         self.config = ExperimentConfigModel.model_validate(data)
 
     def get_config(self) -> dict[str, Any]:
-        return self.config.model_dump()
+        return self.config.model_dump(exclude_none=True)
 
     def save_config(self, write_path: str):
         with open(write_path, "w") as f:
-            yaml.dump(self.config.model_dump(), f)
+            yaml.dump(self.config.model_dump(exclude_none=True), f)

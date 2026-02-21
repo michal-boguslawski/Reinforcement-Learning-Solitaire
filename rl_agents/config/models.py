@@ -8,11 +8,16 @@ class EnvConfig(BaseModel):
     id: str
     vectorization_mode: Literal["sync", "async"]
     num_envs: int
+    continuous: bool | None = None
+    hardcore: bool | None = None
+    training_wrappers: dict = Field(default_factory=dict)
+    general_wrappers: dict = Field(default_factory=dict)
+    normalize_rewards: bool = False
 
 
 class ExplorationMethod(BaseModel):
     name: Literal["distribution", "egreedy"]
-    kwargs: dict = {}
+    kwargs: dict = Field(default_factory=dict)
 
 
 class OptimizerConfig(BaseModel):
@@ -21,27 +26,39 @@ class OptimizerConfig(BaseModel):
     critic_lr: float | None = None
 
 
+class EntropyConfig(BaseModel):
+    scheduler_type: str = "linear_entropy"
+    max_entropy: float
+    total_steps: int
+    min_entropy: float | None = None
+
+
 class PolicyKwargs(BaseModel):
     gamma: float = Field(0.99, ge=0, le=1)
     lambda_: float = Field(0.95, ge=0, le=1)
-    value_loss_coef: float = Field(0.5)
-    entropy_coef: float = Field(0.01)
-    entropy_decay: float = Field(1, ge=0, le=1)
-    num_epochs: int = Field(10, ge=1)
-    clip_epsilon: float = Field(0.2)
+    value_loss_coef: float | None = None
+    entropy_coef: float | None = None
+    entropy_decay: float | None = None
+    num_epochs: int | None = None
+    clip_epsilon: float | None = None
+    use_value_clipping: Literal["absolute", "relative"] | None = None
     advantage_normalize: Literal["batch", "global"] | None = None
+    entropy_kwargs: EntropyConfig | None = None
     exploration_method: ExplorationMethod
-    optimizer_kwargs: OptimizerConfig
+    optimizer_kwargs: OptimizerConfig | None = None
+    scheduler_kwargs: dict | None = None
 
 
 class PolicyConfig(BaseModel):
-    type: Literal["ppo", "sarsa"]
+    type: Literal["ppo", "sarsa", "a2c"]
     kwargs: PolicyKwargs
 
 
 class WorkerConfig(BaseModel):
     device: Literal["auto", "cpu", "cuda"]
-    record_step: int = Field(100_000, ge=10_000)
+    record_step: int = Field(100_000, ge=5_000)
+    verbose: int = 0
+    temperature_config: dict = Field(default_factory=dict)
 
 
 class TrainConfig(BaseModel):
@@ -54,13 +71,13 @@ class NetworkKwargs(BaseModel):
     num_features: int = 64
 
     backbone_name: Literal["mlp", "simple_cnn"] = "mlp"
-    backbone_kwargs: dict = {}
+    backbone_kwargs: dict = Field(default_factory=dict)
 
     core_name: Literal["identity", "lstm", "gru"] = "identity"
-    core_kwargs: dict = {}
+    core_kwargs: dict = Field(default_factory=dict)
 
     head_name: Literal["actor_critic", "actor"] = "actor_critic"
-    head_kwargs: dict = {}
+    head_kwargs: dict = Field(default_factory=dict)
 
     distribution: Literal["normal", "mvn", "categorical"] = "normal"
     initial_deviation: float = 1.0
@@ -73,6 +90,7 @@ class NetworkConfig(BaseModel):
 # ---------- Root config ----------
 
 class ExperimentConfigModel(BaseModel):
+    env_name: str
     experiment_name: str
     env_kwargs: EnvConfig
     policy: PolicyConfig

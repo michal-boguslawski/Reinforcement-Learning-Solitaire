@@ -155,7 +155,7 @@ class RLModel(nn.Module):
         features = self.backbone(input_tensor=input_tensor)
         core = self.core(features=features.features, core_state=core_state)
         head_output = self.head(features=core.core_out)
-        dist = self.dist(logits = head_output.actor_logits, temperature=temperature)
+        dist = self.dist(logits=head_output.actor_logits, temperature=temperature)
         return ModelOutput(
             actor_logits=head_output.actor_logits,
             critic_value=head_output.critic_value,

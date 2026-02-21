@@ -1,6 +1,10 @@
 version: 1
 disable_existing_loggers: false
 
+filters:
+  no_dicts:
+    "()": config.filters.no_dict.NoDictFilter
+
 formatters:
   standard:
     format: "%(asctime)s : %(name)s : %(levelname)s : %(message)s"
@@ -17,6 +21,7 @@ handlers:
     level: DEBUG
     formatter: standard
     filename: "__LOG_FILE__"
+    filters: [no_dicts]
 
 root:
   level: DEBUG

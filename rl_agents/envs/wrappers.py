@@ -1,8 +1,13 @@
+import ast
 import gymnasium as gym
+import logging
 import numpy as np
 import torch as T
 
 from .utils import border_color_check
+
+
+logger = logging.getLogger(__name__)
 
 
 class TerminalBonusWrapper(gym.Wrapper):
@@ -10,7 +15,7 @@ class TerminalBonusWrapper(gym.Wrapper):
         super().__init__(env)
         self.terminated_bonus = terminated_bonus or 0
         self.truncated_bonus = truncated_bonus or 0
-        print(f"TerminalBonusWrapper attached with params {terminated_bonus} {truncated_bonus}")
+        logger.info(f"TerminalBonusWrapper attached with params {terminated_bonus} {truncated_bonus}")
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
@@ -31,14 +36,16 @@ class PowerObsRewardWrapper(gym.Wrapper):
         env,
         pow_factors: T.Tensor | None = None,
         abs_factors: T.Tensor | None = None,
+        nominal_factors: T.Tensor | None = None,
         decay_factor: float | None = 1
     ):
         super().__init__(env)
         self.pow_factors = pow_factors
         self.abs_factors = abs_factors
+        self.nominal_factors = nominal_factors
         self.decay = 1
         self.decay_factor = decay_factor or 1
-        print(f"PowerObsRewardWrapper attached with params {pow_factors} {abs_factors} {decay_factor}")
+        logger.info(f"PowerObsRewardWrapper attached with params {pow_factors} {abs_factors} {nominal_factors} {decay_factor}")
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
@@ -47,6 +54,8 @@ class PowerObsRewardWrapper(gym.Wrapper):
             reward += (obs ** 2 * self.pow_factors).sum().item() * self.decay
         if self.abs_factors is not None:
             reward += (np.abs(obs) * self.abs_factors).sum().item() * self.decay
+        if self.nominal_factors is not None:
+            reward += (obs * self.nominal_factors).sum().item() * self.decay
         if terminated:
             self.decay *= self.decay_factor
         
@@ -63,6 +72,32 @@ class NoMovementInvPunishmentRewardWrapper(gym.Wrapper):
         reward = float(reward)
         inv_obs = 1 / (np.abs(obs) + 1e-6)
         reward -= (inv_obs.clip(0, 100) * self.punishment).sum().item()
+
+        return obs, reward, terminated, truncated, info
+
+
+class NoMovementTruncateWrapper(gym.Wrapper):
+    def __init__(self, env, index: int, penalty: float | int = 10., steps: int = 50, eps: float = 1e-3):
+        super().__init__(env)
+        self.index = index
+        self.steps = steps
+        self.eps = eps
+        self.penalty = penalty
+        self._counter = 0
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+
+        index_observation = obs[self.index]
+        if abs(index_observation) < self.eps:
+            self._counter += 1
+        else:
+            self._counter = 0
+        if self._counter > self.steps:
+            truncated = True
+            reward = float(reward) - self.penalty
+            self._counter = 0
+            logger.info("Env truncated due to lack of movement")
 
         return obs, reward, terminated, truncated, info
 
@@ -116,7 +151,7 @@ class ActionPowerRewardWrapper(gym.Wrapper):
         self.abs_factors = abs_factors
         self.decay = 1
         self.decay_factor = decay_factor or 1
-        print(f"PowerObsRewardWrapper attached with params {pow_factors} {abs_factors} {decay_factor}")
+        logger.info(f"ActionPowerRewardWrapper attached with params {pow_factors} {abs_factors} {decay_factor}")
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
@@ -139,7 +174,7 @@ class ActionInteractionWrapper(gym.Wrapper):
     ):
         super().__init__(env)
         self.factors = self._parse_factors(factors)
-        print(f"PowerObsRewardWrapper attached with params {self.factors}")
+        logger.info(f"ActionInteractionWrapper attached with params {self.factors}")
 
     def _parse_factors(self, factors: dict) -> np.ndarray:
         env_shape = self.env.action_space.shape
@@ -148,6 +183,8 @@ class ActionInteractionWrapper(gym.Wrapper):
         n = env_shape[-1]
         squared_tensor = np.zeros((n, n))
         for key, value in factors.items():
+            if isinstance(key, str):
+                key = ast.literal_eval(key)
             squared_tensor[key[0], key[1]] = value
         return squared_tensor
 
@@ -188,7 +225,7 @@ class OutOfTrackPenaltyAndTerminationWrapper(gym.Wrapper):
         self.step_counter = 0
         self.counter = 0
         self.current_penalty = 0
-        print(f"OutOfTrackPenaltyAndTerminationWrapper attached with penalty {self.out_of_track_penalty}")
+        logger.info(f"OutOfTrackPenaltyAndTerminationWrapper attached with penalty {self.out_of_track_penalty}")
 
     def reset(self, **kwargs):
         obs, info = self.env.reset(**kwargs)
@@ -223,5 +260,36 @@ class OutOfTrackPenaltyAndTerminationWrapper(gym.Wrapper):
             terminated = True
             reward -= self.termination_penalty
             
+        
+        return obs, reward, terminated, truncated, info
+
+
+class ObservationsInteractionWrapper(gym.Wrapper):
+    def __init__(
+        self,
+        env: gym.Env,
+        factors: dict,
+    ):
+        super().__init__(env)
+        self.factors = self._parse_factors(factors)
+        logger.info(f"PowerObsRewardWrapper attached with params {self.factors}")
+
+    def _parse_factors(self, factors: dict) -> np.ndarray:
+        env_shape = self.env.observation_space.shape
+        if env_shape is None:
+            raise ValueError("No valid shape for environment")
+        n = env_shape[-1]
+        squared_tensor = np.zeros((n, n))
+        for key, value in factors.items():
+            if isinstance(key, str):
+                key = ast.literal_eval(key)
+            squared_tensor[key[0], key[1]] = value
+        return squared_tensor
+
+    def step(self, action: np.ndarray):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        reward = float(reward)
+        if self.factors is not None:
+            reward += float((obs @ self.factors.T) @ obs.T)
         
         return obs, reward, terminated, truncated, info
