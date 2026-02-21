@@ -4,6 +4,7 @@ import gymnasium.wrappers.vector as vec_wrappers
 import numpy as np
 
 from .env_utils import prepare_wrappers
+from .registry import WRAPPERS
 
 
 def make_vec(
@@ -17,6 +18,7 @@ def make_vec(
     general_wrappers: dict | None = None,
     normalize_rewards: bool = False,
     normalize_gamma: float = 0.99,
+    permute_observations: bool = False,
     verbose: int = 0,
     *args,
     **kwargs
@@ -41,6 +43,9 @@ def make_vec(
         wrappers.extend(prepare_wrappers(training_wrappers))
 
     wrappers.extend(prepare_wrappers(general_wrappers))
+
+    if permute_observations:
+        wrappers.append(WRAPPERS["permute_observations"])
 
     if num_envs <= 0:
         raise ValueError(f"num_envs must be positive, got {num_envs}")

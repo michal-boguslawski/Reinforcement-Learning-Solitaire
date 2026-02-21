@@ -12,10 +12,10 @@ env_kwargs:
       - 0.0
       decay_factor: 0.99
     out_of_track:
-      out_of_track_penalty: 1.
+      out_of_track_penalty: 1.0
     scale_reward:
-      scale_factor: 0.1
       loc_factor: -0.02
+      scale_factor: 0.1
   vectorization_mode: async
 env_name: CarRacing
 experiment_name: PPO/v1

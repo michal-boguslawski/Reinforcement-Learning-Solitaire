@@ -1,0 +1,25 @@
+2026-02-21 21:14:27,334 : worker.worker : INFO : Current device cuda
+2026-02-21 21:14:27,487 : envs.wrappers : INFO : ActionPowerRewardWrapper attached with params None [-0.0001, 0.002, 0.0] 0.99
+2026-02-21 21:14:27,487 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-21 21:14:27,507 : envs.wrappers : INFO : ActionPowerRewardWrapper attached with params None [-0.0001, 0.002, 0.0] 0.99
+2026-02-21 21:14:27,508 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-21 21:14:27,513 : envs.wrappers : INFO : ActionPowerRewardWrapper attached with params None [-0.0001, 0.002, 0.0] 0.99
+2026-02-21 21:14:27,513 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-21 21:14:27,517 : envs.wrappers : INFO : ActionPowerRewardWrapper attached with params None [-0.0001, 0.002, 0.0] 0.99
+2026-02-21 21:14:27,517 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-21 21:14:27,521 : envs.wrappers : INFO : ActionPowerRewardWrapper attached with params None [-0.0001, 0.002, 0.0] 0.99
+2026-02-21 21:14:27,521 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-21 21:14:27,527 : envs.wrappers : INFO : ActionPowerRewardWrapper attached with params None [-0.0001, 0.002, 0.0] 0.99
+2026-02-21 21:14:27,527 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-21 21:14:27,530 : envs.wrappers : INFO : ActionPowerRewardWrapper attached with params None [-0.0001, 0.002, 0.0] 0.99
+2026-02-21 21:14:27,531 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-21 21:14:27,534 : envs.wrappers : INFO : ActionPowerRewardWrapper attached with params None [-0.0001, 0.002, 0.0] 0.99
+2026-02-21 21:14:27,534 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-21 21:14:27,538 : envs.wrappers : INFO : ActionPowerRewardWrapper attached with params None [-0.0001, 0.002, 0.0] 0.99
+2026-02-21 21:14:27,538 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-21 21:14:28,507 : worker.worker : INFO : ==================== Start training ====================
+2026-02-21 21:14:28,910 : network.model : INFO : Saved model to logs/CarRacing/PPO/v1/model.pt
+2026-02-21 21:14:49,315 : evaluate.evaluate : INFO : Evaluation results: mean = -27.84, std = 0.00, min = -27.84, max = -27.84, count = 1
+2026-02-21 21:14:49,316 : evaluate.evaluate : INFO : Evaluation lengths: mean = 1000.00, std = 0.00, min = 1000.00, max = 1000.00, count = 1
+2026-02-21 21:14:49,317 : evaluate.evaluate : INFO : Covariance matrix:
+[0.18973666 0.18973666 0.18973666]

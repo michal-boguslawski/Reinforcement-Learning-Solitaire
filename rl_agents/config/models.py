@@ -13,6 +13,7 @@ class EnvConfig(BaseModel):
     training_wrappers: dict = Field(default_factory=dict)
     general_wrappers: dict = Field(default_factory=dict)
     normalize_rewards: bool = False
+    permute_observations: bool = False
 
 
 class ExplorationMethod(BaseModel):

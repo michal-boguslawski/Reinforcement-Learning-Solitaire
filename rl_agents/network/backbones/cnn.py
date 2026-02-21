@@ -10,11 +10,11 @@ class SimpleCNN(nn.Module):
         super().__init__()
         self.input_shape = input_shape
         self.num_features = num_features
-        flattened_dim = 400
+        flattened_dim = 6 * 6 * 16
         self.activation = ACTIVATION_FUNCTIONS[activation_fn]
 
         self.network = nn.Sequential(
-            nn.Conv2d(input_shape[0], 6, 8, 4),
+            nn.Conv2d(input_shape[0], 6, 8, 4, 2),
             self.activation(),
             nn.Conv2d(6, 16, 4, 4),
             self.activation(),
