@@ -202,8 +202,8 @@ class OutOfTrackPenaltyAndTerminationWrapper(gym.Wrapper):
     def __init__(
         self,
         env,
-        y_range=(64, 78),
-        x_range=(43, 53),
+        y_range=(63, 79),
+        x_range=(42, 54),
         rgb_max_lim=np.array([120, 255, 120]),
         rgb_min_lim=np.array([0, 180, 0]),
         out_of_track_penalty=1,
