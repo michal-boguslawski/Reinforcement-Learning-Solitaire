@@ -5,7 +5,7 @@ from .on_policy.ppo import PPOPolicy
 
 #Schedulers
 from .schedulers.entropy import LinearSchedule
-from torch.optim.lr_scheduler import LinearLR
+from torch.optim.lr_scheduler import LinearLR, OneCycleLR
 
 
 POLICIES = {
@@ -18,4 +18,5 @@ POLICIES = {
 SCHEDULERS = {
     "linear_entropy": LinearSchedule,
     "linear_lr": LinearLR,
+    "one_cycle_lr": OneCycleLR
 }

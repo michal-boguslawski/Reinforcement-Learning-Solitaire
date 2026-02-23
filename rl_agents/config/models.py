@@ -68,6 +68,12 @@ class TrainConfig(BaseModel):
     minibatch_size: int
 
 
+class WeightsKwargs(BaseModel):
+    file_path: str
+    param_groups: list[Literal["full", "backbone", "core", "head", "dist"]] | None = None
+    strict: bool = True
+
+
 class NetworkKwargs(BaseModel):
     num_features: int = 64
 
@@ -82,6 +88,8 @@ class NetworkKwargs(BaseModel):
 
     distribution: Literal["normal", "mvn", "categorical"] = "normal"
     initial_deviation: float = 1.0
+
+    weights_kwargs: WeightsKwargs | None = None
 
 
 class NetworkConfig(BaseModel):

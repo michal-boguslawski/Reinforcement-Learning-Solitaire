@@ -32,6 +32,9 @@ class RLModel(nn.Module):
         high: T.Tensor | None = None,           # automatically derived
         initial_deviation: float = 1.0,
         device: T.device = T.device("cpu"),
+
+        weights_kwargs: dict | None = None,
+
         *args,
         **kwargs
     ):
@@ -58,6 +61,8 @@ class RLModel(nn.Module):
 
         self.device = device
         self.to(device)
+        if weights_kwargs:
+            self.load_weights(**weights_kwargs)
 
     def _setup(self):
         self._setup_dist()
