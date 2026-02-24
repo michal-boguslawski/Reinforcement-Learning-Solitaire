@@ -1,0 +1,16 @@
+2026-02-24 22:10:58,633 : worker.worker : INFO : Current device cuda
+2026-02-24 22:10:58,770 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-24 22:10:58,796 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-24 22:10:58,800 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-24 22:10:58,805 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-24 22:10:58,809 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-24 22:10:58,814 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-24 22:10:58,819 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-24 22:10:58,823 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-24 22:10:58,828 : envs.wrappers : INFO : OutOfTrackPenaltyAndTerminationWrapper attached with penalty 1.0
+2026-02-24 22:11:00,170 : worker.worker : INFO : ==================== Start training ====================
+2026-02-24 22:11:00,850 : network.model : INFO : Saved model to logs/CarRacing/PPO/v6/model.pt
+2026-02-24 22:11:25,641 : evaluate.evaluate : INFO : Evaluation results: mean = -28.57, std = 0.00, min = -28.57, max = -28.57, count = 1
+2026-02-24 22:11:25,642 : evaluate.evaluate : INFO : Evaluation lengths: mean = 1000.00, std = 0.00, min = 1000.00, max = 1000.00, count = 1
+2026-02-24 22:11:25,643 : evaluate.evaluate : INFO : Covariance matrix:
+[0.18973666 0.18973666 0.18973666]

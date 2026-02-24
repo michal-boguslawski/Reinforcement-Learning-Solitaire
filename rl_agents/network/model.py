@@ -74,13 +74,13 @@ class RLModel(nn.Module):
         self.backbone = make_backbone(
             backbone_name=self.backbone_name,
             input_shape=self.input_shape,
-            num_features=self.num_features
+            **self.backbone_kwargs
         )
 
     def _setup_core(self):
         self.core = make_core(
             core_name=self.core_name,
-            num_features=self.num_features,
+            in_features=self.backbone.out_features,
             **self.core_kwargs
         )
 
@@ -88,7 +88,7 @@ class RLModel(nn.Module):
         self.head = make_head(
             head_name=self.head_name,
             num_actions=self.num_actions,
-            num_features=self.num_features,
+            in_features=self.core.out_features,
             **self.head_kwargs
         )
 

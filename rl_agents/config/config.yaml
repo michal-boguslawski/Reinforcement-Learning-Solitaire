@@ -17,31 +17,37 @@ env_kwargs:
       max_obs: 1.
   vectorization_mode: async
 env_name: CarRacing
-experiment_name: PPO/v4
+experiment_name: PPO/v6
 network:
   kwargs:
-    backbone_kwargs: {}
-    backbone_name: simple_cnn
-    core_kwargs: {}
+    backbone_kwargs:
+      out_features: 256
+      dims: [32, 64, 128, 128]
+      kernel_sizes: [5, 5, 3, 3]
+      strides: [2, 2, 2, 1]
+      activation_fn: relu
+    backbone_name: cnn
+    core_kwargs:
+      out_features: 256
     core_name: gru
     distribution: normal
     head_kwargs:
+      hidden_dim: 256
       activation_fn: relu
-      hidden_dim: 128
     head_name: actor_critic
     initial_deviation: 0.6
-    num_features: 128
-    weights_kwargs:
-      file_path: /app/rl_agents/logs/CarRacing/PPO/v2/model.pt
+    num_features: 256
+    # weights_kwargs:
+    #   file_path: /app/rl_agents/logs/CarRacing/PPO/v4/model.pt
 policy:
   kwargs:
     advantage_normalize: batch
     clip_epsilon: 0.2
     entropy_kwargs:
-      max_entropy: 0.
-      min_entropy: 0.
+      max_entropy: 0.01
+      min_entropy: -0.01
       scheduler_type: linear_entropy
-      total_steps: 600
+      total_steps: 2400
     exploration_method:
       kwargs: {}
       name: distribution
@@ -49,18 +55,19 @@ policy:
     lambda_: 0.95
     num_epochs: 6
     optimizer_kwargs:
-      actor_lr: 0.00008
-      critic_lr: 0.00012
+      actor_lr: 4.0e-05
+      critic_lr: 6.0e-05
     scheduler_kwargs:
-      max_lr: 0.0001
-      scheduler_type: one_cycle_lr
-      total_steps: 2000
+      end_factor: 0.
+      scheduler_type: linear_lr
+      start_factor: 1.0
+      total_iters: 4000
     use_value_clipping: absolute
     value_loss_coef: 0.5
   type: ppo
 train_kwargs:
-  batch_size: 512
-  minibatch_size: 256
+  batch_size: 256
+  minibatch_size: 64
   num_steps: 1000000
 worker_kwargs:
   device: auto

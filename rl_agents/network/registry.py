@@ -11,7 +11,7 @@ from .heads.actor import ActorHead
 
 # Backbones
 from .backbones.mlp import MLPNetwork
-from .backbones.cnn import SimpleCNN
+from .backbones.cnn import SimpleCNN, CNN
 
 # Cores
 from .cores.identity import IdentityCore
@@ -40,7 +40,8 @@ HEADS = {
 
 BACKBONES = {
     "mlp": MLPNetwork,
-    "simple_cnn": SimpleCNN
+    "simple_cnn": SimpleCNN,
+    "cnn": CNN,
 }
 
 

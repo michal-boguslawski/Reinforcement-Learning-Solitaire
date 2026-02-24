@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 class LinearSchedule:
     def __init__(self, max_entropy: float, total_steps: int, min_entropy: float | None = None):
         self.max_entropy = max_entropy
-        self.min_entropy = min_entropy or max_entropy
+        self.min_entropy = max_entropy if min_entropy is None else min_entropy
         self.total_steps = total_steps
         self._curr_step = 0
 

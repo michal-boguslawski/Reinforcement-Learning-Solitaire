@@ -77,7 +77,7 @@ class WeightsKwargs(BaseModel):
 class NetworkKwargs(BaseModel):
     num_features: int = 64
 
-    backbone_name: Literal["mlp", "simple_cnn"] = "mlp"
+    backbone_name: Literal["mlp", "simple_cnn", "cnn"] = "mlp"
     backbone_kwargs: dict = Field(default_factory=dict)
 
     core_name: Literal["identity", "lstm", "gru"] = "identity"
