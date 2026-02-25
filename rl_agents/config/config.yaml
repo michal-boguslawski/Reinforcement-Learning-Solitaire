@@ -17,7 +17,7 @@ env_kwargs:
       max_obs: 1.
   vectorization_mode: async
 env_name: CarRacing
-experiment_name: PPO/v6
+experiment_name: PPO/v9
 network:
   kwargs:
     backbone_kwargs:
@@ -44,10 +44,10 @@ policy:
     advantage_normalize: batch
     clip_epsilon: 0.2
     entropy_kwargs:
-      max_entropy: 0.01
-      min_entropy: -0.01
+      max_entropy: 0.001
+      min_entropy: 0.
       scheduler_type: linear_entropy
-      total_steps: 2400
+      total_steps: 600
     exploration_method:
       kwargs: {}
       name: distribution
@@ -55,19 +55,19 @@ policy:
     lambda_: 0.95
     num_epochs: 6
     optimizer_kwargs:
-      actor_lr: 4.0e-05
-      critic_lr: 6.0e-05
+      actor_lr: 4e-05
+      critic_lr: 6e-05
     scheduler_kwargs:
       end_factor: 0.
       scheduler_type: linear_lr
       start_factor: 1.0
-      total_iters: 4000
+      total_iters: 1000
     use_value_clipping: absolute
     value_loss_coef: 0.5
   type: ppo
 train_kwargs:
-  batch_size: 256
-  minibatch_size: 64
+  batch_size: 1024
+  minibatch_size: 256
   num_steps: 1000000
 worker_kwargs:
   device: auto

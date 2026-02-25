@@ -62,10 +62,9 @@ policy:
       name: distribution
     gamma: 0.99
     lambda_: 0.95
-    num_epochs: 6
+    num_epochs: 4
     optimizer_kwargs:
-      actor_lr: 4.0e-05
-      critic_lr: 6.0e-05
+      lr: 0.00025
     scheduler_kwargs:
       end_factor: 0.0
       scheduler_type: linear_lr
