@@ -89,7 +89,7 @@ class Evaluator:
                 except AttributeError:
                     pass
 
-    def evaluate(self, agent: BasePolicy, min_episodes: int = 1, action_space_type: str = "discrete"):
+    def evaluate(self, agent: BasePolicy, min_episodes: int = 1, action_space_type: str = "discrete", temperature: float = 1.):
         device = agent.network.device
         state, info = self.envs.reset()
         finished_envs = 0
@@ -103,7 +103,7 @@ class Evaluator:
         while finished_envs < min_episodes:
             state = state.to(device)
             with T.no_grad():
-                action_output = agent.action(state=state, core_state=core_state, training=False, temperature=0.1)
+                action_output = agent.action(state=state, core_state=core_state, training=False, temperature=temperature)
 
             action = action_output.action
             env_action = prepare_action_for_env(action, action_space_type)

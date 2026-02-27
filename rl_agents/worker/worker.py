@@ -236,7 +236,7 @@ class Worker:
         self.agent.eval_mode()
 
         with evaluator:
-            evaluator.evaluate(self.agent, min_episodes=1, action_space_type=self.action_space_type)
+            evaluator.evaluate(self.agent, min_episodes=1, action_space_type=self.action_space_type, temperature=0.0001)
 
         self.agent.train_mode()
 
@@ -245,6 +245,6 @@ class Worker:
         self.agent.eval_mode()
 
         with evaluator:
-            evaluator.evaluate(self.agent, min_episodes=1000, action_space_type=self.action_space_type)
+            evaluator.evaluate(self.agent, min_episodes=1000, action_space_type=self.action_space_type, temperature=0.0001)
 
         self.agent.train_mode()

@@ -2,12 +2,14 @@ env_kwargs:
   general_wrappers: {}
   id: CarRacing-v3
   normalize_rewards: false
-  num_envs: 8
+  num_envs: 16
   permute_observations: true
   training_wrappers:
+    terminal_bonus:
+      truncated_bonus: -5
     out_of_track:
-      out_of_track_penalty: 1.0
-      terminate_after: 10
+      out_of_track_penalty: 0.5
+      terminate_after: 1000
     scale_reward:
       loc_factor: -0.01
       scale_factor: 0.2
@@ -17,7 +19,7 @@ env_kwargs:
       max_obs: 1.
   vectorization_mode: async
 env_name: CarRacing
-experiment_name: PPO/v9
+experiment_name: PPO/v11
 network:
   kwargs:
     backbone_kwargs:
@@ -44,31 +46,29 @@ policy:
     advantage_normalize: batch
     clip_epsilon: 0.2
     entropy_kwargs:
-      max_entropy: 0.001
+      max_entropy: 0.02
       min_entropy: 0.
       scheduler_type: linear_entropy
-      total_steps: 600
+      total_steps: 700
     exploration_method:
       kwargs: {}
       name: distribution
     gamma: 0.99
     lambda_: 0.95
-    num_epochs: 6
+    num_epochs: 4
     optimizer_kwargs:
-      actor_lr: 4e-05
-      critic_lr: 6e-05
+      actor_lr: 2e-4
+      critic_lr: 3e-4
     scheduler_kwargs:
-      end_factor: 0.
-      scheduler_type: linear_lr
-      start_factor: 1.0
-      total_iters: 1000
+      scheduler_type: cosine_annealing_lr
+      T_max: 977
     use_value_clipping: absolute
     value_loss_coef: 0.5
   type: ppo
 train_kwargs:
-  batch_size: 1024
+  batch_size: 2048
   minibatch_size: 256
-  num_steps: 1000000
+  num_steps: 2000000
 worker_kwargs:
   device: auto
   record_step: 100000
