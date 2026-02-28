@@ -107,11 +107,10 @@ class Worker:
         
         self.state, _ = self.env.reset()
 
-    def _log_step(self, info: dict, done: T.Tensor, terminated: T.Tensor, truncated: T.Tensor):
-        episode_statistics = info.get("episode")
-        if episode_statistics:
-            final_rewards = episode_statistics["r"]
-            final_lenghts = episode_statistics["l"]
+    def _log_step(self, done: T.Tensor, terminated: T.Tensor, truncated: T.Tensor):
+        if done.any():
+            final_rewards = T.tensor(self.env.env.call("episode_returns"))
+            final_lenghts = T.tensor(self.env.env.call("episode_lengths"))
             log = {
                 "episode/n": done.cpu().sum().item(),
                 "episode/terminated": terminated.cpu().sum().item(),
@@ -166,7 +165,7 @@ class Worker:
         self.core_state = action_output.core_state
 
         if self.verbose == 1:
-            self._log_step(info, done, terminated, truncated)
+            self._log_step(done, terminated, truncated)
 
         return done
 
