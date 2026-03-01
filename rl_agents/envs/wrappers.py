@@ -202,8 +202,8 @@ class OutOfTrackPenaltyAndTerminationWrapper(gym.Wrapper):
     def __init__(
         self,
         env,
-        y_range=(64, 78),
-        x_range=(43, 53),
+        y_range=(63, 79),
+        x_range=(42, 54),
         rgb_max_lim=np.array([120, 255, 120]),
         rgb_min_lim=np.array([0, 180, 0]),
         out_of_track_penalty=1,
@@ -231,35 +231,32 @@ class OutOfTrackPenaltyAndTerminationWrapper(gym.Wrapper):
         obs, info = self.env.reset(**kwargs)
         self.step_counter = 0
         self.counter = 0
-        self.current_penalty = 0
         return obs, info
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
         self.step_counter += 1
 
+        if terminated or truncated:
+            return obs, reward, terminated, truncated, info
+
         if self.step_counter < self.start_at_step:
             return obs, reward, terminated, truncated, info
 
-        self.counter += 1
-
-        out_of_track_check_result = border_color_check(
+        out_of_track = border_color_check(
             obs, self.y_range, self.x_range, self.rgb_min_lim, self.rgb_max_lim
         )
         
-        if not out_of_track_check_result:
+        if out_of_track:
+            self.counter += 1
+            reward = float(reward)
+            reward -= self.out_of_track_penalty
+
+            terminated = terminated or (self.counter > self.terminate_after)
+            if terminated:
+                reward -= self.termination_penalty
+        else:
             self.counter = 0
-            self.current_penalty = 0
-            return obs, reward, terminated, truncated, info
-
-        self.current_penalty += self.out_of_track_penalty
-        reward = float(reward)
-        reward -= self.current_penalty
-
-        if self.counter > self.terminate_after:
-            terminated = True
-            reward -= self.termination_penalty
-            
         
         return obs, reward, terminated, truncated, info
 

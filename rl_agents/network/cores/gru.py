@@ -2,24 +2,27 @@ import torch as T
 import torch.nn as nn
 
 from ..models.models import CoreOutput
+from ..torch_registry import ACTIVATION_FUNCTIONS
 
 
 class GRUCore(nn.Module):
     def __init__(
         self,
-        num_features: int = 64,
+        in_features: int = 64,
+        out_features: int = 64,
         *args,
         **kwargs
     ):
         super().__init__()
-        self.num_features = num_features
+        self.in_features = in_features
+        self.out_features = out_features
 
         self._build_network()
 
     def _build_network(self):
         
-        self.core = nn.GRU(self.num_features, self.num_features, batch_first=False)
-        self.ln = nn.LayerNorm(self.num_features)
+        self.core = nn.GRU(self.in_features, self.out_features, batch_first=False)
+        
 
     def forward(self, features: T.Tensor, core_state: T.Tensor | None = None) -> CoreOutput:
         to_squeeze = False
@@ -28,7 +31,6 @@ class GRUCore(nn.Module):
             to_squeeze = True
 
         core_out, hx = self.core(input=features, hx=core_state)
-        core_out = self.ln(core_out)
 
         if to_squeeze:
             core_out = core_out.squeeze(0)

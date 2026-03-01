@@ -13,6 +13,7 @@ class EnvConfig(BaseModel):
     training_wrappers: dict = Field(default_factory=dict)
     general_wrappers: dict = Field(default_factory=dict)
     normalize_rewards: bool = False
+    permute_observations: bool = False
 
 
 class ExplorationMethod(BaseModel):
@@ -67,10 +68,16 @@ class TrainConfig(BaseModel):
     minibatch_size: int
 
 
+class WeightsKwargs(BaseModel):
+    file_path: str
+    param_groups: list[Literal["full", "backbone", "core", "head", "dist"]] | None = None
+    strict: bool = True
+
+
 class NetworkKwargs(BaseModel):
     num_features: int = 64
 
-    backbone_name: Literal["mlp", "simple_cnn"] = "mlp"
+    backbone_name: Literal["mlp", "simple_cnn", "cnn"] = "mlp"
     backbone_kwargs: dict = Field(default_factory=dict)
 
     core_name: Literal["identity", "lstm", "gru"] = "identity"
@@ -81,6 +88,8 @@ class NetworkKwargs(BaseModel):
 
     distribution: Literal["normal", "mvn", "categorical"] = "normal"
     initial_deviation: float = 1.0
+
+    weights_kwargs: WeightsKwargs | None = None
 
 
 class NetworkConfig(BaseModel):
