@@ -43,9 +43,9 @@ network:
 policy:
   kwargs:
     advantage_normalize: batch
-    clip_epsilon: 0.2
+    clip_epsilon: 0.15
     entropy_kwargs:
-      max_entropy: 0.01
+      max_entropy: 0.001
       min_entropy: 0.
       scheduler_type: linear_entropy
       total_steps: 400
@@ -54,10 +54,10 @@ policy:
       name: distribution
     gamma: 0.99
     lambda_: 0.95
-    num_epochs: 8
+    num_epochs: 10
     optimizer_kwargs:
-      actor_lr: 4e-6
-      critic_lr: 6e-6
+      actor_lr: 6e-6
+      critic_lr: 9e-6
     scheduler_kwargs:
       scheduler_type: cosine_annealing_lr
       T_max: 490
